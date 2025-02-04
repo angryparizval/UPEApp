@@ -1,5 +1,7 @@
 #packages needed to run the application
 import tkinter as tk
+from tkinter import ttk
+from ttkthemes import ThemedTk
 from tkinter import messagebox
 from tkinter import PhotoImage
 
@@ -49,7 +51,7 @@ def open_homepage():
     image_label.pack()
 
     # Add buttons to open the upe budget window, view records window,and exit the application
-    btn_upe_budget_window = tk.Button(homepage_window, text="UPE Budget", command=open_upe_budget)
+    btn_upe_budget_window = ttk.Button(homepage_window, text="UPE Budget", command=open_upe_budget)
     btn_upe_budget_window.pack(pady=10)
 
     btn_open_view_records_window = tk.Button(homepage_window, text="View Records", command=open_view_records)
@@ -100,7 +102,7 @@ def open_view_records():
     btn_homepage_window.pack(pady=10)
 
 # Main application root window
-root = tk.Tk()
+root = ThemedTk(theme = "arc")
 root.withdraw()  # Hide the root window initially
 
 # Create the startup screen
