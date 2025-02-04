@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
 
-# Function to center a window on your screen when oeining the windo
+# Function to center a window on your screen when oeining the window
 def center_window(window, width, height):
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
