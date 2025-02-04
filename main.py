@@ -87,9 +87,9 @@ def open_view_records():
     label = tk.Label(view_records_window, text="This is UPE Records")
     label.pack(pady=50)
 
-    #filter combo box to filter the records by category
+    #filter combo box to filter the records by category (student, member, faculty)
 
-    #filter out uneeded columns for a printout
+    #filter out uneeded columns for a printout (specific information)
 
     #table view of the records
 
