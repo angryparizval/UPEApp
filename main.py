@@ -109,7 +109,7 @@ root = ThemedTk(theme="equilux")  # You can try other themes like "arc", "radian
 style = ttk.Style()
 
 # Configure the style for buttons
-style.configure('TButton', font=('Helvetica', 12), background='red', foreground='black')
+style.configure('TButton', font=('Helvetica', 12), background='red', foreground='white')
 style.map('TButton',background=[('active', 'black'), ('pressed', 'red')],foreground=[('active', 'red'), ('pressed', 'black')])
 
 root.withdraw()  # Hide the root window initially
