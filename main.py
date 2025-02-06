@@ -102,7 +102,16 @@ def open_view_records():
     btn_homepage_window.pack(pady=10)
 
 # Main application root window
-root = ThemedTk(theme = "arc")
+# Create the main window using ThemedTk
+root = ThemedTk(theme="equilux")  # You can try other themes like "arc", "radiance", etc.
+
+# Create a style object
+style = ttk.Style()
+
+# Configure the style for buttons
+style.configure('TButton', font=('Helvetica', 12), background='red', foreground='black')
+style.map('TButton',background=[('active', 'black'), ('pressed', 'red')],foreground=[('active', 'red'), ('pressed', 'black')])
+
 root.withdraw()  # Hide the root window initially
 
 # Create the startup screen
