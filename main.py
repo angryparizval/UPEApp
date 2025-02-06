@@ -54,10 +54,10 @@ def open_homepage():
     btn_upe_budget_window = ttk.Button(homepage_window, text="UPE Budget", command=open_upe_budget)
     btn_upe_budget_window.pack(pady=10)
 
-    btn_open_view_records_window = tk.Button(homepage_window, text="View Records", command=open_view_records)
+    btn_open_view_records_window = ttk.Button(homepage_window, text="View Records", command=open_view_records)
     btn_open_view_records_window.pack(pady=10)
 
-    btn_exit = tk.Button(homepage_window, text="Exit Application", command=root.quit)
+    btn_exit = ttk.Button(homepage_window, text="Exit Application", command=root.quit)
     btn_exit.pack(pady=10)
 
 # opening UPE budget window
@@ -103,14 +103,16 @@ def open_view_records():
 
 # Main application root window
 # Create the main window using ThemedTk
-root = ThemedTk(theme="equilux")  # You can try other themes like "arc", "radiance", etc.
+root = ThemedTk()  # You can try other themes like "arc", "radiance", etc.
 
 # Create a style object
 style = ttk.Style()
 
 # Configure the style for buttons
-style.configure('TButton', font=('Helvetica', 12), background='red', foreground='white')
-style.map('TButton',background=[('active', 'black'), ('pressed', 'red')],foreground=[('active', 'red'), ('pressed', 'black')])
+# background = border, active when hovered over, pressed is base color
+# foreground = text, active when hovered over
+style.configure('TButton', font=('Helvetica', 12), foreground='black')
+style.map('TButton',background=[('active', 'black'), ('pressed', 'red')],foreground=[('active', 'red'), ('pressed', 'green')])
 
 root.withdraw()  # Hide the root window initially
 
@@ -160,7 +162,7 @@ def open_login_window():
     entry_password.pack(pady=5)
 
     # Add login button
-    btn_login = tk.Button(login_window, text="Login", command=login)
+    btn_login = ttk.Button(login_window, text="Login", command=login)
     btn_login.pack(pady=20)
 
 # Start the main event loop
