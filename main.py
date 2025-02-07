@@ -4,6 +4,9 @@ from tkinter import ttk
 from ttkthemes import ThemedTk
 from tkinter import messagebox
 from tkinter import PhotoImage
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from PIL import Image
 
 # Function to center a window on your screen when oeining the window
 def center_window(window, width, height):
@@ -57,6 +60,9 @@ def open_homepage():
     btn_open_view_records_window = ttk.Button(homepage_window, text="View Records", command=open_view_records)
     btn_open_view_records_window.pack(pady=10)
 
+    btn_open_invitation_report_window = ttk.Button(homepage_window, text="Create Invitation", command=open_invitation_report_window)
+    btn_open_invitation_report_window.pack(pady=10)
+
     btn_exit = ttk.Button(homepage_window, text="Exit Application", command=root.quit)
     btn_exit.pack(pady=10)
 
@@ -77,8 +83,48 @@ def open_upe_budget():
     #button or datafields to enter a transaction
 
     # Button to go back to the homepage
-    btn_homepage_window = tk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [upe_budget_window.destroy(), homepage_window.deiconify()])
+    btn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [upe_budget_window.destroy(), homepage_window.deiconify()])
     btn_homepage_window.pack(pady=10)
+
+def open_invitation_report_window():
+    # Hide the homepage window
+    homepage_window.withdraw()
+    invitation_report_window = tk.Toplevel(root) 
+    invitation_report_window.title("Invitation Report")
+    center_window(invitation_report_window, 500, 300)
+    label = tk.Label(invitation_report_window, text = "This is UPE Records")
+    label.pack(pady=50)
+
+    #search student to generate report and confirms selects report button
+
+    #grabs the first name and last name from database and stores in variable for use
+    #FirstName = 
+    #LastName = 
+
+    #button to generate the report and print it to a PDF
+    btn_report = ttk.Button(invitation_report_window, text="Generate PDF Report", command=generate_pdf_report)
+    btn_report.pack(pady=20)
+    
+
+    # Button to go back to the homepage
+    btn_homepage_window = ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()])
+    btn_homepage_window.pack(pady=10)
+
+def generate_pdf_report():
+    # Create a PDF file
+    pdf_filename = "invitation_report.pdf"
+    c = canvas.Canvas(pdf_filename, pagesize=letter)
+    
+    # Add text to the PDF
+    c.drawString(100, 750, "UPE Records")
+    c.drawString(100, 730, "Invitation Report")
+    
+    # Add an image to the PDF
+    image_path = "UPE-shortbanner.jpg"  # Replace with the actual path to your image
+    c.drawImage(image_path, 100, 500, width=200, height=100)
+    
+    # Save the PDF
+    c.save()
 
 def open_view_records():
     # Hide the homepage window
@@ -98,8 +144,9 @@ def open_view_records():
     #button to print out the records that are filtered
 
     # Button to go back to the homepage
-    btn_homepage_window = tk.Button(view_records_window, text="Back to Homepage", command=lambda: [view_records_window.destroy(), homepage_window.deiconify()])
+    btn_homepage_window = ttk.Button(view_records_window, text="Back to Homepage", command=lambda: [view_records_window.destroy(), homepage_window.deiconify()])
     btn_homepage_window.pack(pady=10)
+
 
 # Main application root window
 # Create the main window using ThemedTk
