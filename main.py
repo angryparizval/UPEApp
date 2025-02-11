@@ -34,7 +34,7 @@ def open_homepage():
     # Create the homepage window
     homepage_window = tk.Toplevel(root)
     homepage_window.title("Homepage")
-    center_window(homepage_window, 802, 632)
+    center_window(homepage_window, 800, 630)
 
     # Load the image and keep a reference to it
     homepage_image = PhotoImage(file="UPE-background.png")
