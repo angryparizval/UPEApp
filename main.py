@@ -34,7 +34,7 @@ def open_homepage():
     # Create the homepage window
     homepage_window = tk.Toplevel(root)
     homepage_window.title("Homepage")
-    center_window(homepage_window, 550, 360)
+    center_window(homepage_window, 802, 632)
 
     # Load the image and keep a reference to it
     homepage_image = PhotoImage(file="UPE-background.png")
@@ -113,7 +113,7 @@ image_label.image = resized_startup_image
 image_label.pack()
 
 # Simulates a 4 second delay for the startup screen
-startup_window.after(4000, lambda: [startup_window.destroy(), open_login_window()])
+startup_window.after(1000, lambda: [startup_window.destroy(), open_login_window()])
 
 # Start the main event loop
 root.mainloop()
