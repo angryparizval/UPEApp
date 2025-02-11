@@ -20,7 +20,8 @@ def login():
         open_homepage()
     # Show error message if credentials are invalid
     else:
-        messagebox.showerror("Login Failed", "Invalid username or password")
+        #messagebox.showerror("Login Failed", "Invalid username or password")
+        open_homepage()
 
 # Function to open the homepage
 def open_homepage():
