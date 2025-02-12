@@ -4,13 +4,17 @@ from tkinter import ttk
 from utils import center_window
 
 def open_upe_budget(homepage_window, root):
+    # Withdraws homepage
     homepage_window.withdraw()
-    upe_budget_window = tk.Toplevel(root)
-    upe_budget_window.title("UPE Budget")
-    center_window(upe_budget_window, 800, 630)
 
-    label = tk.Label(upe_budget_window, text="This is Window UPE BUDGET")
-    label.pack(pady=50)
+    upe_budget_window = tk.Toplevel(root)
+    upe_budget_window.title("View Budget")
+    center_window(upe_budget_window, 300, 200)
+
+    label = tk.Label(upe_budget_window, text="Records", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label.place(relx=0.5, rely=0.1, anchor="center")
 
     btn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [upe_budget_window.destroy(), homepage_window.deiconify()])
     btn_homepage_window.pack(pady=10)
+
+    
