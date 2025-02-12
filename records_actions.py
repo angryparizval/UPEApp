@@ -4,47 +4,46 @@ from tkinter import ttk
 from ttkthemes import ThemedTk
 from utils import center_window
 
-#Window to select which records and if the user wants to edit or view
+# Window to select which records and if the user wants to edit or view
 def open_records_act(homepage_window, root):
-
-    #withdraws homepage
+    # Withdraws homepage
     homepage_window.withdraw()
-    #sets the window to global to avoid having to pass it around
+    
     global records_act_window
-
-    #sets window to rootmm, updates title and centers it
     records_act_window = tk.Toplevel(root)
     records_act_window.title("Select Records Action")
     center_window(records_act_window, 800, 630)
 
-
     #Top title of records
-    label = tk.Label(records_act_window, text="Records", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=50)
+    label = tk.Label(records_act_window, text="Records", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label.place(relx=0.5, rely=0.1, anchor="center")
+
+    #button positions (X-shape)
+    #button to move to view records window
+    btn_view_records_window = ttk.Button(records_act_window, text="View Records", command=lambda: open_view_records(root))
+    btn_view_records_window.place(relx=0.5, rely=0.5, anchor="center")  # Center
 
     #button to move to add members windows
     btn_add_members_window = ttk.Button(records_act_window, text="Add Member", command=lambda: open_add_member(root))
-    btn_add_members_window.pack(pady=10)
+    btn_add_members_window.place(relx=0.35, rely=0.4, anchor="center")  # Top-left
 
     #button to move to edit members window
-    btn_edit_members_window = ttk.Button(records_act_window,text="Edit Member", command=lambda: open_edit_member(root))
-    btn_edit_members_window.pack(pady=10)
-
-    #button to move to view records window
-    btn_view_records_window = ttk.Button(records_act_window, text="View Records", command=lambda: open_view_records(root))
-    btn_view_records_window.pack(pady=10)
+    btn_edit_members_window = ttk.Button(records_act_window, text="Edit Member", command=lambda: open_edit_member(root))
+    btn_edit_members_window.place(relx=0.35, rely=0.6, anchor="center")  # Bottom-left
 
     #button to move to add students window
     btn_add_student_window = ttk.Button(records_act_window, text="Add Student", command=lambda: open_add_student(root))
-    btn_add_student_window.pack(pady=10)
+    btn_add_student_window.place(relx=0.65, rely=0.4, anchor="center")  # Top-right
 
     #button to move to edit students window
     btn_edit_students_window = ttk.Button(records_act_window, text="Edit Student", command=lambda: open_edit_student(root))
-    btn_edit_students_window.pack(pady=10)
+    btn_edit_students_window.place(relx=0.65, rely=0.6, anchor="center")  # Bottom-right
 
     #button to return to homepage
     btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [records_act_window.destroy(), homepage_window.deiconify()])
-    btn_rtn_homepage_window.pack(pady=10)
+    btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
+
+
 
 #Window where user will input info to add member
 def open_add_member(root):
