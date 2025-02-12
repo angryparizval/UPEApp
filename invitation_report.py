@@ -12,7 +12,7 @@ def open_invitation_report_window(homepage_window, root):
     homepage_window.withdraw()
     invitation_report_window = tk.Toplevel(root)
     invitation_report_window.title("Invitation Report")
-    center_window(invitation_report_window, 500, 300)
+    center_window(invitation_report_window, 800, 630)
     label = tk.Label(invitation_report_window, text="This is UPE Records")
     label.pack(pady=50)
 

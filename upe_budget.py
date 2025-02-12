@@ -7,7 +7,7 @@ def open_upe_budget(homepage_window, root):
     homepage_window.withdraw()
     upe_budget_window = tk.Toplevel(root)
     upe_budget_window.title("UPE Budget")
-    center_window(upe_budget_window, 300, 200)
+    center_window(upe_budget_window, 800, 630)
 
     label = tk.Label(upe_budget_window, text="This is Window UPE BUDGET")
     label.pack(pady=50)

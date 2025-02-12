@@ -7,7 +7,7 @@ from tkinter import PhotoImage
 from utils import center_window
 from upe_budget import open_upe_budget
 from invitation_report import open_invitation_report_window
-from view_records import open_view_records
+from records_actions import open_records_act
 
 # Function to handle login and check if the credentials are correct
 def login():
@@ -49,8 +49,8 @@ def open_homepage():
     btn_upe_budget_window = ttk.Button(homepage_window, text="UPE Budget", command=lambda: open_upe_budget(homepage_window, root))
     btn_upe_budget_window.pack(pady=10)
 
-    btn_open_view_records_window = ttk.Button(homepage_window, text="View Records", command=lambda: open_view_records(homepage_window, root))
-    btn_open_view_records_window.pack(pady=10)
+    btn_open_records_act_window = ttk.Button(homepage_window, text="Records Actions", command=lambda: open_records_act(homepage_window, root))
+    btn_open_records_act_window.pack(pady=10)
 
     btn_open_invitation_report_window = ttk.Button(homepage_window, text="Create Invitation", command=lambda: open_invitation_report_window(homepage_window, root))
     btn_open_invitation_report_window.pack(pady=10)
@@ -64,7 +64,7 @@ def open_login_window():
 
     login_window = tk.Toplevel(root)
     login_window.title("Login")
-    center_window(login_window, 650, 450)
+    center_window(login_window, 800, 630)
 
     # Load the image and keep a reference to it
     login_image = PhotoImage(file="UPE-logo.png")
