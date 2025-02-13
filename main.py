@@ -8,6 +8,7 @@ from utils import center_window
 from upe_budget import open_upe_budget
 from invitation_report import open_invitation_report_window
 from records_actions import open_records_act
+from upe_information import open_upe_information
 
 # Function to handle login and check if the credentials are correct
 def login():
@@ -53,6 +54,9 @@ def open_homepage():
     btn_open_records_act_window.pack(pady=10)
 
     btn_open_invitation_report_window = ttk.Button(homepage_window, text="Create Invitation", command=lambda: open_invitation_report_window(homepage_window, root))
+    btn_open_invitation_report_window.pack(pady=10)
+    
+    btn_open_invitation_report_window = ttk.Button(homepage_window, text="UPE Information", command=lambda: open_upe_information(homepage_window, root))
     btn_open_invitation_report_window.pack(pady=10)
 
     btn_exit = ttk.Button(homepage_window, text="Exit Application", command=root.quit)
