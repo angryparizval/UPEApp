@@ -30,8 +30,7 @@ def open_upe_information(homepage_window, root):
     label.pack(pady=50)
 
     # Button to return to homepage
-    btn_rtn_homepage_window = ttk.Button(upe_information_window, text="Back to Homepage",
-                                         command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window = ttk.Button(upe_information_window, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")
 
     # Button to LRU bylaws

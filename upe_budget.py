@@ -56,8 +56,7 @@ def open_budget_history(budget_home_window, root):
     label.pack(pady=20)
 
     #Back to Budget Home button
-    btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget Home",
-                                     command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget Home",command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.05, rely=0.05, anchor="nw")
 
     #Table Frame

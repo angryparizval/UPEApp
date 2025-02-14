@@ -1,6 +1,7 @@
 # utils.py
 import tkinter as tk
 
+#Function to center window and information on window
 def center_window(window, width, height):
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
