@@ -1,5 +1,6 @@
 # invitation_report.py
 import tkinter as tk
+import sqlite3
 from tkinter import ttk
 from utils import center_window
 from reportlab.lib.enums import TA_CENTER
@@ -7,21 +8,45 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
+from tkcalendar import Calendar
 
-def open_invitation_report_window(homepage_window, root):
-    homepage_window.withdraw()
-    invitation_report_window = tk.Toplevel(root)
-    invitation_report_window.title("Invitation Report")
-    center_window(invitation_report_window, 800, 630)
-    label = tk.Label(invitation_report_window, text="This is UPE Records")
-    label.pack(pady=50)
+#searching student from databse
+def search_students(event):
+    query = search_var.get()
+    listbox.delete(0, tk.END)  # Clear previous search results
+    
+    if query:
+        #connecting to database
+        conn = sqlite3.connect("UPEAPP.db")  # Change to your actual DB file
+        cursor = conn.cursor()
+        cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?", (f"%{query}%", f"%{query}%"))
+        results = cursor.fetchall()
+        conn.close()
 
-    btn_report = ttk.Button(invitation_report_window, text="Generate PDF Report", command=generate_pdf_report)
-    btn_report.pack(pady=20)
+        for student in results:
+            listbox.insert(tk.END, f"{student[0]} {student[1]}")
 
-    btn_homepage_window = ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()])
-    btn_homepage_window.pack(pady=10)
 
+#function to get selected date from calender
+def get_selected_date():
+    selected_date = cal.get_date()
+    date_label.config(text=f"Selected Date: {selected_date}")
+    open_calendar.withdraw()
+
+#function to open calender
+def open_calendar():
+    calendar_window = tk.Toplevel()
+    calendar_window.title("Select a Date")
+    center_window(calendar_window, 300, 250)
+
+    global cal
+    cal = Calendar(calendar_window, selectmode="day", year=2025, month=2, day=15)
+    cal.pack(pady=20)
+
+    select_button = ttk.Button(calendar_window, text="Select Date", command = get_selected_date)
+    select_button.pack(pady=10)
+
+#function to generate pdf report
 def generate_pdf_report():
     pdf_filename = "Invitation_report.pdf"
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
@@ -52,3 +77,49 @@ def generate_pdf_report():
     document.append(Paragraph('Once again, congratulations, and we hope you will accept this opportunity to become a member of this prestigious Honor Society for the computing and information disciplines. Should you have any problems or questions, feel free to contact me. (Students unable to attend the ceremony may choose to join now and be initiated at our next ceremony)', styles['Normal']))
     doc.build(document)
     print(f"PDF generated successfully: {pdf_filename}")
+
+#main function to open invitation report window
+def open_invitation_report_window(homepage_window, root):
+    homepage_window.withdraw()
+    invitation_report_window = tk.Toplevel(root)
+    invitation_report_window.title("Invitation Report")
+    center_window(invitation_report_window, 800, 630)
+    label = tk.Label(invitation_report_window, text="This is UPE Records")
+    label.pack(pady=50)
+
+    tk.Label(invitation_report_window, text="Search Student:").pack(pady=5)
+    
+    global search_var, listbox
+    search_var = tk.StringVar()
+    
+    #student search entry
+    studentEntry = tk.Entry(invitation_report_window, textvariable=search_var)
+    studentEntry.pack(pady=5)
+    studentEntry.bind("<KeyRelease>", search_students)  # Bind to real-time search
+
+    #student selecton listbox
+    listbox = tk.Listbox(invitation_report_window, height=10, width=40)
+    listbox.pack(pady=10)
+
+    #button to open calender
+    ttk.Button(invitation_report_window,text="Open Calendar", command=open_calendar).pack(pady=20)
+
+    #selecting date label
+    global date_label
+    date_label= tk.Label(invitation_report_window, text="No Date Selected", font=("Arial", 12))
+    date_label.pack(pady=10)
+
+    #link entry
+    link_var = tk.StringVar()
+
+    tk.Label(invitation_report_window, text="Enter a Link:").pack(pady=5)
+    link_entry = tk.Entry(invitation_report_window, textvariable=link_var, width=50)
+    link_entry.pack(pady=5)
+
+    #button to generate pdf report
+    btn_report = ttk.Button(invitation_report_window, text="Generate PDF Report", command=generate_pdf_report)
+    btn_report.pack(pady=20)
+
+    #button to go back to homepage
+    btn_homepage_window = ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()])
+    btn_homepage_window.pack(pady=10)
