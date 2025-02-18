@@ -6,13 +6,11 @@ from ttkthemes import ThemedTk
 from utils import center_window
 
 
-
 '''
 ---------------------------------
 GENERAL USE FUNCTIONS
 --------------------------------
 '''
-
 
 #global connection variable
 conn = None
@@ -152,13 +150,11 @@ def open_edit_member(root):
     btn_rtn_recordsact_window = ttk.Button(edit_member_window, text="Back to Records Actions", command=lambda: [edit_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
 
-
 '''
 ------------------------------
 ADD STUDENT WINDOW FUNCTIONS
 ------------------------------
 '''
-
 
 def open_add_student(root):
     #withdraws records_act_window
@@ -180,13 +176,11 @@ def open_add_student(root):
     btn_rtn_recordsact_window.pack()
 
 
-
 '''
 ------------------------------
 EDIT STUDENT WINDOW FUNCTIONS
 ------------------------------
 '''
-
 
 def open_edit_student(root):
     #withdraws records_act_window
@@ -215,11 +209,8 @@ VIEW RECORDS WINDOW FUNCTIONS
 ------------------------------
 '''
 
-
-
-
 #function to update treeview with data from the selected table
-def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=False):
+def update_treeview(tree, table, filter_col=None):
     
     #clears existing data in tree
     for item in tree.get_children():
@@ -240,30 +231,25 @@ def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=Fal
     if filter_col:
         data = [row for row in data if filter_col.lower() in str(row).lower()]
 
-    #apply sorting if specified
-    if sort_col is not None:
-        column_index = columns.index(sort_col)
-        data.sort(key=lambda x: x[column_index], reverse=sort_desc)
-
     #update treeview with data
     tree["columns"] = columns
+
+    # Create column headings
+    for col in columns:
+        tree.heading(col, text=col)
 
     #update treeview with data
     for row in data:
         tree.insert("", tk.END, values = row)
 
-
     #configure column width
     for col in columns: 
         tree.column(col, anchor="center", width=120)
 
-
 #function to switch tables
 def switch_table(event, tree, table, filter_col, sort_col, sort_desc):
     #swtiches the table based on the drop down menu
-    update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
-
-
+    update_treeview(tree, table.get(), filter_col.get())
 
 
 #functoin that opens the view record window
@@ -313,7 +299,7 @@ def open_view_records(root):
 
 
     # Fetch data for the first table
-    update_treeview(tree, table.get(), filter_col.get(), current_sort_col, current_sort_desc.get())
+    update_treeview(tree, table.get(), filter_col.get())
 
 
     #button to return back to records actions screen
