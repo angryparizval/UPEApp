@@ -1,6 +1,7 @@
 # invitation_report.py
 import tkinter as tk
 import sqlite3
+import os
 from tkinter import ttk
 from utils import center_window
 import tkinter.messagebox as messagebox  # Import messagebox
@@ -35,32 +36,24 @@ def search_students(event):
             student_dict[index] = student 
             listbox.insert(tk.END, full_name)
 
-#function to get selected student
 def get_selected_student(event):
     """Gets the first and last name of the selected student from the listbox."""
-    # Get selected index
+    global first_name, last_name  # Declare them as global so they update correctly
     selected_index = listbox.curselection()
     if selected_index:
-        # Get the first selected item
         index = selected_index[0]
-        # Retrieve from dictionary
-        first_name, last_name = student_dict.get(index, ("", ""))  
-        # You can store this in a variable
-        print(f"Selected Student: {first_name} {last_name}") 
-        return first_name, last_name
-    return None, None
+        first_name, last_name = student_dict.get(index, ("", ""))
+        print(f"Selected Student: {first_name} {last_name}")  # Debugging output
 
 
-#function to get selected date from calender
+
 def get_selected_date():
-    # Get the selected date
-    selected_date_str = cal.get_date()  
-    # Update label
+    global selected_date_str  # Ensure this updates globally
+    selected_date_str = cal.get_date()
     date_label.config(text=f"Selected Date: {selected_date_str}")  
-    # Close the calendar window
-    calendar_window.destroy()  
-    # Show the invitation report window
-    invitation_report_window.deiconify()  
+    calendar_window.destroy()
+    invitation_report_window.deiconify()
+
 
 
 #function to open calender
@@ -101,11 +94,15 @@ def generate_pdf_report():
         return
     
 
-    pdf_filename = "Invitation_report.pdf"
+    pdf_filename = os.path.join("InvitationOutput",first_name + '-' + last_name + "-Invitation_report.pdf")
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
     document = []
-    image_path = "UPE-shortbanner.jpg"
-    document.append(Image(image_path, width=6.1*inch, height=2.0*inch, hAlign=TA_CENTER))
+    image_path = os.path.join("Image", "UPE-shortbanner.jpg")
+    if os.path.exists(image_path):
+        document.append(Image(image_path, width=6.1 * inch, height=2.0 * inch, hAlign=TA_CENTER))
+    else:
+        print(f"Warning: Image file {image_path} not found.")
+
     document.append(Spacer(1, 20))
     styles = getSampleStyleSheet()
     document.append(Paragraph('To: '+ first_name, styles['Normal']))
