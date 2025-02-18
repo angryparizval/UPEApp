@@ -4,6 +4,12 @@ from tkinter import ttk
 import sqlite3
 from utils import center_window
 
+
+'''
+--------------------
+DATABASE CONNECTION
+--------------------
+'''
 # Global connection variable
 conn = None
 
@@ -32,6 +38,11 @@ def fetch_budget_data():
     rows = cursor.fetchall()
     return rows
 
+'''
+--------------------
+MAIN BUDGET WINDOW
+--------------------
+'''
 #function to open budget homepage
 def open_upe_budget(homepage_window, root):
     #withdrawal homepage
@@ -62,6 +73,11 @@ def open_upe_budget(homepage_window, root):
     btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), homepage_window.deiconify()])
     btn_transaction.place(relx=0.5, rely=0.6, anchor="center")
 
+'''
+----------------------
+BUDGET HISTORY WINDOW
+----------------------
+'''
 #function to open budget history window
 def open_budget_history(budget_home_window, root):
     #withdrawals budget home
@@ -113,6 +129,12 @@ def open_budget_history(budget_home_window, root):
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+
+'''
+-----------------------
+OPEN EDIT BUDGET WINDOW
+-----------------------
+'''
 #function to open edit budget window
 def open_edit_budget(root):
     #creates edit budget window, sets title and centers it
