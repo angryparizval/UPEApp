@@ -6,6 +6,14 @@ from ttkthemes import ThemedTk
 from utils import center_window
 
 
+
+'''
+---------------------------------
+GENERAL USE FUNCTIONS
+--------------------------------
+'''
+
+
 #global connection variable
 conn = None
 
@@ -24,6 +32,33 @@ def close_db_connection():
         conn.close()
         conn = None
 
+#function to grab data from Member table and return it
+def fetch_member_data():
+    #creates connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #grabs all columns
+    cursor.execute("SELECT MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISD_DESC, MEM_PREFR_NAME FROM Member")
+    #grabs all rows from related columns and returns it
+    rows = cursor.fetchall()
+    return rows
+
+#function to grab data from Student table and return it
+def fetch_student_data():
+    #creates connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #grabs all columns
+    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS FROM Student")
+    rows = cursor.fetchall()
+    return rows
+
+
+'''
+-------------------------------------
+MAIN RECORDS ACTIONS WINDOW FUNCTIONS
+--------------------------------------
+'''
 
 # Window to select which records and if the user wants to edit or view
 def open_records_act(homepage_window, root):
@@ -65,6 +100,12 @@ def open_records_act(homepage_window, root):
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
 
 
+'''
+------------------------------
+ADD MEMBER WINDOW FUNCTIONS
+------------------------------
+'''
+
 #Window where user will input info to add member
 def open_add_member(root):
     #withdraws records_act_window
@@ -85,6 +126,13 @@ def open_add_member(root):
     btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back to Records Actions", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
 
+
+'''
+------------------------------
+EDIT MEMBER WINDOW FUNCTIONS
+------------------------------
+'''
+
 def open_edit_member(root):
     #withdraws records_act_window
     records_act_window.withdraw()
@@ -103,6 +151,14 @@ def open_edit_member(root):
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(edit_member_window, text="Back to Records Actions", command=lambda: [edit_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
+
+
+'''
+------------------------------
+ADD STUDENT WINDOW FUNCTIONS
+------------------------------
+'''
+
 
 def open_add_student(root):
     #withdraws records_act_window
@@ -123,6 +179,15 @@ def open_add_student(root):
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
 
+
+
+'''
+------------------------------
+EDIT STUDENT WINDOW FUNCTIONS
+------------------------------
+'''
+
+
 def open_edit_student(root):
     #withdraws records_act_window
     records_act_window.withdraw()
@@ -142,26 +207,14 @@ def open_edit_student(root):
     btn_rtn_recordsact_window = ttk.Button(edit_student_window, text="Back to Records Actions", command=lambda: [edit_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
       
-#function to grab data from Member table and return it
-def fetch_member_data():
-    #creates connection
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    #grabs all columns
-    cursor.execute("SELECT MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISD_DESC, MEM_PREFR_NAME FROM Member")
-    #grabs all rows from related columns and returns it
-    rows = cursor.fetchall()
-    return rows
 
-#function to grab data from Student table and return it
-def fetch_student_data():
-    #creates connection
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    #grabs all columns
-    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS FROM Student")
-    rows = cursor.fetchall()
-    return rows
+
+'''
+------------------------------
+VIEW RECORDS WINDOW FUNCTIONS
+------------------------------
+'''
+
 
 #function to update treeview with data from the selected table
 def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=False):
