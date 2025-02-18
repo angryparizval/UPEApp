@@ -4,15 +4,35 @@ from tkinter import ttk
 import sqlite3
 from utils import center_window
 
+# Global connection variable
+conn = None
+
+def get_db_connection():
+    #returns gloval database connection
+    global conn
+    if conn is None:
+        conn = sqlite3.connect("UPEAPP.db")
+    return conn
+
+def close_db_connection():
+    #Close the global connection
+    global conn
+    if conn:
+        conn.close()
+        conn = None
+
+#function to grab budget data and return it
 def fetch_budget_data():
-    #creates connection and returns data as tuple
-    conn = sqlite3.connect("UPEAPP.db")
+    #creates connection
+    conn = get_db_connection()
     cursor = conn.cursor()
+    #grabs all columns from tables
     cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_MEMO FROM budget")
+    #grabs the related rows from columns and returns it
     rows = cursor.fetchall()
-    conn.close()
     return rows
 
+#function to open budget homepage
 def open_upe_budget(homepage_window, root):
     #withdrawal homepage
     homepage_window.withdraw()
@@ -27,7 +47,7 @@ def open_upe_budget(homepage_window, root):
     label.pack(pady=50)
 
     #back to homepage button
-    btn_rtn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [upe_budget_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [close_db_connection(), upe_budget_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")
 
     #View history button
@@ -42,6 +62,7 @@ def open_upe_budget(homepage_window, root):
     btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), homepage_window.deiconify()])
     btn_transaction.place(relx=0.5, rely=0.6, anchor="center")
 
+#function to open budget history window
 def open_budget_history(budget_home_window, root):
     #withdrawals budget home
     budget_home_window.withdraw()
@@ -57,7 +78,7 @@ def open_budget_history(budget_home_window, root):
 
     #Back to Budget Home button
     btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget Home",command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
-    btn_rtn_budget_home.place(relx=0.05, rely=0.05, anchor="nw")
+    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
     #Table Frame
     frame = tk.Frame(upe_budget_history)
@@ -92,6 +113,7 @@ def open_budget_history(budget_home_window, root):
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+#function to open edit budget window
 def open_edit_budget(root):
     #creates edit budget window, sets title and centers it
     upe_budget_window = tk.Toplevel(root)

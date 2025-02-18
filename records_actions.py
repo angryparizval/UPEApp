@@ -1,8 +1,29 @@
 # records_actions.py
 import tkinter as tk
+import sqlite3
 from tkinter import ttk
 from ttkthemes import ThemedTk
 from utils import center_window
+
+
+#global connection variable
+conn = None
+
+#Function to get connection to db
+def get_db_connection():
+    #returns gloval database connection
+    global conn
+    if conn is None:
+        conn = sqlite3.connect("UPEApp.db")
+    return conn
+
+#Function to close connection if open
+def close_db_connection():
+    global conn
+    if conn:
+        conn.close()
+        conn = None
+
 
 # Window to select which records and if the user wants to edit or view
 def open_records_act(homepage_window, root):
@@ -40,9 +61,8 @@ def open_records_act(homepage_window, root):
     btn_edit_students_window.place(relx=0.65, rely=0.6, anchor="center")  # Bottom-right
 
     #button to return to homepage
-    btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [records_act_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [close_db_connection(), records_act_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
-
 
 
 #Window where user will input info to add member
@@ -84,25 +104,6 @@ def open_edit_member(root):
     btn_rtn_recordsact_window = ttk.Button(edit_member_window, text="Back to Records Actions", command=lambda: [edit_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
 
-def open_view_records(root):
-    #withdraws records_act_window
-    records_act_window.withdraw()
-    #sets the window variable to global to avoid having to send it around
-    global view_records_window
-
-    #sets window to root,centers it and sets window title
-    view_records_window = tk.Toplevel(root)
-    center_window(view_records_window, 800, 630)
-    view_records_window.title("View Records")
-    
-    #temporary label of information
-    label = tk.Label(view_records_window, text="View Records", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=50)
-
-    #button to return back to records actions screen
-    btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
-    btn_rtn_recordsact_window.pack()
-
 def open_add_student(root):
     #withdraws records_act_window
     records_act_window.withdraw()
@@ -141,3 +142,118 @@ def open_edit_student(root):
     btn_rtn_recordsact_window = ttk.Button(edit_student_window, text="Back to Records Actions", command=lambda: [edit_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
       
+#function to grab data from Member table and return it
+def fetch_member_data():
+    #creates connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #grabs all columns
+    cursor.execute("SELECT MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISD_DESC, MEM_PREFR_NAME FROM Member")
+    #grabs all rows from related columns and returns it
+    rows = cursor.fetchall()
+    return rows
+
+#function to grab data from Student table and return it
+def fetch_student_data():
+    #creates connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #grabs all columns
+    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS FROM Student")
+    rows = cursor.fetchall()
+    return rows
+
+#function to update treeview with data from the selected table
+def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=False):
+    #Updates treeview by selected table
+    
+    #clears existing data in tree
+    for item in tree.get_children():
+        tree.delete(item)
+
+    #Fetch data based on table
+    if table == "Member":
+        columns = ("MEM_ID", "STUD_ID", "MEM_DOB", "MEM_ENTRY_YR", "MEM_STATUS", "MEM_POS", "MEM_PST_POS", "MEM_PHO_NO", "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
+        data = fetch_member_data()
+    elif table == "Student":
+        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
+        data = fetch_student_data()
+
+    #apply filter if specified
+    if filter_col:
+        data = [row for row in data if filter_col.lower() in str(row).lower()]
+
+    #apply sorting if specified
+    if sort_col:
+        data.sort(key=lambda x: x[sort_col], reverse = sort_desc)
+
+    #update treeview with data
+    tree["columns"] = columns
+
+    #update treeview with data
+    for row in data:
+        tree.insert("", tk.END, values = row)
+
+    #update column headers
+    for idx, col in enumerate(columns):
+        tree.heading(col, text=col)
+
+    #configure column width
+    for col in columns: 
+        tree.column(col, anchor="center", width=120)
+
+#function to switch tables
+def switch_table(event, tree, table, filter_col, sort_col, sort_desc):
+    #swtiches the table based on the drop down menu
+    update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
+
+def open_view_records(root):
+    #withdraws records_act_window
+    records_act_window.withdraw()
+    #sets the window variable to global to avoid having to send it around
+    global view_records_window
+
+    #sets window to root,centers it and sets window title
+    view_records_window = tk.Toplevel(root)
+    center_window(view_records_window, 800, 630)
+    view_records_window.title("View Records")
+    
+    #Window header
+    label = tk.Label(view_records_window, text="View Records", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
+    label.pack(pady=50)
+
+    #create a dropdown menu
+    table = tk.StringVar()
+    table.set("Member") #default
+    table_dropdown = ttk.Combobox(view_records_window, textvariable=table, values = ["Member", "Student"])
+    table_dropdown.pack(pady=10)
+    table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, filter_col, sort_col, sort_desc))
+
+    # Create a filter entry
+    filter_col = tk.StringVar()
+    filter_entry = ttk.Entry(view_records_window, textvariable=filter_col)
+    filter_entry.pack(pady=10)
+
+    # Create a Treeview widget
+    tree = ttk.Treeview(view_records_window)
+    tree.pack(fill=tk.BOTH, expand=True)
+
+    # Sorting controls
+    sort_col = tk.IntVar(value=0)  # Default sort column
+    sort_desc = tk.BooleanVar(value=False)  # Ascending order
+
+    # Fetch data for the first table
+    update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
+
+    # Button to sort ascending/descending
+    def toggle_sort():
+        sort_desc.set(not sort_desc.get())
+        update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
+    
+    sort_button = ttk.Button(view_records_window, text="Toggle Sort", command=toggle_sort)
+    sort_button.pack(pady=10)
+
+    #button to return back to records actions screen
+    btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window.pack()
+
