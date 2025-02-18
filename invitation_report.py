@@ -4,6 +4,7 @@ import sqlite3
 import os
 from tkinter import ttk
 from utils import center_window
+import tkinter.messagebox as messagebox  # Import messagebox
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
@@ -11,31 +12,53 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from tkcalendar import Calendar
 
-#searching student from databse
+# Dictionary to store student names for selection retrieval
+student_dict = {}
+
+#function to search the students in the data base
 def search_students(event):
     query = search_var.get()
-    listbox.delete(0, tk.END)  # Clear previous search results
-    
+    # Clear previous search results
+    listbox.delete(0, tk.END)
+    # Reset dictionary
+    student_dict.clear() 
+
     if query:
-        #connecting to database
-        conn = sqlite3.connect("UPEAPP.db")  # Change to your actual DB file
+        conn = sqlite3.connect("UPEAPP.db")
         cursor = conn.cursor()
         cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?", (f"%{query}%", f"%{query}%"))
         results = cursor.fetchall()
         conn.close()
 
-        for student in results:
-            listbox.insert(tk.END, f"{student[0]} {student[1]}")
+        for index, student in enumerate(results):
+            full_name = f"{student[0]} {student[1]}"
+            # Store in dictionary
+            student_dict[index] = student 
+            listbox.insert(tk.END, full_name)
+
+def get_selected_student(event):
+    """Gets the first and last name of the selected student from the listbox."""
+    global first_name, last_name  # Declare them as global so they update correctly
+    selected_index = listbox.curselection()
+    if selected_index:
+        index = selected_index[0]
+        first_name, last_name = student_dict.get(index, ("", ""))
+        print(f"Selected Student: {first_name} {last_name}")  # Debugging output
 
 
-#function to get selected date from calender
+
 def get_selected_date():
-    selected_date = cal.get_date()
-    date_label.config(text=f"Selected Date: {selected_date}")
-    open_calendar.withdraw()
+    global selected_date_str  # Ensure this updates globally
+    selected_date_str = cal.get_date()
+    date_label.config(text=f"Selected Date: {selected_date_str}")  
+    calendar_window.destroy()
+    invitation_report_window.deiconify()
+
+
 
 #function to open calender
 def open_calendar():
+    global calendar_window
     calendar_window = tk.Toplevel()
     calendar_window.title("Select a Date")
     center_window(calendar_window, 300, 250)
@@ -47,25 +70,44 @@ def open_calendar():
     select_button = ttk.Button(calendar_window, text="Select Date", command = get_selected_date)
     select_button.pack(pady=10)
 
-    
-
 #function to generate pdf report
 def generate_pdf_report():
-    pdf_filename = os.path.join("InvitationOutput", "Invitation_report.pdf")
+    #array to store missing fields
+    missing_fields = []
+
+    # Check if a student is selected
+    if not first_name or not last_name:
+        missing_fields.append("Selecting a student")
+
+    # Check if a date is selected
+    if not selected_date_str:
+        missing_fields.append("Selecting a Date")
+
+    # Check if a link is entered
+    form_link = link_entry.get().strip()
+    if not form_link:
+        missing_fields.append("Providing a form Link")
+
+    # If any fields are missing, show an error message and return
+    if missing_fields:
+        messagebox.showerror("Missing Information", f"Please complete the following fields before generating the PDF:\n- " + "\n- ".join(missing_fields))
+        return
+    
+
+    pdf_filename = os.path.join("InvitationOutput",first_name + '-' + last_name + "-Invitation_report.pdf")
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
     document = []
-    
     image_path = os.path.join("Image", "UPE-shortbanner.jpg")
     if os.path.exists(image_path):
-        document.append(Image(image_path, width=6.1*inch, height=2.0*inch, hAlign=TA_CENTER))
+        document.append(Image(image_path, width=6.1 * inch, height=2.0 * inch, hAlign=TA_CENTER))
     else:
         print(f"Warning: Image file {image_path} not found.")
 
     document.append(Spacer(1, 20))
     styles = getSampleStyleSheet()
-    document.append(Paragraph('To: Eli', styles['Normal']))
+    document.append(Paragraph('To: '+ first_name, styles['Normal']))
     document.append(Spacer(1, 20))
-    document.append(Paragraph('Dear Eli Ledford,', styles['Normal']))
+    document.append(Paragraph('Dear ' + first_name + ' ' + last_name + ',', styles['Normal']))
     document.append(Spacer(1, 20))
     document.append(Paragraph('Congratulations! We are pleased to inform you that you have been selected for membership in the LRU Chapter of Upsilon Pi Epsilon, the International Honor Society for Computing and Information disciplines. As an undergraduate student in the computing and information disciplines at Lenoir-Rhyne University, your selection has been based upon your outstanding achievement and high scholarship rating.', styles['Normal']))
     document.append(Spacer(1, 20))
@@ -77,25 +119,37 @@ def generate_pdf_report():
     document.append(Spacer(1, 20))
     document.append(Paragraph('An in-person initiation ceremony will be scheduled for a date to be determined in November. We will have an informal gathering and then the ceremony. Total this should last approximately 50 minutes. We will make plans to provide online access to the ceremony for alumni inductees unable to attend in person.', styles['Normal']))
     document.append(Spacer(1, 20))
-    document.append(Paragraph('To accept your invitation into the Lenoir-Rhyne Chapter of Upsilon Pi Epsilon, please do complete this form no later than', styles['Normal']))
-    document.append(Paragraph(' INSERT DATE HERE', styles['Heading2']))
-    document.append(Spacer(1, 20))
-    document.append(Paragraph('Visit this form (https://forms.gle/F4quFyTbvz3egvDs9) provide us with some information, including a picture of yourself to be used in the ceremony, the way you want your name to show on your membership certificate, phonetic pronunciation for your name as needed, and the name of your home town.', styles['Normal']))
+    document.append(Paragraph('To accept your invitation into the Lenoir-Rhyne Chapter of Upsilon Pi Epsilon, please do complete this form no later than ', styles['Normal']))
+    document.append(Paragraph(selected_date_str, styles['Heading2']))
+    document.append(Spacer(1, 10))
+    document.append(Paragraph('Visit this form ('+ link_entry.get() +') provide us with some information, including a picture of yourself to be used in the ceremony, the way you want your name to show on your membership certificate, phonetic pronunciation for your name as needed, and the name of your home town.', styles['Normal']))
     document.append(Spacer(1, 20))
     document.append(Paragraph('Once again, congratulations, and we hope you will accept this opportunity to become a member of this prestigious Honor Society for the computing and information disciplines. Should you have any problems or questions, feel free to contact me. (Students unable to attend the ceremony may choose to join now and be initiated at our next ceremony)', styles['Normal']))
-
     doc.build(document)
     print(f"PDF generated successfully: {pdf_filename}")
 
 #main function to open invitation report window
 def open_invitation_report_window(homepage_window, root):
     homepage_window.withdraw()
+    global invitation_report_window
     invitation_report_window = tk.Toplevel(root)
-    invitation_report_window.title("Invitation Report")
-    center_window(invitation_report_window, 800, 630)
-    label = tk.Label(invitation_report_window, text="This is UPE Records")
-    label.pack(pady=50)
+    invitation_report_window.title("Invitation Reporting")
+    center_window(invitation_report_window, 800, 670)
+    label = tk.Label(invitation_report_window, text="Invitation Report", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label.pack(pady=10)
 
+    label = tk.Label(invitation_report_window, text= "Select a Student and Date", font=("Arial", 16))
+    label.pack(pady=20)
+
+    # Initialized global variables
+    global first_name 
+    first_name = ""
+    global last_name
+    last_name = ""
+    global selected_date_str
+    selected_date_str = ""
+
+    # Search student label
     tk.Label(invitation_report_window, text="Search Student:").pack(pady=5)
     
     global search_var, listbox
@@ -110,18 +164,27 @@ def open_invitation_report_window(homepage_window, root):
     listbox = tk.Listbox(invitation_report_window, height=10, width=40)
     listbox.pack(pady=10)
 
+    # Bind the listbox selection event
+    listbox.bind("<<ListboxSelect>>", get_selected_student)
+
     #button to open calender
     ttk.Button(invitation_report_window,text="Open Calendar", command=open_calendar).pack(pady=20)
 
     #selecting date label
     global date_label
-    date_label= tk.Label(invitation_report_window, text="No Date Selected", font=("Arial", 12))
+    date_label= tk.Label(invitation_report_window, text="No Date Selected", font=("Arial", 12, "bold"))
     date_label.pack(pady=10)
 
     #link entry
     link_var = tk.StringVar()
 
-    tk.Label(invitation_report_window, text="Enter a Link:").pack(pady=5)
+    #label for link entry
+    tk.Label(invitation_report_window, text="Enter the form link Link:").pack(pady=5)
+    global link_entry
+
+    #initialization
+    link_entry = ""
+    #link entry
     link_entry = tk.Entry(invitation_report_window, textvariable=link_var, width=50)
     link_entry.pack(pady=5)
 
