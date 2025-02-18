@@ -1,4 +1,5 @@
 # main.py
+import os
 import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedTk
@@ -38,7 +39,7 @@ def open_homepage():
     center_window(homepage_window, 800, 630)
 
     # Load the image and keep a reference to it
-    homepage_image = PhotoImage(file="UPE-background.png")
+    homepage_image = PhotoImage(file="Image/UPE-background.png")
     resized_image = homepage_image.subsample(2, 2)
 
     # Create a label with the resized image
@@ -75,7 +76,7 @@ def open_login_window():
     center_window(login_window, 800, 630)
 
     # Load the image and keep a reference to it
-    login_image = PhotoImage(file="UPE-logo.png")
+    login_image = PhotoImage(file="Image/UPE-logo.png")
     resized_login_image = login_image.subsample(5, 5)
 
     # Create a label with the resized image
@@ -112,7 +113,7 @@ startup_window.title("Welcome to UPE")
 center_window(startup_window, 480, 480)
 
 # Load the image and keep a reference to it
-startup_image = PhotoImage(file="UPE-opening.png")
+startup_image = PhotoImage(file="Image/UPE-opening.png")
 resized_startup_image = startup_image.subsample(2, 2)
 
 # Create a label with the resized image

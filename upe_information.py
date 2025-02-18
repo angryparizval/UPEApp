@@ -33,7 +33,7 @@ def open_upe_information(homepage_window, root):
     center_window(upe_information_window, 970, 730)
 
     # Load the image and keep a reference to it
-    upe_information_window.image_ref = PhotoImage(file="UPE-banner.png")
+    upe_information_window.image_ref = PhotoImage(file="Image/UPE-banner.png")
     resized_image = upe_information_window.image_ref.subsample(2, 2)
 
     # Create a label with the resized image
@@ -110,6 +110,6 @@ def open_upe_information(homepage_window, root):
 
     # Buttons in the right frame
     ttk.Button(right_frame, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()]).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file("LRU bylaws.pdf")).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file("LRU Constitution.pdf")).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file("UPE-Infographic_2022.pdf")).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_bylaws.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_Constitution.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "UPE-Infographic_2022.pdf"))).pack(pady=5, fill="x")

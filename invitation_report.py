@@ -1,6 +1,7 @@
 # invitation_report.py
 import tkinter as tk
 import sqlite3
+import os
 from tkinter import ttk
 from utils import center_window
 from reportlab.lib.enums import TA_CENTER
@@ -46,13 +47,20 @@ def open_calendar():
     select_button = ttk.Button(calendar_window, text="Select Date", command = get_selected_date)
     select_button.pack(pady=10)
 
+    
+
 #function to generate pdf report
 def generate_pdf_report():
-    pdf_filename = "Invitation_report.pdf"
+    pdf_filename = os.path.join("InvitationOutput", "Invitation_report.pdf")
     doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
     document = []
-    image_path = "UPE-shortbanner.jpg"
-    document.append(Image(image_path, width=6.1*inch, height=2.0*inch, hAlign=TA_CENTER))
+    
+    image_path = os.path.join("Image", "UPE-shortbanner.jpg")
+    if os.path.exists(image_path):
+        document.append(Image(image_path, width=6.1*inch, height=2.0*inch, hAlign=TA_CENTER))
+    else:
+        print(f"Warning: Image file {image_path} not found.")
+
     document.append(Spacer(1, 20))
     styles = getSampleStyleSheet()
     document.append(Paragraph('To: Eli', styles['Normal']))
@@ -75,6 +83,7 @@ def generate_pdf_report():
     document.append(Paragraph('Visit this form (https://forms.gle/F4quFyTbvz3egvDs9) provide us with some information, including a picture of yourself to be used in the ceremony, the way you want your name to show on your membership certificate, phonetic pronunciation for your name as needed, and the name of your home town.', styles['Normal']))
     document.append(Spacer(1, 20))
     document.append(Paragraph('Once again, congratulations, and we hope you will accept this opportunity to become a member of this prestigious Honor Society for the computing and information disciplines. Should you have any problems or questions, feel free to contact me. (Students unable to attend the ceremony may choose to join now and be initiated at our next ceremony)', styles['Normal']))
+
     doc.build(document)
     print(f"PDF generated successfully: {pdf_filename}")
 
@@ -122,4 +131,4 @@ def open_invitation_report_window(homepage_window, root):
 
     #button to go back to homepage
     btn_homepage_window = ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()])
-    btn_homepage_window.pack(pady=10)
+    btn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")

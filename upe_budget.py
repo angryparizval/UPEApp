@@ -8,7 +8,7 @@ def fetch_budget_data():
     #creates connection and returns data as tuple
     conn = sqlite3.connect("UPEAPP.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_RUNNING_TOT, BDGET_MEMO FROM budget")
+    cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_MEMO FROM budget")
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -64,7 +64,7 @@ def open_budget_history(budget_home_window, root):
     frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
     #Define table columns
-    columns = ("Transaction No", "Date", "Type", "Running Total", "Memo")
+    columns = ("Transaction No", "Date", "Type", "Memo")
 
     #Create Treeview widget
     tree = ttk.Treeview(frame, columns=columns, show="headings")
@@ -73,7 +73,6 @@ def open_budget_history(budget_home_window, root):
     tree.column("Transaction No", width=120, anchor="center")
     tree.column("Date", width=100, anchor="center")
     tree.column("Type", width=150, anchor="center")
-    tree.column("Running Total", width=120, anchor="center")
     tree.column("Memo", width=200, anchor="w")
 
     # Define column headers
