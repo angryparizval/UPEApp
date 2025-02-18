@@ -112,4 +112,4 @@ def open_upe_information(homepage_window, root):
     ttk.Button(right_frame, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()]).pack(pady=5, fill="x")
     ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_bylaws.pdf"))).pack(pady=5, fill="x")
     ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_Constitution.pdf"))).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "UPE-Infographic_2022.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "UPE_Infographic_2022.pdf"))).pack(pady=5, fill="x")
