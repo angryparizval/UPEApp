@@ -234,6 +234,14 @@ def open_view_records(root):
     filter_entry = ttk.Entry(view_records_window, textvariable=filter_col)
     filter_entry.pack(pady=10)
 
+    # Button to sort ascending/descending
+    def toggle_sort():
+        sort_desc.set(not sort_desc.get())
+        update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
+    
+    sort_button = ttk.Button(view_records_window, text="Sort", command=toggle_sort)
+    sort_button.pack(pady=10)
+
     # Create a Treeview widget
     tree = ttk.Treeview(view_records_window)
     tree.pack(fill=tk.BOTH, expand=True)
@@ -245,13 +253,7 @@ def open_view_records(root):
     # Fetch data for the first table
     update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
 
-    # Button to sort ascending/descending
-    def toggle_sort():
-        sort_desc.set(not sort_desc.get())
-        update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
     
-    sort_button = ttk.Button(view_records_window, text="Toggle Sort", command=toggle_sort)
-    sort_button.pack(pady=10)
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
