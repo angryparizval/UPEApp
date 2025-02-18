@@ -241,7 +241,7 @@ def update_treeview(tree, table, filter_col=None):
         tree.column(col, anchor="center", width=120)
 
 #function to switch tables
-def switch_table(event, tree, table, filter_col, sort_col, sort_desc):
+def switch_table(event, tree, table, filter_col):
     #swtiches the table based on the drop down menu
     update_treeview(tree, table.get(), filter_col.get())
 
@@ -287,13 +287,13 @@ def open_view_records(root):
     filter_entry.bind("<KeyRelease>", on_filter_change)
 
     #create a table
-    tree = ttk.Treeview(view_records_window)
-    tree.pack(fill=tk.BOTH, expand=True)
+    tree = ttk.Treeview(view_records_window, show="headings")
+    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
     # Fetch data for the first table
     update_treeview(tree, table.get(), filter_col.get())
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
-    btn_rtn_recordsact_window.pack()
+    btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 

@@ -6,9 +6,9 @@ from utils import center_window
 
 
 '''
---------------------
-DATABASE CONNECTION
---------------------
+----------------------------------------
+DATABASE CONNECTION/GENERAL FUNCTIONS
+----------------------------------------
 '''
 # Global connection variable
 conn = None
@@ -39,9 +39,9 @@ def fetch_budget_data():
     return rows
 
 '''
---------------------
-MAIN BUDGET WINDOW
---------------------
+---------------------------------
+MAIN BUDGET WINDOW FUNCTIONS
+-----------------------------------
 '''
 #function to open budget homepage
 def open_upe_budget(homepage_window, root):
@@ -74,9 +74,9 @@ def open_upe_budget(homepage_window, root):
     btn_transaction.place(relx=0.5, rely=0.6, anchor="center")
 
 '''
-----------------------
-BUDGET HISTORY WINDOW
-----------------------
+--------------------------------
+BUDGET HISTORY WINDOW FUNCTIONS
+--------------------------------
 '''
 #function to open budget history window
 def open_budget_history(budget_home_window, root):
@@ -131,9 +131,9 @@ def open_budget_history(budget_home_window, root):
 
 
 '''
------------------------
-OPEN EDIT BUDGET WINDOW
------------------------
+----------------------------
+EDIT BUDGET WINDOW FUNCTIONS
+----------------------------
 '''
 #function to open edit budget window
 def open_edit_budget(root):
