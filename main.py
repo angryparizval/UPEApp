@@ -69,8 +69,10 @@ def open_homepage():
 
 # Function to open the login window
 def open_login_window():
+    #global variables for login window
     global login_window, entry_username, entry_password, login_image
 
+    # Create the login window
     login_window = tk.Toplevel(root)
     login_window.title("Login")
     center_window(login_window, 800, 630)
@@ -90,6 +92,7 @@ def open_login_window():
     entry_username = tk.Entry(login_window)
     entry_username.pack(pady=5)
 
+    #label for password and making it show an asterisk
     label_password = tk.Label(login_window, text="Password:")
     label_password.pack(pady=5)
     entry_password = tk.Entry(login_window, show="*")
