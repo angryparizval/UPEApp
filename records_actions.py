@@ -51,7 +51,6 @@ def fetch_student_data():
     rows = cursor.fetchall()
     return rows
 
-
 '''
 -------------------------------------
 MAIN RECORDS ACTIONS WINDOW FUNCTIONS
@@ -97,7 +96,6 @@ def open_records_act(homepage_window, root):
     btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [close_db_connection(), records_act_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
 
-
 '''
 ------------------------------
 ADD MEMBER WINDOW FUNCTIONS
@@ -123,7 +121,6 @@ def open_add_member(root):
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back to Records Actions", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
-
 
 '''
 ------------------------------
@@ -175,7 +172,6 @@ def open_add_student(root):
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
 
-
 '''
 ------------------------------
 EDIT STUDENT WINDOW FUNCTIONS
@@ -200,8 +196,6 @@ def open_edit_student(root):
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(edit_student_window, text="Back to Records Actions", command=lambda: [edit_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.pack()
-      
-
 
 '''
 ------------------------------
@@ -251,7 +245,6 @@ def switch_table(event, tree, table, filter_col, sort_col, sort_desc):
     #swtiches the table based on the drop down menu
     update_treeview(tree, table.get(), filter_col.get())
 
-
 #functoin that opens the view record window
 def open_view_records(root):
     global view_records_window, current_sort_col, current_sort_desc, tree
@@ -297,10 +290,8 @@ def open_view_records(root):
     tree = ttk.Treeview(view_records_window)
     tree.pack(fill=tk.BOTH, expand=True)
 
-
     # Fetch data for the first table
     update_treeview(tree, table.get(), filter_col.get())
-
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
