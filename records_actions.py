@@ -216,17 +216,7 @@ VIEW RECORDS WINDOW FUNCTIONS
 '''
 
 
-#function to toggle sort by column (ascending/descending)
-def toggle_sort_by_column(col, table, filter_col):
-    global current_sort_col, current_sort_desc
-    if current_sort_col == col:
-        current_sort_desc.set(not current_sort_desc.get())  # Toggle descending/ascending
-    else:
-        current_sort_col = col  # Set the column to sort by
-        current_sort_desc.set(False)  # Default to ascending
-    
-    #Call update_treeview with new sorting state
-    update_treeview(tree, table.get(), filter_col.get(), current_sort_col, current_sort_desc.get())
+
 
 #function to update treeview with data from the selected table
 def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=False):
@@ -242,7 +232,10 @@ def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=Fal
     elif table == "Student":
         columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
         data = fetch_student_data()
-
+    else:
+        print(f"Unknown table: {table}")
+        return 
+    
     #apply filter if specified
     if filter_col:
         data = [row for row in data if filter_col.lower() in str(row).lower()]
@@ -259,9 +252,6 @@ def update_treeview(tree, table, filter_col=None, sort_col = None, sort_desc=Fal
     for row in data:
         tree.insert("", tk.END, values = row)
 
-    #update column headers
-    for idx, col in enumerate(columns):
-        tree.heading(col, text=col, command=lambda col=col: toggle_sort_by_column(col, table, filter_col))
 
     #configure column width
     for col in columns: 
@@ -305,7 +295,7 @@ def open_view_records(root):
     table.set("Member") #default
     table_dropdown = ttk.Combobox(view_records_window, textvariable=table, values = ["Member", "Student"])
     table_dropdown.pack(pady=10)
-    table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, filter_col, sort_col, sort_desc))
+    table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, filter_col))
 
     #create a filter entry
     filter_col = tk.StringVar()
@@ -314,28 +304,17 @@ def open_view_records(root):
 
     #function to automatically filter when typing
     def on_filter_change(event):
-        update_treeview(tree, table.get(), filter_col.get(), sort_col.get(), sort_desc.get())
+        update_treeview(tree, table.get(), filter_col.get())
     filter_entry.bind("<KeyRelease>", on_filter_change)
 
     #create a table
     tree = ttk.Treeview(view_records_window)
     tree.pack(fill=tk.BOTH, expand=True)
 
-    #sorting controls
-    sort_col = tk.IntVar(value=0) 
-    sort_desc = tk.BooleanVar(value=False) 
-
-    # Sorting column state variables
-    current_sort_col = None  # Initialize the sorting column variable
-    current_sort_desc = tk.BooleanVar(value=False)  # Ascending order by default
 
     # Fetch data for the first table
     update_treeview(tree, table.get(), filter_col.get(), current_sort_col, current_sort_desc.get())
 
-
-    #Adding sort functionality to column headers
-    for col in tree["columns"]:
-        tree.heading(col, text=col, command=lambda col=col: toggle_sort_by_column(col))
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
