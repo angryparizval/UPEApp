@@ -194,4 +194,4 @@ def open_invitation_report_window(homepage_window, root):
 
     #button to go back to homepage
     btn_homepage_window = ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()])
-    btn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")
+    btn_homepage_window.place(relx=0.02, rely=0.05, anchor="nw")
