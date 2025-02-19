@@ -12,7 +12,7 @@ GENERAL USE FUNCTIONS
 --------------------------------
 '''
 
-#global connection variable
+#global variables
 conn = None
 
 #Function to get connection to db
@@ -203,95 +203,143 @@ VIEW RECORDS WINDOW FUNCTIONS
 ------------------------------
 '''
 
-#function to update treeview with data from the selected table
-def update_treeview(tree, table, filter_col=None):
+
+#function to sort column asc/desc
+def treeview_sort_column(treeview, col, reverse):
+    l = [(treeview.set(k, col), k) for k in treeview.get_children('')]
+    l.sort(reverse=reverse)
+
+    # rearrange items in sorted positions
+    for index, (val, k) in enumerate(l):
+        treeview.move(k, '', index)
+
+    # reverse sort next time
+    treeview.heading(col, text=col, command=lambda _col=col: \
+                 treeview_sort_column(treeview, _col, not reverse))
     
-    #clears existing data in tree
+#function to update treeview with data from the selected table
+def update_treeview(tree, table, selected_columns, filter_col=None):
+    
+    #clear existing data in tree
     for item in tree.get_children():
         tree.delete(item)
 
-    #Fetch data based on table
+    #fetch data based on table selected
     if table == "Member":
-        columns = ("MEM_ID", "STUD_ID", "MEM_DOB", "MEM_ENTRY_YR", "MEM_STATUS", "MEM_POS", "MEM_PST_POS", "MEM_PHO_NO", "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
+        columns = ("MEM_ID", "STUD_ID", "MEM_DOB", "MEM_ENTRY_YR", "MEM_STATUS", "MEM_POS", "MEM_PST_POS", "MEM_PHO_NO", 
+                   "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
         data = fetch_member_data()
     elif table == "Student":
-        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
+        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", 
+                   "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", 
+                   "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
         data = fetch_student_data()
     else:
-        print(f"Unknown table: {table}")
-        return 
-    
-    #apply filter if specified
+        return  
+
+    #apply filter if given one by user
     if filter_col:
         data = [row for row in data if filter_col.lower() in str(row).lower()]
 
-    #update treeview with data
-    tree["columns"] = columns
+    #filter columns to display only selected ones
+    visible_columns = [col for col in columns if col not in selected_columns]
 
-    # Create column headings
-    for col in columns:
+    #update treeview with only visibl columns
+    tree["columns"] = visible_columns
+
+    #creates column heading
+    for col in visible_columns:
         tree.heading(col, text=col)
-
-    #update treeview with data
-    for row in data:
-        tree.insert("", tk.END, values = row)
-
-    #configure column width
-    for col in columns: 
         tree.column(col, anchor="center", width=120)
 
-#function to switch tables
-def switch_table(event, tree, table, filter_col):
-    #swtiches the table based on the drop down menu
-    update_treeview(tree, table.get(), filter_col.get())
+    #inserts filtered data when filter applied
+    for row in data:
+        filtered_row = [row[columns.index(col)] for col in visible_columns]  # Keep only selected columns
+        tree.insert("", tk.END, values=filtered_row)
+
+#function to handle listbox selection and update treeview
+def update_selected_columns(event, tree, table, listbox, filter_col):
+    selected_columns = [listbox.get(i) for i in listbox.curselection()]
+    update_treeview(tree, table.get(), selected_columns, filter_col.get())
+
+#function to update listbox based on table selection
+def update_listbox(listbox, table):
+    listbox.delete(0, tk.END)
+    if table == "Member":
+        columns = ("MEM_ID", "STUD_ID", "MEM_DOB", "MEM_ENTRY_YR", "MEM_STATUS", "MEM_POS", "MEM_PST_POS", "MEM_PHO_NO", 
+                   "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
+    elif table == "Student":
+        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", 
+                   "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", 
+                   "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
+    else:
+        return
+
+    for col in columns:
+        listbox.insert(tk.END, col)
+
+#middle man function to allow for event press of selecting/switch table
+def switch_table(event, tree, table, listbox, filter_col):
+    update_listbox(listbox, table.get())
+    update_treeview(tree, table.get(), [], filter_col.get())
 
 #functoin that opens the view record window
 def open_view_records(root):
-    global view_records_window, current_sort_col, current_sort_desc, tree
+    global view_records_window, tree
 
-    #Initialize the Tkinter root windo
+    #initialize the Tkinter root window
     if not root:
         root = tk.Tk()
-    
-    #Set up global variables before calling them
-    current_sort_col = None  # Initialize the sorting column variable
-    current_sort_desc = tk.BooleanVar(value=False)  # Ascending order by default
 
-    # Withdraw the current window before opening the next
+    #withdraw the current window before opening the next
     records_act_window.withdraw()
 
-    #sets window to root,centers it and sets window title
+    #create new window
     view_records_window = tk.Toplevel(root)
-    center_window(view_records_window, 800, 630)
+    center_window(view_records_window, 1500, 650)
     view_records_window.title("View Records")
-    
-    #Window header
-    label = tk.Label(view_records_window, text="View Records", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=50)
 
-    #create a dropdown menu
+    #window header
+    label = tk.Label(view_records_window, text="View Records", font=("Helvetica", 20, "bold"))
+    label.pack(pady=10)
+
+    #dropdown to select table user wishes to see
     table = tk.StringVar()
-    table.set("Member") #default
-    table_dropdown = ttk.Combobox(view_records_window, textvariable=table, values = ["Member", "Student"])
+    table_dropdown = ttk.Combobox(view_records_window, textvariable=table, values=["Member", "Student"], state="readonly")
+    table_dropdown.set("Select Table")
     table_dropdown.pack(pady=10)
-    table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, filter_col))
 
-    #create a filter entry
+    #entrybox for user to input filter
     filter_col = tk.StringVar()
     filter_entry = ttk.Entry(view_records_window, textvariable=filter_col)
     filter_entry.pack(pady=10)
+    #when key is released it updates the table
+    filter_entry.bind("<KeyRelease>", lambda event: update_treeview(tree, table.get(), [], filter_col.get()))
 
-    #function to automatically filter when typing
-    def on_filter_change(event):
-        update_treeview(tree, table.get(), filter_col.get())
-    filter_entry.bind("<KeyRelease>", on_filter_change)
+    #create a listbox for column selection
+    listbox_frame = tk.Frame(view_records_window)
+    listbox_frame.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.Y)
 
-    #create a table
-    tree = ttk.Treeview(view_records_window, show="headings")
-    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    #label for hide columns
+    listbox_label = tk.Label(listbox_frame, text="Hide Columns:")
+    listbox_label.pack()
+    
+    #label
+    listbox = tk.Listbox(listbox_frame, selectmode=tk.MULTIPLE, height=10)
+    listbox.pack()
 
-    # Fetch data for the first table
-    update_treeview(tree, table.get(), filter_col.get())
+    #button to update column visibility
+    btn_update_columns = ttk.Button(listbox_frame, text="Apply Filter", command=lambda: update_selected_columns(None, tree, table, listbox, filter_col))
+    btn_update_columns.pack(pady=5)
+
+    #create a table with a frame
+    tree_frame = tk.Frame(view_records_window)
+    tree_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    tree = ttk.Treeview(tree_frame, show="headings")
+    tree.pack(fill=tk.BOTH, expand=True)
+
+    #binds dropdown to update UI when a table is selected in box
+    table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, listbox, filter_col))
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
