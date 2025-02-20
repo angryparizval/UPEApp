@@ -4,7 +4,7 @@ from tkinter import ttk
 import sqlite3
 from utils import center_window
 
-
+#'view edit add'
 '''
 ----------------------------------------
 DATABASE CONNECTION/GENERAL FUNCTIONS
@@ -66,11 +66,11 @@ def open_upe_budget(homepage_window, root):
     btn_view_history.place(relx=0.5, rely=0.4, anchor="center")
 
     #Edit History button
-    btn_edit_history = ttk.Button(upe_budget_window, text="Edit History", command=lambda: [upe_budget_window.withdraw(), homepage_window.deiconify()])
+    btn_edit_history = ttk.Button(upe_budget_window, text="Edit History", command=lambda: [upe_budget_window.withdraw(), open_edit_budget(upe_budget_window, root)])
     btn_edit_history.place(relx=0.5, rely=0.5, anchor="center")
 
     #Add transaction buton
-    btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), homepage_window.deiconify()])
+    btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
     btn_transaction.place(relx=0.5, rely=0.6, anchor="center")
 
 '''
@@ -136,8 +136,36 @@ EDIT BUDGET WINDOW FUNCTIONS
 ----------------------------
 '''
 #function to open edit budget window
-def open_edit_budget(root):
+def open_edit_budget(budget_home_window, root):
     #creates edit budget window, sets title and centers it
-    upe_budget_window = tk.Toplevel(root)
-    upe_budget_window.title("Edit Budget")
-    center_window(upe_budget_window, 800, 630)
+    budget_edit_window = tk.Toplevel(root)
+    budget_edit_window.title("Edit Budget")
+    center_window(budget_edit_window, 800, 630)
+
+    #creates header
+    label = tk.Label(budget_edit_window, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label.pack(pady=20)
+
+    #Back to Budget Home button
+    btn_rtn_budget_home = ttk.Button(budget_edit_window, text="Back to Budget Home",command=lambda: [budget_edit_window.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
+
+'''
+-------------------------------
+ADD TRANSACTION WINDOW FUNCTIONS
+-------------------------------
+'''
+#function to open edit budget window
+def open_add_transaction(budget_home_window, root):
+    #creates edit budget window, sets title and centers it
+    budget_add_transaction = tk.Toplevel(root)
+    budget_add_transaction.title("Add Transaction")
+    center_window(budget_add_transaction, 800, 630)
+
+    #creates header
+    label = tk.Label(budget_add_transaction, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label.pack(pady=20)
+
+    #Back to Budget Home button
+    btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget Home",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
