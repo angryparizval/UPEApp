@@ -4,6 +4,7 @@ from tkinter import ttk
 import sqlite3
 from utils import center_window
 from tkcalendar import Calendar
+from tkinter import *
 
 '''
 ----------------------------------------
@@ -185,6 +186,12 @@ def open_add_transaction(budget_home_window, root):
     lblMemo = tk.Label(budget_add_transaction, text="Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblMemo.pack(pady=5)
     lblMemo.place(relx=0.5, rely=0.6)
+
+    #Radio Buttons for type
+    
+
+    #Text boxes for amount and memo
+
 
     #Back to Budget Home button and submit button
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget Home",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
