@@ -81,7 +81,7 @@ BUDGET HISTORY WINDOW FUNCTIONS
 '''
 #function to open budget history window
 def open_budget_history(budget_home_window, root):
-    #withdrawals budget home
+    #withdraws budget home
     budget_home_window.withdraw()
 
     #creates history page, sets title and centers it
@@ -94,7 +94,7 @@ def open_budget_history(budget_home_window, root):
     label.pack(pady=20)
 
     #Back to Budget Home button
-    btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget Home",command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget",command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
     #Table Frame
@@ -102,7 +102,7 @@ def open_budget_history(budget_home_window, root):
     frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
     #Define table columns
-    columns = ("Transaction No", "Date", "Type", "Memo")
+    columns = ("Transaction No", "Date", "Type", "Memo", "Amount")
 
     #Create Treeview widget
     tree = ttk.Treeview(frame, columns=columns, show="headings")
@@ -111,7 +111,8 @@ def open_budget_history(budget_home_window, root):
     tree.column("Transaction No", width=120, anchor="center")
     tree.column("Date", width=100, anchor="center")
     tree.column("Type", width=150, anchor="center")
-    tree.column("Memo", width=200, anchor="w")
+    tree.column("Memo", width=200, anchor="center")
+    tree.column("Amount", width=100, anchor="w")
 
     # Define column headers
     for col in columns:
@@ -148,7 +149,7 @@ def open_edit_budget(budget_home_window, root):
     label.pack(pady=20)
 
     #Back to Budget Home button
-    btn_rtn_budget_home = ttk.Button(budget_edit_window, text="Back to Budget Home",command=lambda: [budget_edit_window.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home = ttk.Button(budget_edit_window, text="Back to Budget",command=lambda: [budget_edit_window.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
 '''
@@ -161,6 +162,7 @@ def open_add_transaction(budget_home_window, root):
 
     #call in global variables
     global date_label
+    global selected_date_str
 
     #creates edit budget window, sets title and centers it
     budget_add_transaction = tk.Toplevel(root)
@@ -185,16 +187,23 @@ def open_add_transaction(budget_home_window, root):
 
     lblMemo = tk.Label(budget_add_transaction, text="Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblMemo.pack(pady=5)
-    lblMemo.place(relx=0.5, rely=0.6)
+    lblMemo.place(relx=0.45, rely=0.4)
 
     #Radio Buttons for type
-    
+    transaction_type = tk.StringVar(value="Deposit")
+    rdWithdrawal = ttk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="withdrawal")
+    rdWithdrawal.place(relx=0.45, rely=0.25)
+    rdDeposit = ttk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="deposit")
+    rdDeposit.place(relx=0.45, rely=0.3)
 
     #Text boxes for amount and memo
-
+    txtAmount = tk.Text(budget_add_transaction, height=1, width=15)
+    txtAmount.place(relx=0.7, rely=0.25)
+    txtMemo = tk.Text(budget_add_transaction, height=5, width=30)
+    txtMemo.place(relx=0.45, rely=0.45)
 
     #Back to Budget Home button and submit button
-    btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget Home",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
     btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=submit_transaction())
@@ -222,4 +231,6 @@ def get_selected_date(cal, lblSelectedDate):
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
 def submit_transaction():
+    #Limit memo characters to 100
+    #
     pass
