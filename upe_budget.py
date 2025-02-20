@@ -3,8 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 from utils import center_window
+from tkcalendar import Calendar
 
-#'view edit add'
 '''
 ----------------------------------------
 DATABASE CONNECTION/GENERAL FUNCTIONS
@@ -157,15 +157,62 @@ ADD TRANSACTION WINDOW FUNCTIONS
 '''
 #function to open edit budget window
 def open_add_transaction(budget_home_window, root):
+
+    #call in global variables
+    global date_label
+
     #creates edit budget window, sets title and centers it
     budget_add_transaction = tk.Toplevel(root)
     budget_add_transaction.title("Add Transaction")
     center_window(budget_add_transaction, 800, 630)
 
-    #creates header
-    label = tk.Label(budget_add_transaction, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=20)
+    #creates labels; Header and textbox labels
+    lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    lblHeader.pack(pady=20)
 
-    #Back to Budget Home button
+    lblDate = tk.Label(budget_add_transaction, text="Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblDate.pack(pady=5)
+    lblDate.place(relx=0.1, rely=0.2)
+
+    lblType = tk.Label(budget_add_transaction, text="Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblType.pack(pady=5)
+    lblType.place(relx=0.45, rely=0.2)
+
+    lblAmount = tk.Label(budget_add_transaction, text="Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
+    lblAmount.pack(pady=5)
+    lblAmount.place(relx=0.7, rely=0.2)
+
+    lblMemo = tk.Label(budget_add_transaction, text="Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblMemo.pack(pady=5)
+    lblMemo.place(relx=0.5, rely=0.6)
+
+    #Back to Budget Home button and submit button
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget Home",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
+
+    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=submit_transaction())
+    btnSubmit.place(relx=0.84, rely=0.95, anchor="sw")
+
+    # Create the calendar
+    cal = Calendar(budget_add_transaction, selectmode="day", year=2025, month=2, day=15)
+    cal.pack(pady=20)
+    cal.place(relx=0.05, rely=0.25)
+
+    lblSelectedDate = tk.Label(budget_add_transaction, text="No Date Selected", font=("Arial", 12, "bold"))
+    lblSelectedDate.pack(pady=10)
+    lblSelectedDate.place(relx=0.075, rely=0.55)
+
+    # Button to select the date
+    select_button = ttk.Button(budget_add_transaction, text="Update Date", command= lambda: [get_selected_date(cal, lblSelectedDate)])
+    select_button.pack(pady=10)
+    select_button.place(relx=0.125, rely=0.6)
+    lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
+# Function to get the selected date
+def get_selected_date(cal, lblSelectedDate):
+    global selected_date_str
+    selected_date_str = cal.get_date()
+    lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
+def submit_transaction():
+    pass
