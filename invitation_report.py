@@ -211,7 +211,7 @@ def open_invitation_report_window(homepage_window, root):
 
     #Entry for searching students
     search_var = tk.StringVar()
-    student_entry = tk.Entry(invitation_report_window, textvariable=search_var)
+    student_entry = ttk.Entry(invitation_report_window, textvariable=search_var)
     student_entry.pack(pady=5)
 
     # Bind the search function to the entry
@@ -248,7 +248,7 @@ def open_invitation_report_window(homepage_window, root):
 
     # Entry for form link
     tk.Label(invitation_report_window, text="Enter Form Link:").pack()
-    link_entry = tk.Entry(invitation_report_window, width=50)
+    link_entry = ttk.Entry(invitation_report_window, width=50)
     link_entry.pack(pady=5)
 
     # Create a frame to hold the buttons

@@ -46,16 +46,17 @@ def open_homepage():
     image_label = tk.Label(homepage_window, image=resized_image)
     image_label.image = resized_image
     image_label.pack()
+    image_label.place(relx= -0.19, rely=-.01)
 
     #Button to go to Budget window
     btn_upe_budget_window = ttk.Button(homepage_window, text="UPE Budget", command=lambda: open_upe_budget(homepage_window, root))
     btn_upe_budget_window.pack(pady=10)
-    btn_upe_budget_window.place(relx=0.2, rely=.5)
+    btn_upe_budget_window.place(relx=0.14, rely=.5)
 
     #Button to go to records action window
     btn_open_records_act_window = ttk.Button(homepage_window, text="Records Actions", command=lambda: open_records_act(homepage_window, root))
     btn_open_records_act_window.pack(pady=10)
-    btn_open_records_act_window.place(relx=0.19, rely=.6)
+    btn_open_records_act_window.place(relx=0.13, rely=.6)
 
     #Button to go to window for creating invitation
     btn_open_invitation_report_window = ttk.Button(homepage_window, text="Create Invitation", command=lambda: open_invitation_report_window(homepage_window, root))
@@ -70,7 +71,7 @@ def open_homepage():
     #Button to exit application
     btn_exit = ttk.Button(homepage_window, text="Exit Application", command=root.quit)
     btn_exit.pack(pady=10)
-    btn_exit.place(relx=0.45, rely=.9)
+    btn_exit.place(relx=0.428, rely=.91)
 
 # Function to open the login window
 def open_login_window():
@@ -94,13 +95,13 @@ def open_login_window():
     # Add username and password fields
     label_username = tk.Label(login_window, text="Username:")
     label_username.pack(pady=5)
-    entry_username = tk.Entry(login_window)
+    entry_username = ttk.Entry(login_window)
     entry_username.pack(pady=5)
 
     #label for password and making it show an asterisk
     label_password = tk.Label(login_window, text="Password:")
     label_password.pack(pady=5)
-    entry_password = tk.Entry(login_window, show="*")
+    entry_password = ttk.Entry(login_window, show="*")
     entry_password.pack(pady=5)
 
     # Add login button
@@ -110,8 +111,9 @@ def open_login_window():
 # Main application root window
 root = ThemedTk()
 style = ttk.Style()
-style.configure('TButton', font=('Helvetica', 12), foreground='black')
+style.configure('TButton', font=('Helvetica', 15), foreground='black')
 style.map('TButton', background=[('active', 'black'), ('pressed', 'red')], foreground=[('active', 'red'), ('pressed', 'green')])
+style.configure('TEntry', foreground='black', fieldbackground='white')
 
 root.withdraw()
 

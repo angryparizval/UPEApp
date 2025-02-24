@@ -219,7 +219,7 @@ def on_double_click(event):
     current_value = tree.item(selected_item, "values")[column_index]
 
     #create an entry widget that will allow editing cell
-    entry_widget = tk.Entry(tree)
+    entry_widget = ttk.Entry(tree)
     entry_widget.insert(0, current_value)
     entry_widget.focus()
 
