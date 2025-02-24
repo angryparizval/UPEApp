@@ -185,6 +185,8 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 
+entry_widget = None
+
 #function to allow sort column by ascending or descending based on column chose
 def treeview_sort_column(treeview, col, reverse):
     #gets data from tree view
@@ -220,8 +222,10 @@ def update_database(table, column_name, new_value, primary_key_value):
 def on_double_click(event):
     global entry_widget
 
-    #grabs cell row and column
+    if entry_widget:
+        entry_widget.destroy()
 
+    #grabs cell row and column
     selected_items = tree.selection()
     if not selected_items:
         return 
@@ -252,7 +256,7 @@ def on_double_click(event):
 
     #binds enter button to save the edited changes
     entry_widget.bind("<Return>", lambda event: save_edit(selected_item, column_index))
-
+    entry_widget.bind("<Escape>", lambda event: entry_widget.destroy())
 
 #function to save edit to tree before calling update database
 def save_edit(selected_item, column_index):
