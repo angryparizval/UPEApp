@@ -36,11 +36,11 @@ def open_homepage():
     # Create the homepage window
     homepage_window = tk.Toplevel(root)
     homepage_window.title("Homepage")
-    center_window(homepage_window, 800, 630)
+    center_window(homepage_window, 950,700)
 
     # Load the image and keep a reference to it
     homepage_image = PhotoImage(file="Image/UPE-background.png")
-    resized_image = homepage_image.subsample(2, 2)
+    resized_image = homepage_image.subsample(1, 1)
 
     # Create a label with the resized image
     image_label = tk.Label(homepage_window, image=resized_image)
@@ -50,22 +50,27 @@ def open_homepage():
     #Button to go to Budget window
     btn_upe_budget_window = ttk.Button(homepage_window, text="UPE Budget", command=lambda: open_upe_budget(homepage_window, root))
     btn_upe_budget_window.pack(pady=10)
+    btn_upe_budget_window.place(relx=0.2, rely=.5)
 
     #Button to go to records action window
     btn_open_records_act_window = ttk.Button(homepage_window, text="Records Actions", command=lambda: open_records_act(homepage_window, root))
     btn_open_records_act_window.pack(pady=10)
+    btn_open_records_act_window.place(relx=0.19, rely=.6)
 
     #Button to go to window for creating invitation
     btn_open_invitation_report_window = ttk.Button(homepage_window, text="Create Invitation", command=lambda: open_invitation_report_window(homepage_window, root))
     btn_open_invitation_report_window.pack(pady=10)
+    btn_open_invitation_report_window.place(relx=0.75, rely=.5)
     
     #Button to go to UPE Info window
     btn_open_invitation_report_window = ttk.Button(homepage_window, text="UPE Information", command=lambda: open_upe_information(homepage_window, root))
     btn_open_invitation_report_window.pack(pady=10)
+    btn_open_invitation_report_window.place(relx=0.75, rely=.6)
 
     #Button to exit application
     btn_exit = ttk.Button(homepage_window, text="Exit Application", command=root.quit)
     btn_exit.pack(pady=10)
+    btn_exit.place(relx=0.45, rely=.9)
 
 # Function to open the login window
 def open_login_window():
