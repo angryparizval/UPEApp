@@ -185,6 +185,21 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 
+#function to allow sort column by ascending or descending based on column chose
+def treeview_sort_column(treeview, col, reverse):
+    #gets data from tree view
+    l = [(treeview.set(k, col), k) for k in treeview.get_children('')]
+    l.sort(reverse=reverse, key=lambda x: (float(x[0]) if x[0].replace('.', '', 1).isdigit() else x[0].lower()))
+
+    #rearrange cells in other columns in sorted positions
+    for index, (_, k) in enumerate(l):
+        treeview.move(k, '', index)
+
+    #update column header with sorting order indicator
+    treeview.heading(col, text=f"{col} {'▲' if not reverse else '▼'}", 
+                        command=lambda _col=col: treeview_sort_column(treeview, _col, not reverse))
+
+
 #function to update SQLite database after cell is edited
 def update_database(table, column_name, new_value, primary_key_value):
     #connects to db
@@ -206,6 +221,10 @@ def on_double_click(event):
     global entry_widget
 
     #grabs cell row and column
+
+    selected_items = tree.selection()
+    if not selected_items:
+        return 
     selected_item = tree.selection()[0]  
     column_id = tree.identify_column(event.x)  
     column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
@@ -223,8 +242,12 @@ def on_double_click(event):
     entry_widget.insert(0, current_value)
     entry_widget.focus()
 
-    #get current cell position and places entry widget in that position
-    x, y, width, height = tree.bbox(selected_item, column_index)
+    #get current clicked cell position and place keyboard entry widget in that position
+    bbox = tree.bbox(selected_item, column_index)
+    #prevents error if the column header is clicked
+    if not bbox:
+        return  
+    x, y, width, height = bbox
     entry_widget.place(x=x, y=y, width=width, height=height)
 
     #binds enter button to save the edited changes
@@ -283,7 +306,7 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
     #update Treeview columns
     tree["columns"] = visible_columns
     for col in visible_columns:
-        tree.heading(col, text=col)
+        tree.heading(col, text=f"{col} {'▲'}", command=lambda _col=col: treeview_sort_column(tree, _col, False))
         tree.column(col, anchor="center", width=120)
 
     #insert filtered data
