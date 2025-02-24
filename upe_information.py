@@ -81,26 +81,26 @@ def open_upe_information(homepage_window, root):
 
     # Function to display names in a single column
     def display_names(title, names, parent):
-        title_label = tk.Label(parent, text=title, font=("Helvetica", 14, "bold"))
+        title_label = tk.Label(parent, text=title, font=("Helvetica", 17, "bold"))
         title_label.pack(anchor="w", padx=10, pady=2)
         for name in names:
-            name_label = tk.Label(parent, text=name, font=("Helvetica", 12))
+            name_label = tk.Label(parent, text=name, font=("Helvetica", 15))
             name_label.pack(anchor="w", padx=30)
 
     # Function to display undergraduate students in two columns but keeping alphabetical order
     def display_names_two_columns(title, names, parent):
-        title_label = tk.Label(parent, text=title, font=("Helvetica", 14, "bold"))
+        title_label = tk.Label(parent, text=title, font=("Helvetica", 17, "bold"))
         title_label.grid(row=0, column=0, columnspan=2, pady=5)
         
         col1 = names[:len(names)//2]  # First half
         col2 = names[len(names)//2:]  # Second half
         
         for i, name in enumerate(col1):
-            name_label = tk.Label(parent, text=name, font=("Helvetica", 12))
+            name_label = tk.Label(parent, text=name, font=("Helvetica", 15))
             name_label.grid(row=i+1, column=0, sticky="w", padx=20, pady=2)
 
         for i, name in enumerate(col2):
-            name_label = tk.Label(parent, text=name, font=("Helvetica", 12))
+            name_label = tk.Label(parent, text=name, font=("Helvetica", 15))
             name_label.grid(row=i+1, column=1, sticky="w", padx=20, pady=2)
 
     # Display the lists in respective frames
