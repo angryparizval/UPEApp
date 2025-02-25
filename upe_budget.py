@@ -13,6 +13,7 @@ DATABASE CONNECTION/GENERAL FUNCTIONS
 '''
 # Global connection variable
 conn = None
+selected_date_str = ""
 
 def get_db_connection():
     #returns gloval database connection
@@ -164,6 +165,9 @@ ADD TRANSACTION WINDOW FUNCTIONS
 #function to open edit budget window
 def open_add_transaction(budget_home_window, root):
 
+    #ADD NO DATE SELECTED PLACE HOLDER
+    #MAKE DEFAULT DATE CURRENT DAY
+
     #call in global variables
     global date_label
     global selected_date_str
@@ -274,7 +278,7 @@ def edit_transaction(budget_home_window, root):
 
 # Function to get the selected date
 def get_selected_date(cal, lblSelectedDate):
-    global selected_date_str
+    selected_date_str = "No Date Selected"
     selected_date_str = cal.get_date()
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
