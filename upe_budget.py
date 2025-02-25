@@ -152,6 +152,10 @@ def open_edit_budget(budget_home_window, root):
     btn_rtn_budget_home = ttk.Button(budget_edit_window, text="Back to Budget",command=lambda: [budget_edit_window.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
+    #edit transaction button
+    btn_edit_transaction = ttk.Button(budget_edit_window, text="Edit", command=lambda: [budget_edit_window.withdraw(), edit_transaction(budget_edit_window, root)])
+    btn_edit_transaction.place(relx=0.84, rely=0.95, anchor="sw")
+
 '''
 -------------------------------
 ADD TRANSACTION WINDOW FUNCTIONS
@@ -223,6 +227,50 @@ def open_add_transaction(budget_home_window, root):
     select_button.pack(pady=10)
     select_button.place(relx=0.125, rely=0.6)
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
+
+'''
+-------------------------------
+EDIT TRANSACTION WINDOW FUNCTIONS
+-------------------------------
+'''
+#edit transaction window
+def edit_transaction(budget_home_window, root):
+    #creates edit budget window, sets title
+    budget_edit_transaction = tk.Toplevel(root)
+    budget_edit_transaction.title("Edit Transaction")
+    center_window(budget_edit_transaction, 800, 630)
+
+    #create back button
+    btn_rtn_budget_home = ttk.Button(budget_edit_transaction, text="Back to Budget",command=lambda: [budget_edit_transaction.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
+
+    #creates labels; Header and textbox labels
+    lblHeader = tk.Label(budget_edit_transaction, text="Edit Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    lblHeader.pack(pady=20)
+
+    lblDate = tk.Label(budget_edit_transaction, text="Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblDate.pack(pady=5)
+    lblDate.place(relx=0.1, rely=0.2)
+
+    lblType = tk.Label(budget_edit_transaction, text="Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblType.pack(pady=5)
+    lblType.place(relx=0.45, rely=0.2)
+
+    lblAmount = tk.Label(budget_edit_transaction, text="Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
+    lblAmount.pack(pady=5)
+    lblAmount.place(relx=0.7, rely=0.2)
+
+    lblMemo = tk.Label(budget_edit_transaction, text="Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblMemo.pack(pady=5)
+    lblMemo.place(relx=0.45, rely=0.4)
+
+    lblNum = tk.Label(budget_edit_transaction, text="Transaction Number", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblNum.pack(pady=5)
+    lblNum.place(relx=0.1, rely=0.4)
+
+    
+
 
 # Function to get the selected date
 def get_selected_date(cal, lblSelectedDate):
