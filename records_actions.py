@@ -76,7 +76,7 @@ def open_records_act(homepage_window, root):
     btn_view_records_window.pack(pady=10) 
 
     #button to move to add members windows
-    btn_add_members_window = ttk.Button(records_act_window, text="Add Member", command=lambda: open_add_member(root))
+    btn_add_members_window = ttk.Button(records_act_window, text="Add Member", command=lambda: open_search_student(root))
     btn_add_members_window.pack(pady=10)  
 
     #button to move to add students window
@@ -94,10 +94,64 @@ ADD MEMBER WINDOW FUNCTIONS
 ------------------------------
 '''
 
-#Window where user will input info to add member
-def open_add_member(root):
-    #withdraws records_act_window
+#function to run search query in database
+def search_students():
+    query = search_var.get()
+    
+    #gets connection to DB
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_LST_NM FROM Student WHERE STUD_ID LIKE ? OR STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?", 
+                   (f"%{query}%", f"%{query}%", f"%{query}%"))
+    
+    results = cursor.fetchall()
+    
+    
+    student_listbox.delete(0, tk.END)
+    for student in results:
+        student_listbox.insert(tk.END, f"{student[0]} {student[1]} {student[2]}")
+
+# Function to handle student selection
+def select_student(root):
+    selected = student_listbox.get(tk.ACTIVE)
+    if selected:
+        student_id = selected.split()[0]  # Extract Student ID
+        open_add_member(root, student_id)
+        conn.close()
+
+# Function to open search student window
+def open_search_student(root):
+    global search_window, search_var, student_listbox
     records_act_window.withdraw()
+
+    search_window = tk.Toplevel(root)
+    center_window(search_window, 600, 400)
+    search_window.title("Search Students")
+
+    label = tk.Label(search_window, text="Find Student", font=("Helvetica", 20, "bold"),bd=2, relief="solid", padx=10)
+    label.pack(pady=10)
+
+    search_var = tk.StringVar()
+    search_entry = ttk.Entry(search_window, textvariable=search_var, width=40)
+    search_entry.pack(pady=5)
+    search_entry.bind("<KeyRelease>", lambda event: search_students())
+
+    student_listbox = tk.Listbox(search_window, width=50, height=10)
+    student_listbox.pack(pady=5)
+
+    select_button = ttk.Button(search_window, text="Select", command= lambda: select_student(root))
+    select_button.pack()
+    
+    #button to return to records screen
+    btn_rtn_recordsact_window = ttk.Button(search_window, text="Back", command=lambda: [search_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
+    
+
+#Window where user will input info to add member
+def open_add_member(root, student_id):
+    global add_member_window, txtMemStudID
+    #withdraws search student window
+    search_window.withdraw()
     #sets the window variable to global to avoid having to send it around
     global add_member_window
 
@@ -114,31 +168,36 @@ def open_add_member(root):
     label = tk.Label(add_member_window, text="Add Members", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
     label.place(relx = .35, rely = .05, anchor="nw")
 
-    #label for memberID
-    lblMemID = tk.Text(add_member_window, height=1, width=15)
+    lblMemID = tk.Label(add_member_window, text="Student ID", height=1, width=15)
     lblMemID.grid(row=1, column=0, columnspan=1, pady=10)
 
-    #textbox for member ID
-    txtMemID = tk.Text(add_member_window, height=1, width=15)
-    txtMemID.grid(row=1, column=0, columnspan=1, pady=10)
-
-    #textbox for student ID
-    txtMemStudID = tk.Text(add_member_window, height=1, width=15)
+    #student id textbox that is prefilled using search student returned stud_id
+    txtMemStudID = tk.Entry(add_member_window, width=20)
     txtMemStudID.grid(row=1, column=1, columnspan=1, pady=10)
+    #inserts id into box
+    txtMemStudID.insert(0, student_id)
+    #makes it readonly so stud_id is not messed with by user
+    txtMemStudID.config(state="readonly")  
+
+    # Other fields
+    txtMemFName = tk.Entry(add_member_window, width=20)
+    txtMemFName.grid(row=1, column=2, columnspan=1, pady=10)
+
+    txtMemLName = tk.Entry(add_member_window, width=20)
+    txtMemLName.grid(row=1, column=3, columnspan=1, pady=10)
+
+    txtMemDOB = tk.Entry(add_member_window, width=20)
+    txtMemDOB.grid(row=2, column=0, columnspan=1, pady=10)
+
+    txtEntryYr = tk.Entry(add_member_window, width=20)
+    txtEntryYr.grid(row=2, column=1, columnspan=1, pady=10)
     
-    #textbox for member DOB
-    txtMemDOB = tk.Text(add_member_window, height=1, width=15)
-    txtMemDOB.grid(row=1, column=2, columnspan=1, pady=10)
-
-    #textbox for member entry year
-    txtEntryYr = tk.Text(add_member_window, height =1, width=15)
-    txtEntryYr.grid(row = 2, column=0, columnspan=1, pady=10)
-
     for i in range(total_columns):  
-        add_member_window.columnconfigure(i, weight=1)
+        add_member_window.columnconfigure(i, weight=0)
 
     for i in range(total_rows):  
         add_member_window.rowconfigure(i, weight=1)
+    
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back to Records Actions", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
@@ -412,5 +471,3 @@ def open_view_records(root):
     #button to return to records screen
     btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
-
-
