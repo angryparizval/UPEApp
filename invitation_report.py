@@ -36,7 +36,8 @@ def search_students(event):
         # Display search results in the listbox
         for index, student in enumerate(results):
             full_name = f"{student[0]} {student[1]}"
-            student_dict[index] = student  # Store student tuple (first, last name)
+            # Store student tuple 
+            student_dict[index] = student  
             listbox.insert(tk.END, full_name)
 
 # Function to select a student
@@ -223,7 +224,7 @@ def open_invitation_report_window(homepage_window, root):
 
     # Listbox for search results
     listbox = tk.Listbox(listbox_frame, height=10, width=40)
-    listbox.grid(row=0, column=0, padx=10, pady=(0, 5))  # Add padding below to create space for button
+    listbox.grid(row=0, column=0, padx=10, pady=(0, 5)) 
 
     # Listbox for selected students
     selected_students_listbox = tk.Listbox(listbox_frame, height=10, width=40)

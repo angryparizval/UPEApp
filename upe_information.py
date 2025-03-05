@@ -91,9 +91,11 @@ def open_upe_information(homepage_window, root):
     def display_names_two_columns(title, names, parent):
         title_label = tk.Label(parent, text=title, font=("Helvetica", 17, "bold"))
         title_label.grid(row=0, column=0, columnspan=2, pady=5)
-        
-        col1 = names[:len(names)//2]  # First half
-        col2 = names[len(names)//2:]  # Second half
+       
+        # First half
+        col1 = names[:len(names)//2] 
+        # Second half
+        col2 = names[len(names)//2:]  
         
         for i, name in enumerate(col1):
             name_label = tk.Label(parent, text=name, font=("Helvetica", 15))
@@ -106,7 +108,7 @@ def open_upe_information(homepage_window, root):
     # Display the lists in respective frames
     display_names("Charter Faculty:", charter_faculty, left_frame)
     display_names("Charter Alumni:", charter_alumni, left_frame)
-    display_names_two_columns("Charter Undergraduate Students:", charter_undergrad_students, center_frame)  # 2-column layout
+    display_names_two_columns("Charter Undergraduate Students:", charter_undergrad_students, center_frame)
 
     # Buttons in the right frame
     ttk.Button(right_frame, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()]).pack(pady=5, fill="x")
