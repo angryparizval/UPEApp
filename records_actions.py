@@ -2,6 +2,7 @@
 import tkinter as tk
 import sqlite3
 from tkinter import ttk
+from tkinter import messagebox
 from ttkthemes import ThemedTk
 from tkcalendar import Calendar
 from utils import center_window
@@ -54,6 +55,15 @@ def fetch_student_data():
     rows = cursor.fetchall()
     return rows
 
+
+
+
+
+
+
+
+
+
 '''
 -------------------------------------
 MAIN RECORDS ACTIONS WINDOW FUNCTIONS
@@ -91,13 +101,58 @@ def open_records_act(homepage_window, root):
     btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [close_db_connection(), records_act_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
 
+
+
+
+
+
+
+
+
+
 '''
 ------------------------------
 ADD MEMBER WINDOW FUNCTIONS
 ------------------------------
 '''
 
+#function to send data when the user hits submit
+def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    #splitting dob_var into year month and day again to verify that the format is correct
+    year, month, day = map(int, dob_var.split('/'))
+    dob = datetime.date(year, month, day)
 
+    #checks for all possible errors in date
+    if(dob > datetime.date.today() or month < 1 or month > 12 or day < 1 or day > ((datetime.date(year, month + 1, 1) - datetime.timedelta(days=1)).day)):
+        messagebox.showerror("Error", "Please input a valid birthdate")
+        return
+    
+    #checks to make sure phonenumber is correct number of values
+    if(len(phoNo_var) < 13):
+        messagebox.showerror("Error", "Invalid Phone Number")
+        return
+
+    #checks to make sure all fields have information inputted into them
+    if not all([txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm]):
+        messagebox.showerror("Error", "All fields must be filled")
+        return
+
+    #finds the last mem_id value and adds one to it
+    cursor.execute("SELECT COALESCE(MAX(MEM_ID), 0) + 1 FROM Member")
+    memId = cursor.fetchone()[0]
+
+    #insert command to send data to db
+    cursor.execute("""
+        INSERT INTO Member (MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISSED_DESC, MEM_PREFER_NAME) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+        (memId, txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, "", phoNo_var, txtMemAbrStatus, txtMemComStatus, 0, "", txtMemPreferNm))
+
+    #commit changes and close connection
+    conn.commit()
+    conn.close()
 
 #function to get the selected date
 def get_selected_date(cal, lblSelectedDate):
@@ -181,7 +236,7 @@ def open_add_member(root, student_id, student_first, student_last):
 
     #set column and row amount based on actual row/column amount
     total_columns = 6
-    total_rows = 5
+    total_rows = 6
 
     #sets window to root,centers it and sets window title
     add_member_window = tk.Toplevel(root)
@@ -288,7 +343,7 @@ def open_add_member(root, student_id, student_first, student_last):
     txtMemPos = tk.StringVar()
     pos_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemPos, values=["President", "Vice President", "Secretary"], state="readonly", width=20)
     #sets default text to select status
-    pos_dropdown.set("Select position")
+    pos_dropdown.set("Select Position")
     pos_dropdown.grid(row=3, column=1, padx=(5, 10), pady=10, sticky="w")
 
     #label for member phone number
@@ -301,7 +356,7 @@ def open_add_member(root, student_id, student_first, student_last):
         #remove any non-digit characters except slashes
         numbers1 = [char1 for char1 in current_text1 if char1.isdigit()]
         
-        #format as YYYY/MM/DD as that is sql default date format
+        #format as (xxx)xxx-xxxx 
         formatted_text1 = "("
         if len(numbers1) > 0:
             formatted_text1 += "".join(numbers1[0:3]) # MM
@@ -317,7 +372,7 @@ def open_add_member(root, student_id, student_first, student_last):
         #moves the cursor to the correct position after each numbner
         txtMemPhoNo.after(1, lambda: txtMemPhoNo.icursor(len(phoNo_var.get())))
     
-    #stringVar to hold the date
+    #stringVar to hold the phhonenumber
     phoNo_var = tk.StringVar()
     #sets default text in the box
     phoNo_var.set("(xxx)-xxx-xxxx")  
@@ -358,18 +413,23 @@ def open_add_member(root, student_id, student_first, student_last):
         add_member_window.columnconfigure(i, weight=0)
     for i in range(total_rows):  
         add_member_window.rowconfigure(i, weight=1)
-    
+
+    #button to submit all data
+    btn_submit_member = ttk.Button(add_member_window, text="Submit", command=lambda: [send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm)])
+    btn_submit_member.place(relx=0.88, rely=0.92, anchor="se")
+
     #button to return to records screen
     btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
-    '''
-    ************
-    IMPORTANT
-    --------
-    -Need to figure out how to do a conn.close at some point during one of the windows
-    ************
-    '''
+
+
+
+
+
+
+
+
 
 '''
 ------------------------------
@@ -397,6 +457,13 @@ def open_add_student(root):
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
+
+
+
+
+
+
+
 
 
 
