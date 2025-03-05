@@ -7,6 +7,7 @@ from ttkthemes import ThemedTk
 from tkcalendar import Calendar
 from utils import center_window
 import datetime
+import re
 
 
 '''
@@ -122,7 +123,7 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
     cursor = conn.cursor()
     
     #splitting dob_var into year month and day again to verify that the format is correct
-    year, month, day = map(int, dob_var.split('/'))
+    year, month, day = map(int, dob_var.get().split('-'))
     dob = datetime.date(year, month, day)
 
     #checks for all possible errors in date
@@ -131,12 +132,12 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
         return
     
     #checks to make sure phonenumber is correct number of values
-    if(len(phoNo_var) < 13):
+    if(len(phoNo_var.get()) != 13 ):
         messagebox.showerror("Error", "Invalid Phone Number")
         return
 
     #checks to make sure all fields have information inputted into them
-    if not all([txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm]):
+    if(dob_var.get()== "YYYY-MM-DD" or phoNo_var.get() == "(xxx)xxx-xxxx" or txtMemStudID.get() == "Select Status" or txtMemEntryYr.get() == "Select Year" or txtMemStatus.get() == "Select Status" or txtMemPos.get() == "Select Position" or txtMemAbrStatus.get() == "Select Status" or txtMemComStatus.get() == "Select Status"):
         messagebox.showerror("Error", "All fields must be filled")
         return
 
@@ -146,13 +147,17 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
 
     #insert command to send data to db
     cursor.execute("""
-        INSERT INTO Member (MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISSED_DESC, MEM_PREFER_NAME) 
+        INSERT INTO Member (MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISD_DESC, MEM_PREFR_NAME) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
-        (memId, txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, "", phoNo_var, txtMemAbrStatus, txtMemComStatus, 0, "", txtMemPreferNm))
+        (memId, txtMemStudID.get(), dob_var.get(), txtMemEntryYr.get(), txtMemStatus.get(), txtMemPos.get(), "", phoNo_var.get(), txtMemAbrStatus.get(), txtMemComStatus.get(), 0, "", txtMemPreferNm.get()))
 
     #commit changes and close connection
     conn.commit()
     conn.close()
+
+    #sends message to let user know if everything worked correctly
+    messagebox.showinfo("Success","Member Succesfully Added")
+    records_act_window.deiconify
 
 #function to get the selected date
 def get_selected_date(cal, lblSelectedDate):
@@ -295,9 +300,9 @@ def open_add_member(root, student_id, student_first, student_last):
         if len(numbers) > 0:
             formatted_text += "".join(numbers[0:4]) #MM
         if len(numbers) > 4:
-            formatted_text += "/" + "".join(numbers[4:6])  #/DD
+            formatted_text += "-" + "".join(numbers[4:6])  #/DD
         if len(numbers) > 6:
-            formatted_text += "/" + "".join(numbers[6:8])  #/YYYY
+            formatted_text += "-" + "".join(numbers[6:8])  #/YYYY
 
         #prevent infinite loop by checking if formatted text is different
         if formatted_text != current_text:
@@ -309,7 +314,7 @@ def open_add_member(root, student_id, student_first, student_last):
     #stringVar to hold the date
     dob_var = tk.StringVar()
     #sets default text in the box
-    dob_var.set("YYYY/MM/DD")  
+    dob_var.set("YYYY-MM-DD")  
     dob_var.trace_add("write", on_dob_entry_change)
     #member date of birth entry field
     txtMemDOB = tk.Entry(add_member_window, text=dob_var, width=20)
@@ -341,7 +346,7 @@ def open_add_member(root, student_id, student_first, student_last):
     lblMemPos.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="w")
     #creates dropdown for position selection
     txtMemPos = tk.StringVar()
-    pos_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemPos, values=["President", "Vice President", "Secretary"], state="readonly", width=20)
+    pos_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemPos, values=["President", "Vice President", "Secretary", "Member"], state="readonly", width=20)
     #sets default text to select status
     pos_dropdown.set("Select Position")
     pos_dropdown.grid(row=3, column=1, padx=(5, 10), pady=10, sticky="w")
@@ -375,7 +380,7 @@ def open_add_member(root, student_id, student_first, student_last):
     #stringVar to hold the phhonenumber
     phoNo_var = tk.StringVar()
     #sets default text in the box
-    phoNo_var.set("(xxx)-xxx-xxxx")  
+    phoNo_var.set("(xxx)xxx-xxxx")  
     phoNo_var.trace_add("write", on_phoNo_entry_change)
     #entry box for member phone number
     txtMemPhoNo = tk.Entry(add_member_window,text=phoNo_var, width=20)
