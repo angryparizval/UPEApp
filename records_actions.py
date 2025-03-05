@@ -3,7 +3,9 @@ import tkinter as tk
 import sqlite3
 from tkinter import ttk
 from ttkthemes import ThemedTk
+from tkcalendar import Calendar
 from utils import center_window
+import datetime
 
 
 '''
@@ -14,6 +16,7 @@ GENERAL USE FUNCTIONS
 
 #global variables
 conn = None
+selected_date_str = ""
 
 #Function to get connection to db
 def get_db_connection():
@@ -65,7 +68,7 @@ def open_records_act(homepage_window, root):
     global records_act_window
     records_act_window = tk.Toplevel(root)
     records_act_window.title("Select Records Action")
-    center_window(records_act_window, 800, 630)
+    center_window(records_act_window, 950,700)
 
     #Top title of records
     label = tk.Label(records_act_window, text="Records", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
@@ -93,6 +96,14 @@ def open_records_act(homepage_window, root):
 ADD MEMBER WINDOW FUNCTIONS
 ------------------------------
 '''
+
+
+
+#function to get the selected date
+def get_selected_date(cal, lblSelectedDate):
+    selected_date_str = "No Date Selected"
+    selected_date_str = cal.get_date()
+    lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
 #function to run search query in database
 def search_students():
@@ -128,7 +139,7 @@ def select_student(root):
 #function to open search student window
 def open_search_student(root):
     global search_window, search_var, student_listbox
-    records_act_window.withdraw()
+    
 
     #creates window, centers it and gives it a title
     search_window = tk.Toplevel(root)
@@ -152,7 +163,7 @@ def open_search_student(root):
     student_listbox.pack(pady=5)
 
     #select button that moves to next page with selected student info
-    select_button = ttk.Button(search_window, text="Select", command= lambda: select_student(root))
+    select_button = ttk.Button(search_window, text="Select", command= lambda: [select_student(root),records_act_window.withdraw()] )
     select_button.pack()
     
     #button to return to records screen
@@ -169,44 +180,178 @@ def open_add_member(root, student_id, student_first, student_last):
     global add_member_window
 
     #set column and row amount based on actual row/column amount
-    total_columns = 5
+    total_columns = 6
     total_rows = 5
 
     #sets window to root,centers it and sets window title
     add_member_window = tk.Toplevel(root)
-    center_window(add_member_window, 800, 630)
+    center_window(add_member_window, 950,700)
     add_member_window.title("Add Members")
     
-    #temporary label of information
+    #top header
     label = tk.Label(add_member_window, text="Add Members", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
-    label.place(relx = .35, rely = .05, anchor="nw")
+    label.place(relx = .30, rely = .05, anchor="nw")
 
-    lblMemID = tk.Label(add_member_window, text="Student ID", height=1, width=15)
-    lblMemID.grid(row=1, column=0, columnspan=1, pady=10)
-
+    #label for student id
+    lblStudId = tk.Label(add_member_window, text="Student ID:", height=1, width=15)
+    lblStudId.grid(row=1, column=0, pady=10, padx=(10, 5), sticky = "w")
     #student id textbox that is prefilled using search student returned stud_id
     txtMemStudID = tk.Entry(add_member_window, width=20)
-    txtMemStudID.grid(row=1, column=1, columnspan=1, pady=10)
+    txtMemStudID.grid(row=1, column=1, padx=(5, 10), pady=10, sticky="w")
     #inserts id into box
     txtMemStudID.insert(0, student_id)
     #makes it readonly so stud_id is not messed with by user
     txtMemStudID.config(state="readonly")  
 
+    #label for student first name
+    lblMemFName = tk.Label(add_member_window, text="First Name:", height=1, width=15)
+    lblMemFName.grid(row=1, column=2, pady=10, padx=(10, 5), sticky = "w")
     #member first name entry field
     txtMemFName = tk.Entry(add_member_window, width=20)
-    txtMemFName.grid(row=1, column=2, columnspan=1, pady=10)
+    txtMemFName.grid(row=1, column=3, padx=(5, 10), pady=10, sticky="w")
+    #inserts first name into box
+    txtMemFName.insert(0, student_first)
+    #makes box readonly so first name is not messed with by user
+    txtMemFName.config(state="readonly")
 
+    #label for student last name
+    lblMemLName = tk.Label(add_member_window, text="Last Name:", height=1, width=15 )
+    lblMemLName.grid(row=1, column = 4, pady=10, padx=(10, 5), sticky = "w")
     #member last name entry field
     txtMemLName = tk.Entry(add_member_window, width=20)
-    txtMemLName.grid(row=1, column=3, columnspan=1, pady=10)
+    txtMemLName.grid(row=1, column=5, padx=(5, 10), pady=10, sticky="w")
+    #inserts last name into box
+    txtMemLName.insert(0, student_last)
+    #makes box readonly so first name is not messed with by user
+    txtMemLName.config(state="readonly")
 
-    #member dob entry field
-    txtMemDOB = tk.Entry(add_member_window, width=20)
-    txtMemDOB.grid(row=2, column=0, columnspan=1, pady=10)
+    #label for member dob
+    lblMemDob = tk.Label(add_member_window, text="Birthdate:", height=1, width=15)
+    lblMemDob.grid(row=2, column=0, padx=(10,5), pady=10, sticky="w")
+    #function for date entry that formats it with YYYY/MM/DD and auto moves cursor
+    def on_dob_entry_change(*args):
+        current_text = dob_var.get()
+        
+        #remove any non-digit characters except slashes
+        numbers = [char for char in current_text if char.isdigit()]
+        
+        #format as YYYY/MM/DD as that is sql default date format
+        formatted_text = ""
+        if len(numbers) > 0:
+            formatted_text += "".join(numbers[0:4]) #MM
+        if len(numbers) > 4:
+            formatted_text += "/" + "".join(numbers[4:6])  #/DD
+        if len(numbers) > 6:
+            formatted_text += "/" + "".join(numbers[6:8])  #/YYYY
 
+        #prevent infinite loop by checking if formatted text is different
+        if formatted_text != current_text:
+            dob_var.set(formatted_text)
+
+        #moves the cursor to the correct position after each numbner
+        txtMemDOB.after(1, lambda: txtMemDOB.icursor(len(dob_var.get())))
+    
+    #stringVar to hold the date
+    dob_var = tk.StringVar()
+    #sets default text in the box
+    dob_var.set("YYYY/MM/DD")  
+    dob_var.trace_add("write", on_dob_entry_change)
+    #member date of birth entry field
+    txtMemDOB = tk.Entry(add_member_window, text=dob_var, width=20)
+    txtMemDOB.grid(row=2, column=1, padx=(5, 10), pady=10, sticky="w")
+
+    #label for member entry year
+    lblMemEntryYr = tk.Label(add_member_window, text="Entry Year:", height=1, width=15)
+    lblMemEntryYr.grid(row=2, column=2, padx=(10,5), pady=10, sticky="w")
     #member entry year entry field
-    txtEntryYr = tk.Entry(add_member_window, width=20)
-    txtEntryYr.grid(row=2, column=1, columnspan=1, pady=10)
+    txtMemEntryYr = tk.StringVar()
+    #creates a dropdown with year options from 1900-current year
+    entryYr_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemEntryYr, values=list(range(1900,datetime.datetime.now().year + 1)), state="readonly", width=20)
+    #sets default text to select status
+    entryYr_dropdown.set("Select Year")
+    entryYr_dropdown.grid(row=2, column=3, padx=(5, 10), pady=10, sticky="w")
+    
+    #label for member status
+    lblMemStatus = tk.Label(add_member_window, text="Member Status:", height=1, width=15)
+    lblMemStatus.grid(row=2, column=4, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for status selection
+    txtMemStatus = tk.StringVar()
+    status_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemStatus, values=["Active", "Inactive", "Alumni"], state="readonly", width=20)
+    #sets default text to select status
+    status_dropdown.set("Select Status")
+    status_dropdown.grid(row=2, column=5, padx=(5, 10), pady=10, sticky="w")
+
+    #label for member position
+    lblMemPos = tk.Label(add_member_window, text="Position:", height=1, width=15)
+    lblMemPos.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="w")
+    #creates dropdown for position selection
+    txtMemPos = tk.StringVar()
+    pos_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemPos, values=["President", "Vice President", "Secretary"], state="readonly", width=20)
+    #sets default text to select status
+    pos_dropdown.set("Select position")
+    pos_dropdown.grid(row=3, column=1, padx=(5, 10), pady=10, sticky="w")
+
+    #label for member phone number
+    lblMemPhoNo = tk.Label(add_member_window, text="Phone Number:", height=1, width=15)
+    lblMemPhoNo.grid(row=3, column=2, padx=(10,5), pady=10, sticky="w")
+    #function for date entry that formats it with YYYY/MM/DD and auto moves cursor
+    def on_phoNo_entry_change(*args):
+        current_text1 = phoNo_var.get()
+        
+        #remove any non-digit characters except slashes
+        numbers1 = [char1 for char1 in current_text1 if char1.isdigit()]
+        
+        #format as YYYY/MM/DD as that is sql default date format
+        formatted_text1 = "("
+        if len(numbers1) > 0:
+            formatted_text1 += "".join(numbers1[0:3]) # MM
+        if len(numbers1) > 2:
+            formatted_text1 += ") " + "".join(numbers1[3:6])  # /DD
+        if len(numbers1) > 5:
+            formatted_text1 += "-" + "".join(numbers1[6:10])  # /YYYY
+
+        #prevent infinite loop by checking if formatted text is different
+        if formatted_text1 != current_text1:
+            phoNo_var.set(formatted_text1)
+
+        #moves the cursor to the correct position after each numbner
+        txtMemPhoNo.after(1, lambda: txtMemPhoNo.icursor(len(phoNo_var.get())))
+    
+    #stringVar to hold the date
+    phoNo_var = tk.StringVar()
+    #sets default text in the box
+    phoNo_var.set("(xxx)-xxx-xxxx")  
+    phoNo_var.trace_add("write", on_phoNo_entry_change)
+    #entry box for member phone number
+    txtMemPhoNo = tk.Entry(add_member_window,text=phoNo_var, width=20)
+    txtMemPhoNo.grid(row=3, column=3, padx=(5,10), pady=10, sticky="w")
+
+    #label for member abroad status
+    lblMemAbrStatus = tk.Label(add_member_window, text="Abroad Status:", height=1, width=15)
+    lblMemAbrStatus.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for abroad status selection
+    txtMemAbrStatus = tk.StringVar()
+    abrStatus_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemAbrStatus, values=["Y","N"], state="readonly", width=20)
+    #sets default text to select status
+    abrStatus_dropdown.set("Select Status")
+    abrStatus_dropdown.grid(row=3, column=5, padx=(5, 10), pady=10, sticky="w")
+
+    #label for member commuter status
+    lblMemComStatus = tk.Label(add_member_window, text="Commute Status:", height=1, width=15)
+    lblMemComStatus.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for commuter status selection
+    txtMemComStatus = tk.StringVar()
+    comStatus_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemComStatus, values=["Y","N"], state="readonly", width=20)
+    #sets default text to select status
+    comStatus_dropdown.set("Select Status")
+    comStatus_dropdown.grid(row=4, column=1, padx=(5, 10), pady=10, sticky="w")
+
+    #label for member prefer name
+    lblMemPreferNm = tk.Label(add_member_window, text="Preferred Name:", height=1, width=15)
+    lblMemPreferNm.grid(row=4, column=2, padx=(10,5), pady=10, sticky="w")
+    #entry box for member phone number
+    txtMemPreferNm = tk.Entry(add_member_window, width=20)
+    txtMemPreferNm.grid(row=4, column=3, padx=(5,10), pady=10, sticky="w")
     
     #configures column spacing
     for i in range(total_columns):  
@@ -214,16 +359,16 @@ def open_add_member(root, student_id, student_first, student_last):
     for i in range(total_rows):  
         add_member_window.rowconfigure(i, weight=1)
     
-    #button to return back to records actions screen
-    btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back to Records Actions", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
-    btn_rtn_recordsact_window.grid(row=0, column=0, columnspan=1, pady=20, sticky="nw", padx=10)
+    #button to return to records screen
+    btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
     '''
-    *********
+    ************
     IMPORTANT
-    
-    Need to figure out how to do a conn.close at some point during one of the windows
-    *********
+    --------
+    -Need to figure out how to do a conn.close at some point during one of the windows
+    ************
     '''
 
 '''
@@ -242,7 +387,7 @@ def open_add_student(root):
     
     #sets window to root,centers it and sets window title
     add_student_window = tk.Toplevel(root)
-    center_window(add_student_window, 800, 630)
+    center_window(add_student_window, 950,700)
     add_student_window.title("Add Student")
     
     #top window header
@@ -251,7 +396,7 @@ def open_add_student(root):
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
-    btn_rtn_recordsact_window.pack()
+    btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
 
 
@@ -260,11 +405,6 @@ def open_add_student(root):
 VIEW RECORDS WINDOW FUNCTIONS
 ------------------------------
 '''
-
-
-import tkinter as tk
-from tkinter import ttk
-import sqlite3
 
 entry_widget = None
 
