@@ -458,8 +458,6 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
 
-    add_member_window.conn = conn
-
 
 
 
