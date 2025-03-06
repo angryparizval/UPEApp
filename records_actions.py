@@ -4,11 +4,10 @@ import sqlite3
 from tkinter import ttk
 from tkinter import messagebox
 from ttkthemes import ThemedTk
-from tkcalendar import Calendar
 from utils import center_window
 import datetime
+import calendar
 import re
-
 
 '''
 ---------------------------------
@@ -73,6 +72,7 @@ MAIN RECORDS ACTIONS WINDOW FUNCTIONS
 
 # Window to select which records and if the user wants to edit or view
 def open_records_act(homepage_window, root):
+
     # Withdraws homepage
     homepage_window.withdraw()
     
@@ -116,23 +116,52 @@ def open_records_act(homepage_window, root):
 ADD MEMBER WINDOW FUNCTIONS
 ------------------------------
 '''
+#function to validate phone number against format
+def validate_phone_number(phone_number):
+    #regular expression to check for the format (xxx)xxx-xxxx
+    pattern = r"^\(\d{3}\)\d{3}-\d{4}$"
+    
+    #if it matches returns true else false
+    if re.match(pattern, phone_number):
+        return True
+    else:
+        return False
 
 #function to send data when the user hits submit
-def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm):
-    conn = get_db_connection()
-    cursor = conn.cursor()
+def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm, conn):
     
-    #splitting dob_var into year month and day again to verify that the format is correct
-    year, month, day = map(int, dob_var.get().split('-'))
-    dob = datetime.date(year, month, day)
+    cursor = conn.cursor()
 
-    #checks for all possible errors in date
-    if(dob > datetime.date.today() or month < 1 or month > 12 or day < 1 or day > ((datetime.date(year, month + 1, 1) - datetime.timedelta(days=1)).day)):
-        messagebox.showerror("Error", "Please input a valid birthdate")
+    dob=datetime.date.today()
+
+    #try-catch to find any invalid dates inputted
+    try:
+        #splits input into of date into year, month and day variables
+        year, month, day = map(int, dob_var.get().split('-'))
+
+        #check if month is between 1-12
+        if month < 1 or month > 12:
+            raise ValueError("Month should be between 1 and 12.")
+
+        #check if day is valid for the given month and year
+        days_in_month = calendar.monthrange(year, month)[1]
+        if day < 1 or day > days_in_month:
+            raise ValueError(f"{month}/{year} has only {days_in_month} days.")
+
+        #if date makes it through checks create dob object
+        dob = datetime.date(year, month, day)
+
+    except ValueError as e:
+        messagebox.showerror("Error", f"Invalid date: {str(e)}")
+        return
+
+    #check to see if date entered is in the future
+    if dob > datetime.date.today():
+        messagebox.showerror("Error", "Please input a valid birthdate (cannot be in the future).")
         return
     
     #checks to make sure phonenumber is correct number of values
-    if(len(phoNo_var.get()) != 13 ):
+    if(validate_phone_number(phoNo_var.get()) == False):
         messagebox.showerror("Error", "Invalid Phone Number")
         return
 
@@ -145,16 +174,18 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
     cursor.execute("SELECT COALESCE(MAX(MEM_ID), 0) + 1 FROM Member")
     memId = cursor.fetchone()[0]
 
+    if(txtMemPreferNm.get() == ""):
+        mem_prefer_nm = None
+
     #insert command to send data to db
     cursor.execute("""
         INSERT INTO Member (MEM_ID, STUD_ID, MEM_DOB, MEM_ENTRY_YR, MEM_STATUS, MEM_POS, MEM_PST_POS, MEM_PHO_NO, MEM_ABROAD_ST, MEM_COMMUTE_ST, MEM_MEETING_MISD, MEM_MEETING_MISD_DESC, MEM_PREFR_NAME) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
-        (memId, txtMemStudID.get(), dob_var.get(), txtMemEntryYr.get(), txtMemStatus.get(), txtMemPos.get(), "", phoNo_var.get(), txtMemAbrStatus.get(), txtMemComStatus.get(), 0, "", txtMemPreferNm.get()))
+        (memId, txtMemStudID.get(), dob_var.get(), txtMemEntryYr.get(), txtMemStatus.get(), txtMemPos.get(), None, phoNo_var.get(), txtMemAbrStatus.get(), txtMemComStatus.get(), None, None, mem_prefer_nm))
 
-    #commit changes and close connection
+    #commit changes
     conn.commit()
-    conn.close()
-
+    
     #sends message to let user know if everything worked correctly
     messagebox.showinfo("Success","Member Succesfully Added")
     records_act_window.deiconify
@@ -193,14 +224,13 @@ def select_student(root):
         student_id = selected.split()[0]  
         student_first = selected.split()[1]
         student_last = selected.split()[2]
-        open_add_member(root, student_id, student_first, student_last)
+        open_add_member(root, student_id, student_first, student_last, conn)
         
 
 #function to open search student window
 def open_search_student(root):
     global search_window, search_var, student_listbox
     
-
     #creates window, centers it and gives it a title
     search_window = tk.Toplevel(root)
     center_window(search_window, 600, 400)
@@ -232,12 +262,12 @@ def open_search_student(root):
     
 
 #function to op window where user will input info to add member
-def open_add_member(root, student_id, student_first, student_last):
+def open_add_member(root, student_id, student_first, student_last, conn):
     global add_member_window, txtMemStudID
     #withdraws search student window
     search_window.withdraw()
-    #sets the window variable to global to avoid having to send it around
-    global add_member_window
+
+    conn = get_db_connection()
 
     #set column and row amount based on actual row/column amount
     total_columns = 6
@@ -364,11 +394,11 @@ def open_add_member(root, student_id, student_first, student_last):
         #format as (xxx)xxx-xxxx 
         formatted_text1 = "("
         if len(numbers1) > 0:
-            formatted_text1 += "".join(numbers1[0:3]) # MM
+            formatted_text1 += "".join(numbers1[0:3]) #(xxx)
         if len(numbers1) > 2:
-            formatted_text1 += ") " + "".join(numbers1[3:6])  # /DD
+            formatted_text1 += ")" + "".join(numbers1[3:6])  #xxx
         if len(numbers1) > 5:
-            formatted_text1 += "-" + "".join(numbers1[6:10])  # /YYYY
+            formatted_text1 += "-" + "".join(numbers1[6:10])  #-xxxx
 
         #prevent infinite loop by checking if formatted text is different
         if formatted_text1 != current_text1:
@@ -420,7 +450,7 @@ def open_add_member(root, student_id, student_first, student_last):
         add_member_window.rowconfigure(i, weight=1)
 
     #button to submit all data
-    btn_submit_member = ttk.Button(add_member_window, text="Submit", command=lambda: [send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm)])
+    btn_submit_member = ttk.Button(add_member_window, text="Submit", command=lambda: [send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm, conn)])
     btn_submit_member.place(relx=0.88, rely=0.92, anchor="se")
 
     #button to return to records screen
@@ -428,7 +458,7 @@ def open_add_member(root, student_id, student_first, student_last):
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
 
-
+    add_member_window.conn = conn
 
 
 
@@ -509,7 +539,6 @@ def update_database(table, column_name, new_value, primary_key_value):
     cursor.execute(query, (new_value, primary_key_value))
     
     conn.commit()
-    conn.close()
 
 #function to handle double-click on a treeview table cells
 def on_double_click(event):
