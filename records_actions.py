@@ -224,6 +224,22 @@ def select_student(root):
         student_id = selected.split()[0]  
         student_first = selected.split()[1]
         student_last = selected.split()[2]
+
+        #gets connection to DB
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        #checks to make sure that a member with the selected student id doesnt exist already
+        #searchs for a member with a matching stud_id, if it finds it returns 1
+        cursor.execute("SELECT 1 FROM Member WHERE STUD_ID = ?", (student_id,))
+        exists = cursor.fetchone()
+        #if member already exists gives error message and doesnt move forward
+        if exists:
+            messagebox.showerror("Error", "Member with that student ID already exists")
+            return
+
+        records_act_window.withdraw()
+        #opens add member window
         open_add_member(root, student_id, student_first, student_last, conn)
         
 
@@ -253,7 +269,7 @@ def open_search_student(root):
     student_listbox.pack(pady=5)
 
     #select button that moves to next page with selected student info
-    select_button = ttk.Button(search_window, text="Select", command= lambda: [select_student(root),records_act_window.withdraw()] )
+    select_button = ttk.Button(search_window, text="Select", command= lambda: [select_student(root)] )
     select_button.pack()
     
     #button to return to records screen
@@ -470,6 +486,12 @@ ADD STUDENT WINDOW FUNCTIONS
 ------------------------------
 '''
 
+def send_student_data():
+    email = "temporary"
+
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return re.match(pattern, email) is not None
+
 #function to open add student window
 def open_add_student(root):
     #withdraws records_act_window
@@ -486,6 +508,140 @@ def open_add_student(root):
     #top window header
     label = tk.Label(add_student_window, text="Add Student", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
     label.place(relx = .35, rely = .05, anchor="nw")
+
+
+    #set column and row amount based on actual row/column amount
+    total_columns = 6
+    total_rows = 10
+
+    #label for studentid
+    lblStudID = tk.Label(add_student_window, text="Student ID:", height=1, width=15)
+    lblStudID.grid(row=3, column=0, padx=(10,5), pady=10, sticky="w")
+    #textbox for studid
+    txtStudID = tk.Entry(add_student_window, width=20)
+    txtStudID.grid(row=3, column=1, padx=(5,10), pady=10, sticky="w")
+    
+    #label for student first name
+    lblStudFstNm = tk.Label(add_student_window, text="First Name:", height=1, width=15)
+    lblStudFstNm.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
+    #entry field for student first name
+    txtStudFstNm = tk.Entry(add_student_window, width=20)
+    txtStudFstNm.grid(row=4, column=1, padx=(5,10), pady=10, sticky="w")
+
+    #label for student middle intial
+    lblStudMInit = tk.Label(add_student_window, text="Middle Initial:", height=1, width=15)
+    lblStudMInit.grid(row=5, column=0, padx=(10,5), pady=10, sticky="w")
+    #entry field for student middle intial
+    txtStudMinit = tk.Entry(add_student_window, width=20)
+    txtStudMinit.grid(row=5, column=1, padx=(5,10), pady=10, sticky="w")
+
+    #label for student last name
+    lblStudLstNm = tk.Label(add_student_window, text="Last Name:", height=1, width=15)
+    lblStudLstNm.grid(row=6, column=0, padx=(10,5), pady=10, sticky="w")
+    #entry field for student first name
+    txtStudLstNm = tk.Entry(add_student_window, width=20)
+    txtStudLstNm.grid(row=6, column=1, padx=(5,10), pady=10, sticky="w")
+
+    #label for student email address
+    lblStudEmail = tk.Label(add_student_window, text="Email Address:", height=1, width=15)
+    lblStudEmail.grid(row=7, column=0, padx=(10,5), pady=10, sticky="w")
+    #entry field for student email address
+    txtStudEmail = tk.Entry(add_student_window, width=20)
+    txtStudEmail.grid(row=7, column=1, padx=(5,10), pady=10, sticky="w")
+
+    #label for student class level
+    lblStudClassLvl = tk.Label(add_student_window, text="Class Level:", height=1, width=15)
+    lblStudClassLvl.grid(row=3, column=2, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for class level selection
+    txtStudClassLvl = tk.StringVar()
+    classLvl_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudClassLvl, values=["Freshman", "Sophomore", "Junior", "Senior", "Senior+"], state="readonly", width=20)
+    #sets default text to select class level
+    classLvl_dropdown.set("Select Class Level")
+    classLvl_dropdown.grid(row=3, column=3, padx=(5, 10), pady=10, sticky="w")
+
+    #label for student curriculum
+    lblStudCurr = tk.Label(add_student_window, text="Curriculum:", height=1, width=15)
+    lblStudCurr.grid(row=4, column=2, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for curriculum selection
+    txtStudCurr = tk.StringVar()
+    curr_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudCurr, values=["BA", "BS"], state="readonly", width=20)
+    #sets default text to select curriculum
+    curr_dropdown.set("Select Curriculum")
+    curr_dropdown.grid(row=4, column=3, padx=(5, 10), pady=10, sticky="w")
+
+    #label for student degree
+    lblStudDegree = tk.Label(add_student_window, text="Degree:", height=1, width=15)
+    lblStudDegree.grid(row=5, column=2, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for degree selection
+    txtStudDegree = tk.StringVar()
+    degree_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudDegree, values=["Computer Science", "Information Technology", "Cybersecurity"], state="readonly", width=20)
+    #sets default text to select degree
+    degree_dropdown.set("Select Degree")
+    degree_dropdown.grid(row=5, column=3, padx=(5, 10), pady=10, sticky="w")
+
+    #label for student cumulative gpa
+    lblStudCumGPA = tk.Label(add_student_window, text="Cumulative GPA:", height=1, width=15)
+    lblStudCumGPA.grid(row=6, column=2, padx=(10,5), pady=10, sticky="w")
+    #entry field for student email address
+    txtStudCumGPA = tk.Entry(add_student_window, width=20)
+    txtStudCumGPA.grid(row=6, column=3, padx=(5,10), pady=10, sticky="w")
+
+    #label for student Transfer Credits
+    lblStudTransCred = tk.Label(add_student_window, text="Transfer Credits:", height=1, width=15)
+    lblStudTransCred.grid(row=7, column=2, padx=(10,5), pady=10, sticky="w")
+    #entry field for student transfer credits
+    txtStudTransCred = tk.Entry(add_student_window, width=20)
+    txtStudTransCred.grid(row=7, column=3, padx=(5,10), pady=10, sticky="w")
+
+    #label for student earned Credits
+    lblStudEarnedCred = tk.Label(add_student_window, text="Earned Credits:", height=1, width=15)
+    lblStudEarnedCred.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
+    #entry field for student transfer credits
+    txtStudEarnedCred = tk.Entry(add_student_window, width=20)
+    txtStudEarnedCred.grid(row=3, column=5, padx=(5,10), pady=10, sticky="w")
+
+    #label for student Total Credits
+    lblStudTotalCred = tk.Label(add_student_window, text="Total Credits:", height=1, width=15)
+    lblStudTotalCred.grid(row=4, column=4, padx=(10,5), pady=10, sticky="w")
+    #entry field for student total credits
+    txtStudTotalCred = tk.Entry(add_student_window, width=20)
+    txtStudTotalCred.grid(row=4, column=5, padx=(5,10), pady=10, sticky="w")
+
+    #label for below 30 lr credits indicator
+    lblStudBelow30LrCred = tk.Label(add_student_window, text="Below 30 LR Credits?:", height=1, width=15)
+    lblStudBelow30LrCred.grid(row=5, column=4, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for below 30 indicator selection
+    txtStudBelow30LrCred = tk.StringVar()
+    belowcred_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudBelow30LrCred, values=["Y", "N"], state="readonly", width=20)
+    #sets default text to select Y/N
+    belowcred_dropdown.set("Select Y/N")
+    belowcred_dropdown.grid(row=5, column=5, padx=(5, 10), pady=10, sticky="w")
+
+    #label for below 3.0 GPA indicator
+    lblStudBel3GPA = tk.Label(add_student_window, text="Below 3.0 GPA?:", height=1, width=15)
+    lblStudBel3GPA.grid(row=6, column=4, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for below 3.0 GPA indicator selection
+    txtStudBel3GPA = tk.StringVar()
+    belowgpa_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudBel3GPA, values=["Y", "N"], state="readonly", width=20)
+    #sets default text to select degree
+    belowgpa_dropdown.set("Select Y/N")
+    belowgpa_dropdown.grid(row=6, column=5, padx=(5, 10), pady=10, sticky="w")
+
+    #label for student invite status
+    lblStudInvStatus = tk.Label(add_student_window, text="Invite Status:", height=1, width=15)
+    lblStudInvStatus.grid(row=7, column=4, padx=(10,5), pady=10, sticky="w")
+    #creates dropdown for invite status selection
+    txtStudInvStatus = tk.StringVar()
+    invstatus_dropdown = ttk.Combobox(add_student_window, textvariable=txtStudInvStatus, values=["N/A", "Invited", "Accepted", "Declined"], state="readonly", width=20)
+    #sets default text to select status
+    invstatus_dropdown.set("Select Status")
+    invstatus_dropdown.grid(row=7, column=5, padx=(5, 10), pady=10, sticky="w")
+    
+    #configures column spacing
+    for i in range(total_columns):  
+        add_student_window.columnconfigure(i, weight=0)
+    for i in range(total_rows):  
+        add_student_window.rowconfigure(i, weight=1)
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
