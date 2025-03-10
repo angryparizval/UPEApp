@@ -5,6 +5,7 @@ import sqlite3
 from utils import center_window
 from tkcalendar import Calendar
 from tkinter import *
+import tkinter.messagebox as messagebox
 
 '''
 ----------------------------------------
@@ -13,7 +14,7 @@ DATABASE CONNECTION/GENERAL FUNCTIONS
 '''
 # Global connection variable
 conn = None
-selected_date_str = ""
+selected_date_str = "No Date"
 
 def get_db_connection():
     #returns gloval database connection
@@ -214,7 +215,7 @@ def open_add_transaction(budget_home_window, root):
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
-    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=submit_transaction())
+    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
     btnSubmit.place(relx=0.84, rely=0.95, anchor="sw")
 
     # Create the calendar
@@ -277,12 +278,32 @@ def edit_transaction(budget_home_window, root):
 
 
 # Function to get the selected date
-def get_selected_date(cal, lblSelectedDate):
-    selected_date_str = "No Date Selected"
+def get_selected_date(cal, lblSelectedDate):    
     selected_date_str = cal.get_date()
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
-def submit_transaction():
+def submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str):
     #Limit memo characters to 100
-    #
+    if len(txtMemo.get("1.0", "end-1c")) > 10:
+        messagebox.showerror("Error", "Memo must be less than 100 characters")
+        return
+    #check if a radio button is selected
+    if not transaction_type:
+        messagebox.showerror("Error", "Please select either withdrawal or deposit")
+        return
+    #make sure txtamount is not blank and is a number
+    if not txtAmount:
+        messagebox.showerror("Error", "Please enter a transaction amount")
+        return
+    '''
+    #verify that txtamount is a valid number
+    if not get(txtAmount.isdigit()):
+        messagebox.showerror("Error", "Please enter a valid number for the transaction amount")
+        return
+    '''
+    #verify that a date is selected
+    if selected_date_str == "No Date":
+        messagebox.showerror("Error", "Please select a date for the transaction")
+        return
+    
     pass
