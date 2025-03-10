@@ -41,6 +41,12 @@ def fetch_budget_data():
     rows = cursor.fetchall()
     return rows
 
+# Function to get the selected date
+def get_selected_date(cal, lblSelectedDate):  
+    global selected_date_str  
+    selected_date_str = cal.get_date()
+    lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
 '''
 ---------------------------------
 MAIN BUDGET WINDOW FUNCTIONS
@@ -166,7 +172,7 @@ ADD TRANSACTION WINDOW FUNCTIONS
 #function to open edit budget window
 def open_add_transaction(budget_home_window, root):
 
-    #ADD NO DATE SELECTED PLACE HOLDER
+    #Fix validation for radio buttons
     #MAKE DEFAULT DATE CURRENT DAY
 
     #call in global variables
@@ -215,9 +221,6 @@ def open_add_transaction(budget_home_window, root):
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
-    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
-    btnSubmit.place(relx=0.84, rely=0.95, anchor="sw")
-
     # Create the calendar
     cal = Calendar(budget_add_transaction, selectmode="day", year=2025, month=2, day=15)
     cal.pack(pady=20)
@@ -232,6 +235,9 @@ def open_add_transaction(budget_home_window, root):
     select_button.pack(pady=10)
     select_button.place(relx=0.125, rely=0.6)
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
+    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+    btnSubmit.place(relx=0.84, rely=0.95, anchor="sw")
 
 
 '''
@@ -274,25 +280,20 @@ def edit_transaction(budget_home_window, root):
     lblNum.pack(pady=5)
     lblNum.place(relx=0.1, rely=0.4)
 
-    
 
 
-# Function to get the selected date
-def get_selected_date(cal, lblSelectedDate):    
-    selected_date_str = cal.get_date()
-    lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
-
-def submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str):
+def submit_transaction(txtMemo, txtAmount, transaction_type, lblSelectedDate):
     #Limit memo characters to 100
-    if len(txtMemo.get("1.0", "end-1c")) > 10:
-        messagebox.showerror("Error", "Memo must be less than 100 characters")
+    if len(txtMemo.get("0.0", "end-1c")) > 100 or len(txtMemo.get("0.0", "end-1c")) == 0:
+        messagebox.showerror("Error", "Memo is empty or exceeds 100 characters")
         return
     #check if a radio button is selected
-    if not transaction_type:
+    messagebox.showinfo("check", transaction_type.get())
+    if not transaction_type.get() == "Deposit" or not transaction_type.get() == "Withdrawal":
         messagebox.showerror("Error", "Please select either withdrawal or deposit")
         return
     #make sure txtamount is not blank and is a number
-    if not txtAmount:
+    if len(txtAmount.get("0.0", "end-1c")) == 0:
         messagebox.showerror("Error", "Please enter a transaction amount")
         return
     '''
@@ -302,7 +303,7 @@ def submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str):
         return
     '''
     #verify that a date is selected
-    if selected_date_str == "No Date":
+    if lblSelectedDate == "No Date":
         messagebox.showerror("Error", "Please select a date for the transaction")
         return
     
