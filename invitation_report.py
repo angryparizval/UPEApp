@@ -11,6 +11,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from tkcalendar import Calendar
+from datetime import datetime
 
 
 # Store selected students and search results
@@ -73,8 +74,9 @@ def open_calendar():
     calendar_window.title("Select a Date")
     center_window(calendar_window, 300, 250)
 
-    # Create the calendar
-    cal = Calendar(calendar_window, selectmode="day", year=2025, month=2, day=15)
+    # Create the calendar and get current date
+    current_date = datetime.today().strftime('%m/%d/%Y')
+    cal = Calendar(calendar_window, selectmode="day", year=datetime.today().year, month=datetime.today().month, day=datetime.today().day)
     cal.pack(pady=20)
 
     # Button to select the date

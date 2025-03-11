@@ -6,6 +6,7 @@ from utils import center_window
 from tkcalendar import Calendar
 from tkinter import *
 import tkinter.messagebox as messagebox
+from datetime import datetime
 
 '''
 ----------------------------------------
@@ -74,13 +75,9 @@ def open_upe_budget(homepage_window, root):
     btn_view_history = ttk.Button(upe_budget_window, text="View History", command=lambda: [upe_budget_window.withdraw(), open_budget_history(upe_budget_window, root)])
     btn_view_history.place(relx=0.5, rely=0.4, anchor="center")
 
-    #Edit History button
-    btn_edit_history = ttk.Button(upe_budget_window, text="Edit History", command=lambda: [upe_budget_window.withdraw(), open_edit_budget(upe_budget_window, root)])
-    btn_edit_history.place(relx=0.5, rely=0.5, anchor="center")
-
     #Add transaction buton
     btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
-    btn_transaction.place(relx=0.5, rely=0.6, anchor="center")
+    btn_transaction.place(relx=0.5, rely=0.5, anchor="center")
 
 '''
 --------------------------------
@@ -139,31 +136,6 @@ def open_budget_history(budget_home_window, root):
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-
-'''
-----------------------------
-EDIT BUDGET WINDOW FUNCTIONS
-----------------------------
-'''
-#function to open edit budget window
-def open_edit_budget(budget_home_window, root):
-    #creates edit budget window, sets title and centers it
-    budget_edit_window = tk.Toplevel(root)
-    budget_edit_window.title("Edit Budget")
-    center_window(budget_edit_window, 800, 630)
-
-    #creates header
-    label = tk.Label(budget_edit_window, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=20)
-
-    #Back to Budget Home button
-    btn_rtn_budget_home = ttk.Button(budget_edit_window, text="Back to Budget",command=lambda: [budget_edit_window.destroy(), budget_home_window.deiconify()])
-    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
-
-    #edit transaction button
-    btn_edit_transaction = ttk.Button(budget_edit_window, text="Edit", command=lambda: [budget_edit_window.withdraw(), edit_transaction(budget_edit_window, root)])
-    btn_edit_transaction.place(relx=0.84, rely=0.95, anchor="sw")
-
 '''
 -------------------------------
 ADD TRANSACTION WINDOW FUNCTIONS
@@ -205,10 +177,10 @@ def open_add_transaction(budget_home_window, root):
     lblMemo.place(relx=0.45, rely=0.4)
 
     #Radio Buttons for type
-    transaction_type = tk.StringVar(value="Deposit")
-    rdWithdrawal = ttk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="withdrawal")
+    transaction_type = tk.StringVar(value="")
+    rdWithdrawal = ttk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="Withdrawal")
     rdWithdrawal.place(relx=0.45, rely=0.25)
-    rdDeposit = ttk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="deposit")
+    rdDeposit = ttk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="Deposit")
     rdDeposit.place(relx=0.45, rely=0.3)
 
     #Text boxes for amount and memo
@@ -221,8 +193,9 @@ def open_add_transaction(budget_home_window, root):
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
 
-    # Create the calendar
-    cal = Calendar(budget_add_transaction, selectmode="day", year=2025, month=2, day=15)
+    # Create the calendar and get current date
+    current_date = datetime.today().strftime('%m/%d/%Y')
+    cal = Calendar(budget_add_transaction, selectmode="day", year=datetime.today().year, month=datetime.today().month, day=datetime.today().day)
     cal.pack(pady=20)
     cal.place(relx=0.05, rely=0.25)
 
@@ -237,7 +210,7 @@ def open_add_transaction(budget_home_window, root):
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
     btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
-    btnSubmit.place(relx=0.84, rely=0.95, anchor="sw")
+    btnSubmit.place(relx=0.8, rely=0.95, anchor="sw")
 
 
 '''
@@ -283,28 +256,37 @@ def edit_transaction(budget_home_window, root):
 
 
 def submit_transaction(txtMemo, txtAmount, transaction_type, lblSelectedDate):
-    #Limit memo characters to 100
-    if len(txtMemo.get("0.0", "end-1c")) > 100 or len(txtMemo.get("0.0", "end-1c")) == 0:
-        messagebox.showerror("Error", "Memo is empty or exceeds 100 characters")
-        return
-    #check if a radio button is selected
-    messagebox.showinfo("check", transaction_type.get())
-    if not transaction_type.get() == "Deposit" or not transaction_type.get() == "Withdrawal":
-        messagebox.showerror("Error", "Please select either withdrawal or deposit")
-        return
-    #make sure txtamount is not blank and is a number
-    if len(txtAmount.get("0.0", "end-1c")) == 0:
-        messagebox.showerror("Error", "Please enter a transaction amount")
-        return
-    '''
-    #verify that txtamount is a valid number
-    if not get(txtAmount.isdigit()):
-        messagebox.showerror("Error", "Please enter a valid number for the transaction amount")
-        return
-    '''
+    #max transaction amount
+    MAX_AMOUNT = 1000000
+
     #verify that a date is selected
     if lblSelectedDate == "No Date":
         messagebox.showerror("Error", "Please select a date for the transaction")
         return
-    
     pass
+
+    #check if radio button is selected
+    if transaction_type.get() == "":
+        messagebox.showerror("Error", "Please select a transaction type")
+        return
+    
+    #make sure txtamount is not blank and is a number
+    if len(txtAmount.get("0.0", "end-1c")) == 0:
+        messagebox.showerror("Error", "Please enter a transaction amount")
+        return
+    
+    #verify that txtamount is a number. If the number has a decimal verify it is two decimals. If the number does not, add two decimals
+    if not txtAmount.get("0.0", "end-1c").replace('.', '', 1).isdigit():
+        messagebox.showerror("Error", "Amount must be a number")
+        return
+    elif '.' in txtAmount.get("0.0", "end-1c"):
+        if len(txtAmount.get("0.0", "end-1c").split('.')[1]) != 2:
+            messagebox.showerror("Error", "Amount must have two decimal places")
+            return
+    else:
+        txtAmount.insert("end", ".00")
+    
+    #Limit memo characters to 100
+    if len(txtMemo.get("0.0", "end-1c")) > 100 or len(txtMemo.get("0.0", "end-1c")) == 0:
+        messagebox.showerror("Error", "Memo is empty or exceeds 100 characters")
+        return

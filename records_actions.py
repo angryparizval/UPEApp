@@ -879,6 +879,13 @@ def open_view_records(root):
     tree = ttk.Treeview(tree_frame, show="headings")
     tree.pack(fill=tk.BOTH, expand=True)
 
+    #Add scrollbar
+    scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+
+    #Pack widgets
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
     #bind double-click event for editing cells
     tree.bind("<Double-1>", on_double_click)
 
