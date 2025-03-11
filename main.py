@@ -117,7 +117,7 @@ style.configure('TEntry', foreground='black', fieldbackground='white')
 
 root.withdraw()
 
-# Create the startup screen
+# Create the startup screen window
 startup_window = tk.Toplevel(root)
 startup_window.title("Welcome to UPE")
 center_window(startup_window, 480, 480)

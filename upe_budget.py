@@ -144,8 +144,8 @@ ADD TRANSACTION WINDOW FUNCTIONS
 #function to open edit budget window
 def open_add_transaction(budget_home_window, root):
 
-    #Fix validation for radio buttons
-    #MAKE DEFAULT DATE CURRENT DAY
+    #Do not allow tabs in memo field
+    #Enter key should submit the transaction
 
     #call in global variables
     global date_label
