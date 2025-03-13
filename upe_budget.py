@@ -8,6 +8,9 @@ from tkinter import *
 import tkinter.messagebox as messagebox
 from datetime import datetime
 
+
+#CAN NOT PASS TREE AND COLUMN NUMBER PROPERLY TO CREATE A WORKING EDITOR FUNCTION
+
 '''
 ----------------------------------------
 DATABASE CONNECTION/GENERAL FUNCTIONS
@@ -16,6 +19,7 @@ DATABASE CONNECTION/GENERAL FUNCTIONS
 # Global connection variable
 conn = None
 selected_date_str = "No Date"
+
 
 def get_db_connection():
     #returns gloval database connection
@@ -47,6 +51,83 @@ def get_selected_date(cal, lblSelectedDate):
     global selected_date_str  
     selected_date_str = cal.get_date()
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
+
+entry_widget = None
+
+#function to handle double-click on a treeview table cells
+def on_double_click(event):
+    global entry_widget
+
+    if entry_widget:
+        entry_widget.destroy()
+
+    #grabs cell row and column
+    selected_items = tree.selection()
+    if not selected_items:
+        return 
+    selected_item = tree.selection()[0]  
+    column_id = tree.identify_column(event.x)  
+    column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
+    column_name = visible_columns[column_index]
+
+    #prevent editing the primary key columns
+    if column_name in ["BDGET_TRNS_NO"]:
+        return  
+    
+    #get cells current value
+    current_value = tree.item(selected_item, "values")[column_index]
+
+    #create an entry widget that will allow editing cell
+    entry_widget = ttk.Entry(tree)
+    entry_widget.insert(0, current_value)
+    entry_widget.focus()
+
+    #get current clicked cell position and place keyboard entry widget in that position
+    bbox = tree.bbox(selected_item, column_index)
+    #prevents error if the column header is clicked
+    if not bbox:
+        return  
+    x, y, width, height = bbox
+    entry_widget.place(x=x, y=y, width=width, height=height)
+
+    #binds enter button to save the edited changes
+    entry_widget.bind("<Return>", lambda event: save_edit(selected_item, column_index))
+    entry_widget.bind("<Escape>", lambda event: entry_widget.destroy())
+
+    #function to save edit to tree before calling update database
+def save_edit(selected_item, column_index):
+    global entry_widget
+
+    new_value = entry_widget.get()
+    column_name = visible_columns[column_index]  # Get column name
+
+    #get the primary key value instead of assuming "id"
+    primary_key_value = tree.item(selected_item, "values")[0]  # First column is assumed primary key
+
+    #update database with correct primary key column
+    update_database(current_table, column_name, new_value, primary_key_value)
+
+    #update Treeview
+    values = list(tree.item(selected_item, "values"))
+    values[column_index] = new_value
+    tree.item(selected_item, values=values)
+
+    entry_widget.destroy()
+
+#function to update SQLite database after cell is edited
+def update_database(table, column_name, new_value, primary_key_value):
+    #connects to db
+    conn = sqlite3.connect("UPEApp.db")  
+    cursor = conn.cursor()
+
+    #define primary key column per table
+    primary_key_column = "BDGET_TRNS_NO"
+
+    #sends sql query to db to update table with new info
+    query = f"UPDATE {table} SET {column_name} = ? WHERE {primary_key_column} = ?"
+    cursor.execute(query, (new_value, primary_key_value))
+    
+    conn.commit()
 
 '''
 ---------------------------------
@@ -135,6 +216,9 @@ def open_budget_history(budget_home_window, root):
     #Pack widgets
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    #bind double-click event for editing cells
+    tree.bind("<Double-1>", on_double_click())
 
 '''
 -------------------------------
