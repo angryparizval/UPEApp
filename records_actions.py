@@ -500,6 +500,8 @@ def open_add_student(root):
     #sets the window variable to global to avoid having to send it around
     global add_student_window
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
     
     #sets window to root,centers it and sets window title
     add_student_window = tk.Toplevel(root)
@@ -515,12 +517,18 @@ def open_add_student(root):
     total_columns = 6
     total_rows = 10
 
+    #finds the last mem_id value and adds one to it
+    cursor.execute("SELECT COALESCE(MAX(STUD_ID), 0) + 1 FROM Student")
+    stud_id = cursor.fetchone()[0]
+
     #label for studentid
     lblStudID = tk.Label(add_student_window, text="Student ID:", height=1, width=15)
     lblStudID.grid(row=3, column=0, padx=(10,5), pady=10, sticky="w")
     #textbox for studid
     txtStudID = tk.Entry(add_student_window, width=20)
     txtStudID.grid(row=3, column=1, padx=(5,10), pady=10, sticky="w")
+    txtStudID.insert(0, stud_id)
+    txtStudID.config(state="readonly")
     
     #label for student first name
     lblStudFstNm = tk.Label(add_student_window, text="First Name:", height=1, width=15)
@@ -643,6 +651,9 @@ def open_add_student(root):
         add_student_window.columnconfigure(i, weight=0)
     for i in range(total_rows):  
         add_student_window.rowconfigure(i, weight=1)
+
+    btn_submit = ttk.Button(add_student_window, text="Submit", command=lambda: [send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr)])
+    btn_submit.place(relx=0.869, rely=0.92, anchor="se")
 
     #button to return back to records actions screen
     btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
