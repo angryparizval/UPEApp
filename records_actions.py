@@ -174,6 +174,7 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
     cursor.execute("SELECT COALESCE(MAX(MEM_ID), 0) + 1 FROM Member")
     memId = cursor.fetchone()[0]
 
+    mem_prefer_nm = txtMemPreferNm.get()
     if(txtMemPreferNm.get() == ""):
         mem_prefer_nm = None
 
