@@ -10,9 +10,9 @@ import calendar
 import re
 
 '''
----------------------------------
+======================
 GENERAL USE FUNCTIONS
---------------------------------
+======================
 '''
 
 #global variables
@@ -65,9 +65,9 @@ def fetch_student_data():
 
 
 '''
--------------------------------------
+======================================
 MAIN RECORDS ACTIONS WINDOW FUNCTIONS
---------------------------------------
+======================================
 '''
 
 # Window to select which records and if the user wants to edit or view
@@ -112,9 +112,9 @@ def open_records_act(homepage_window, root):
 
 
 '''
-------------------------------
+============================
 ADD MEMBER WINDOW FUNCTIONS
-------------------------------
+============================
 '''
 #function to validate phone number against format
 def validate_phone_number(phone_number):
@@ -482,16 +482,51 @@ def open_add_member(root, student_id, student_first, student_last, conn):
 
 
 '''
-------------------------------
+=============================
 ADD STUDENT WINDOW FUNCTIONS
-------------------------------
+=============================
 '''
 
-def send_student_data():
-    email = "temporary"
+def send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr, txtStudDegree, txtStudCumGPA,txtStudTransCred, txtStudEarnedCred, txtStudTotalCred, txtStudBelow30LrCred, txtStudBel3GPA, txtStudInvStatus, conn):
+    cursor = conn.cursor()
+    
+    #patterns to check for correct formatting
+    emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    namePattern = r"^[a-zA-Z\s-]*$"
+    middleInitPattern = r"^[a-zA-Z]\.$"
+    gpaPattern = r"^\d\.\d{2}$"
+    
+    #checks first name formatting pops up error if wrong
+    if(re.match(namePattern, txtStudFstNm.get()) == False):
+        messagebox.Error("Please enter a valid first name")
+        return
+    
+    #checks middle intial name formatting pops up error if wrong
+    if(re.match(middleInitPattern, txtStudMinit.get()) == False):
+        messagebox.Error("Please enter a valid middle intial (Ex: I. )")
+        return
 
-    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return re.match(pattern, email) is not None
+    #checks last name formatting pops up error if wrong
+    if(re.match(namePattern, txtStudLstNm.get()) == False):
+        messagebox.Error("Please enter a valid last name")
+        return
+
+    #checks email formatting pops up error if wrong
+    if(re.match(emailPattern, txtStudEmail.get()) == False):
+        messagebox.ERROR("Please enter a valid email")
+        return
+    
+    if(re.match(gpaPattern, txtStudCumGPA.get()) == False or txtStudCumGPA.get() < 0 or txtStudCumGPA.get() > 4):
+        messagebox.ERROR("Please enter a valid GPA (Ex: 3.90)")
+        return
+    
+
+    cursor.execute("""
+                    INSERT INTO Student ()
+                    Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (txtStudID.get(), txtStudFstNm.get(), txtStudMinit.get(), txtStudLstNm.get(), txtStudEmail.get(), txtStudClassLvl.get(), txtStudCurr.get(), txtStudDegree.get(), txtStudCumGPA.get(),txtStudTransCred.get(), txtStudEarnedCred.get(), txtStudTotalCred.get(), txtStudBelow30LrCred.get(), txtStudBel3GPA.get(), txtStudInvStatus.get()))
+
+    conn.commit()
 
 #function to open add student window
 def open_add_student(root):
@@ -652,7 +687,7 @@ def open_add_student(root):
     for i in range(total_rows):  
         add_student_window.rowconfigure(i, weight=1)
 
-    btn_submit = ttk.Button(add_student_window, text="Submit", command=lambda: [send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr)])
+    btn_submit = ttk.Button(add_student_window, text="Submit", command=lambda: [send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr, txtStudDegree, txtStudCumGPA,txtStudTransCred, txtStudEarnedCred, txtStudTotalCred, txtStudBelow30LrCred, txtStudBel3GPA, txtStudInvStatus, conn)])
     btn_submit.place(relx=0.869, rely=0.92, anchor="se")
 
     #button to return back to records actions screen
@@ -669,9 +704,9 @@ def open_add_student(root):
 
 
 '''
-------------------------------
+==============================
 VIEW RECORDS WINDOW FUNCTIONS
-------------------------------
+==============================
 '''
 
 entry_widget = None
