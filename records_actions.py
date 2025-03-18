@@ -493,38 +493,82 @@ def send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtSt
     #patterns to check for correct formatting
     emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     namePattern = r"^[a-zA-Z\s-]*$"
-    middleInitPattern = r"^[a-zA-Z]\.$"
     gpaPattern = r"^\d\.\d{2}$"
     
     #checks first name formatting pops up error if wrong
-    if(re.match(namePattern, txtStudFstNm.get()) == False):
-        messagebox.Error("Please enter a valid first name")
+    if(re.match(namePattern, txtStudFstNm.get()) == False or txtStudFstNm.get() == ""):
+        messagebox.showerror("Error", "Please enter a valid first name")
         return
     
     #checks middle intial name formatting pops up error if wrong
-    if(re.match(middleInitPattern, txtStudMinit.get()) == False):
-        messagebox.Error("Please enter a valid middle intial (Ex: I. )")
+    if(re.match(namePattern, txtStudMinit.get()) == False):
+        messagebox.showerror("Error", "Please enter a valid middle intial (Ex: I. )")
         return
 
     #checks last name formatting pops up error if wrong
     if(re.match(namePattern, txtStudLstNm.get()) == False):
-        messagebox.Error("Please enter a valid last name")
+        messagebox.showerror("Error", "Please enter a valid last name")
         return
 
     #checks email formatting pops up error if wrong
     if(re.match(emailPattern, txtStudEmail.get()) == False):
-        messagebox.ERROR("Please enter a valid email")
+        messagebox.showerror("Error", "Please enter a valid email")
         return
     
-    if(re.match(gpaPattern, txtStudCumGPA.get()) == False or txtStudCumGPA.get() < 0 or txtStudCumGPA.get() > 4):
-        messagebox.ERROR("Please enter a valid GPA (Ex: 3.90)")
+    # Validate cumulative GPA
+    try:
+        gpa = float(txtStudCumGPA.get())  # Convert to float
+        if not re.match(gpaPattern, txtStudCumGPA.get()) or gpa < 0 or gpa > 4:
+            messagebox.showerror("Error", "Please enter a valid GPA (Ex: 3.90)")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid GPA (Ex: 3.90)")
         return
-    
 
+    # Validate transfer credits
+    try:
+        trans_cred = int(txtStudTransCred.get())  # Convert to int
+        if trans_cred < 0 or trans_cred > 200:
+            messagebox.showerror("Error", "Please enter a valid transfer credits amount (0-200)")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid transfer credits amount (0-200)")
+        return
+
+    # Validate earned credits
+    try:
+        earned_cred = int(txtStudEarnedCred.get())  # Convert to int
+        if earned_cred < 0 or earned_cred > 200:
+            messagebox.showerror("Error", "Please enter a valid earned credits amount (0-200)")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid earned credits amount (0-200)")
+        return
+
+    # Validate total credits
+    try:
+        total_cred = int(txtStudTotalCred.get())  # Convert to int
+        if total_cred < 0 or total_cred > 200:
+            messagebox.showerror("Error", "Please enter a valid total credits amount (0-200)")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid total credits amount (0-200)")
+        return
+
+    #sets formatting of invstatus to None as that is the NULL name for sqllite
+    invStatus = txtStudInvStatus.get()
+    if invStatus == "N/A":
+        invStatus = None
+
+    #checks to make sure all fields have information inputted into them
+    if(txtStudClassLvl.get()== "Select Class Level" or txtStudCurr.get() == "Select Curriculum" or txtStudDegree.get() == "Select Degree" or txtStudBelow30LrCred.get() == "Select Y/N" or txtStudBel3GPA.get() == "Select Y/N" or txtStudInvStatus.get() == "Select Status"):
+        messagebox.showerror("Error", "All fields must be filled")
+        return
+    
     cursor.execute("""
-                    INSERT INTO Student ()
+                    INSERT INTO Student (STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS )
                     Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                    (txtStudID.get(), txtStudFstNm.get(), txtStudMinit.get(), txtStudLstNm.get(), txtStudEmail.get(), txtStudClassLvl.get(), txtStudCurr.get(), txtStudDegree.get(), txtStudCumGPA.get(),txtStudTransCred.get(), txtStudEarnedCred.get(), txtStudTotalCred.get(), txtStudBelow30LrCred.get(), txtStudBel3GPA.get(), txtStudInvStatus.get()))
+                    (txtStudID.get(), txtStudFstNm.get(), txtStudMinit.get(), txtStudLstNm.get(), txtStudEmail.get(), txtStudClassLvl.get(), txtStudCurr.get(), txtStudDegree.get(), txtStudCumGPA.get(),txtStudTransCred.get(), txtStudEarnedCred.get(), txtStudTotalCred.get(), txtStudBelow30LrCred.get(), txtStudBel3GPA.get(), invStatus))
 
     conn.commit()
 
