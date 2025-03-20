@@ -245,7 +245,7 @@ def open_invitation_report_window(homepage_window, root):
     listbox_frame.columnconfigure(1, weight=1)
 
     # Button to open the calendar
-    ttk.Button(invitation_report_window, text="Open Calendar", command=open_calendar).pack(pady=10)
+    ttk.Button(invitation_report_window, text="Select Reply by Date", command=open_calendar).pack(pady=10)
     date_label = tk.Label(invitation_report_window, text="No Date Selected", font=("Helvetica", 18, "bold"))
     date_label.pack(pady=10)
 
