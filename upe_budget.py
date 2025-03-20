@@ -72,6 +72,7 @@ def on_double_click(event):
 
     #prevent editing the primary key columns
     if column_name in ["BDGET_TRNS_NO"]:
+        messagebox.show("FLAG", "Cannot edit primary key column")
         return  
     
     #get cells current value
@@ -106,7 +107,6 @@ def save_edit(selected_item, column_index):
 
     #get the primary key value instead of assuming "id"
     primary_key_value = tree.item(selected_item, "values")[0]  # First column is assumed primary key
-    messagebox.showinfo(primary_key_value)
 
     #update database with correct primary key column
     update_database("Budget", column_name, new_value, primary_key_value)
@@ -184,7 +184,6 @@ def update_database(table, column_name, new_value, primary_key_value):
 
     #define primary key column per table
     primary_key_column = "BDGET_TRNS_NO"
-    messagebox.showinfo(column_name)
 
     #sends sql query to db to update table with new info
     query = f"UPDATE {table} SET {column_name} = ? WHERE {primary_key_column} = ?"
