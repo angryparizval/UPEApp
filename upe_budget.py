@@ -9,7 +9,7 @@ import tkinter.messagebox as messagebox
 from datetime import datetime
 
 
-#CAN NOT PASS TREE AND COLUMN NUMBER PROPERLY TO CREATE A WORKING EDITOR FUNCTION
+#CAN NOT COLUMN NUMBER PROPERLY TO CREATE A WORKING EDITOR FUNCTION
 
 '''
 ----------------------------------------
@@ -68,7 +68,7 @@ def on_double_click(event):
     selected_item = tree.selection()[0]  
     column_id = tree.identify_column(event.x)  
     column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
-    column_name = visible_columns[column_index]
+    column_name = [column_index]
 
     #prevent editing the primary key columns
     if column_name in ["BDGET_TRNS_NO"]:
@@ -98,14 +98,18 @@ def on_double_click(event):
 def save_edit(selected_item, column_index):
     global entry_widget
 
+    #CREATE VARIABLE THAT GRABS ALL COLUMNS
+    columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+
     new_value = entry_widget.get()
-    column_name = visible_columns[column_index]  # Get column name
+    column_name = columns[column_index]  # Get column name
 
     #get the primary key value instead of assuming "id"
     primary_key_value = tree.item(selected_item, "values")[0]  # First column is assumed primary key
+    messagebox.showinfo(primary_key_value)
 
     #update database with correct primary key column
-    update_database(current_table, column_name, new_value, primary_key_value)
+    update_database("Budget", column_name, new_value, primary_key_value)
 
     #update Treeview
     values = list(tree.item(selected_item, "values"))
@@ -113,6 +117,64 @@ def save_edit(selected_item, column_index):
     tree.item(selected_item, values=values)
 
     entry_widget.destroy()
+
+#function to update treeview with selected table data
+def update_treeview(tree, table, selected_columns, filter_col=None):
+    global visible_columns, current_table
+    current_table = "Budget"  #stores table name for later updates
+
+    #clear all existing treeview data
+    for item in tree.get_children():
+        tree.delete(item)
+
+    #fetch data from the selected table
+    if table == "Budget":
+        columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+        data = fetch_member_data()
+        return  
+    
+    #apply filter if user wants
+    if filter_col:
+        data = [row for row in data if filter_col.lower() in str(row).lower()]
+
+    #filter columns based on selected filter
+    visible_columns = [col for col in columns]
+
+    #update Treeview columns
+    tree["columns"] = visible_columns
+    for col in visible_columns:
+        tree.heading(col, text=f"{col} {'▲'}", command=lambda _col=col: treeview_sort_column(tree, _col, False))
+        tree.column(col, anchor="center", width=120)
+
+    #insert filtered data
+    for row in data:
+        filtered_row = [row[columns.index(col)] for col in visible_columns]
+        tree.insert("", tk.END, values=filtered_row)
+
+#function to allow sort column by ascending or descending based on column chose
+def treeview_sort_column(treeview, col, reverse):
+    #gets data from tree view
+    l = [(treeview.set(k, col), k) for k in treeview.get_children('')]
+    l.sort(reverse=reverse, key=lambda x: (float(x[0]) if x[0].replace('.', '', 1).isdigit() else x[0].lower()))
+
+    #rearrange cells in other columns in sorted positions
+    for index, (_, k) in enumerate(l):
+        treeview.move(k, '', index)
+
+    #update column header with sorting order indicator
+    treeview.heading(col, text=f"{col} {'▲' if not reverse else '▼'}", 
+                        command=lambda _col=col: treeview_sort_column(treeview, _col, not reverse))
+
+#function to grab data from Member table and return it
+def fetch_member_data():
+    #creates connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #grabs all columns
+    cursor.execute("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+    #grabs all rows from related columns and returns it
+    rows = cursor.fetchall()
+    return rows
 
 #function to update SQLite database after cell is edited
 def update_database(table, column_name, new_value, primary_key_value):
@@ -122,6 +184,7 @@ def update_database(table, column_name, new_value, primary_key_value):
 
     #define primary key column per table
     primary_key_column = "BDGET_TRNS_NO"
+    messagebox.showinfo(column_name)
 
     #sends sql query to db to update table with new info
     query = f"UPDATE {table} SET {column_name} = ? WHERE {primary_key_column} = ?"
@@ -167,6 +230,7 @@ BUDGET HISTORY WINDOW FUNCTIONS
 '''
 #function to open budget history window
 def open_budget_history(budget_home_window, root):
+    global tree
     #withdraws budget home
     budget_home_window.withdraw()
 
@@ -218,7 +282,7 @@ def open_budget_history(budget_home_window, root):
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     #bind double-click event for editing cells
-    tree.bind("<Double-1>", on_double_click())
+    tree.bind("<Double-1>", on_double_click)
 
 '''
 -------------------------------
