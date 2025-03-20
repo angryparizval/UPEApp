@@ -333,7 +333,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     txtMemLName.config(state="readonly")
 
     #label for member dob
-    lblMemDob = tk.Label(add_member_window, text="Birthdate:", height=1, width=15)
+    lblMemDob = tk.Label(add_member_window, text="*Birthdate:", height=1, width=15)
     lblMemDob.grid(row=2, column=0, padx=(10,5), pady=10, sticky="w")
     #function for date entry that formats it with YYYY/MM/DD and auto moves cursor
     def on_dob_entry_change(*args):
@@ -368,18 +368,18 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     txtMemDOB.grid(row=2, column=1, padx=(5, 10), pady=10, sticky="w")
 
     #label for member entry year
-    lblMemEntryYr = tk.Label(add_member_window, text="Entry Year:", height=1, width=15)
+    lblMemEntryYr = tk.Label(add_member_window, text="*Entry Year:", height=1, width=15)
     lblMemEntryYr.grid(row=2, column=2, padx=(10,5), pady=10, sticky="w")
     #member entry year entry field
     txtMemEntryYr = tk.StringVar()
     #creates a dropdown with year options from 1900-current year
-    entryYr_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemEntryYr, values=list(range(1900,datetime.datetime.now().year + 1)), state="readonly", width=20)
+    entryYr_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemEntryYr, values=list(range(datetime.datetime.now().year + 1, 1900)), state="readonly", width=20)
     #sets default text to select status
     entryYr_dropdown.set("Select Year")
     entryYr_dropdown.grid(row=2, column=3, padx=(5, 10), pady=10, sticky="w")
     
     #label for member status
-    lblMemStatus = tk.Label(add_member_window, text="Member Status:", height=1, width=15)
+    lblMemStatus = tk.Label(add_member_window, text="*Member Status:", height=1, width=15)
     lblMemStatus.grid(row=2, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for status selection
     txtMemStatus = tk.StringVar()
@@ -389,7 +389,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     status_dropdown.grid(row=2, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for member position
-    lblMemPos = tk.Label(add_member_window, text="Position:", height=1, width=15)
+    lblMemPos = tk.Label(add_member_window, text="*Position:", height=1, width=15)
     lblMemPos.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="w")
     #creates dropdown for position selection
     txtMemPos = tk.StringVar()
@@ -434,7 +434,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     txtMemPhoNo.grid(row=3, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for member abroad status
-    lblMemAbrStatus = tk.Label(add_member_window, text="Abroad Status:", height=1, width=15)
+    lblMemAbrStatus = tk.Label(add_member_window, text="*Abroad Status:", height=1, width=15)
     lblMemAbrStatus.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for abroad status selection
     txtMemAbrStatus = tk.StringVar()
@@ -444,7 +444,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     abrStatus_dropdown.grid(row=3, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for member commuter status
-    lblMemComStatus = tk.Label(add_member_window, text="Commute Status:", height=1, width=15)
+    lblMemComStatus = tk.Label(add_member_window, text="*Commute Status:", height=1, width=15)
     lblMemComStatus.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for commuter status selection
     txtMemComStatus = tk.StringVar()
@@ -610,35 +610,35 @@ def open_add_student(root):
     txtStudID.config(state="readonly")
     
     #label for student first name
-    lblStudFstNm = tk.Label(add_student_window, text="First Name:", height=1, width=15)
+    lblStudFstNm = tk.Label(add_student_window, text="*First Name:", height=1, width=15)
     lblStudFstNm.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student first name
     txtStudFstNm = tk.Entry(add_student_window, width=20)
     txtStudFstNm.grid(row=4, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student middle intial
-    lblStudMInit = tk.Label(add_student_window, text="Middle Initial:", height=1, width=15)
+    lblStudMInit = tk.Label(add_student_window, text="*Middle Name:", height=1, width=15)
     lblStudMInit.grid(row=5, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student middle intial
     txtStudMinit = tk.Entry(add_student_window, width=20)
     txtStudMinit.grid(row=5, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student last name
-    lblStudLstNm = tk.Label(add_student_window, text="Last Name:", height=1, width=15)
+    lblStudLstNm = tk.Label(add_student_window, text="*Last Name:", height=1, width=15)
     lblStudLstNm.grid(row=6, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student first name
     txtStudLstNm = tk.Entry(add_student_window, width=20)
     txtStudLstNm.grid(row=6, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student email address
-    lblStudEmail = tk.Label(add_student_window, text="Email Address:", height=1, width=15)
+    lblStudEmail = tk.Label(add_student_window, text="*Email Address:", height=1, width=15)
     lblStudEmail.grid(row=7, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student email address
     txtStudEmail = tk.Entry(add_student_window, width=20)
     txtStudEmail.grid(row=7, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student class level
-    lblStudClassLvl = tk.Label(add_student_window, text="Class Level:", height=1, width=15)
+    lblStudClassLvl = tk.Label(add_student_window, text="*Class Level:", height=1, width=15)
     lblStudClassLvl.grid(row=3, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for class level selection
     txtStudClassLvl = tk.StringVar()
@@ -648,7 +648,7 @@ def open_add_student(root):
     classLvl_dropdown.grid(row=3, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student curriculum
-    lblStudCurr = tk.Label(add_student_window, text="Curriculum:", height=1, width=15)
+    lblStudCurr = tk.Label(add_student_window, text="*Curriculum:", height=1, width=15)
     lblStudCurr.grid(row=4, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for curriculum selection
     txtStudCurr = tk.StringVar()
@@ -658,7 +658,7 @@ def open_add_student(root):
     curr_dropdown.grid(row=4, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student degree
-    lblStudDegree = tk.Label(add_student_window, text="Degree:", height=1, width=15)
+    lblStudDegree = tk.Label(add_student_window, text="*Degree:", height=1, width=15)
     lblStudDegree.grid(row=5, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for degree selection
     txtStudDegree = tk.StringVar()
@@ -668,35 +668,35 @@ def open_add_student(root):
     degree_dropdown.grid(row=5, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student cumulative gpa
-    lblStudCumGPA = tk.Label(add_student_window, text="Cumulative GPA:", height=1, width=15)
+    lblStudCumGPA = tk.Label(add_student_window, text="*Cumulative GPA:", height=1, width=15)
     lblStudCumGPA.grid(row=6, column=2, padx=(10,5), pady=10, sticky="w")
     #entry field for student email address
     txtStudCumGPA = tk.Entry(add_student_window, width=20)
     txtStudCumGPA.grid(row=6, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for student Transfer Credits
-    lblStudTransCred = tk.Label(add_student_window, text="Transfer Credits:", height=1, width=15)
+    lblStudTransCred = tk.Label(add_student_window, text="*Transfer Credits:", height=1, width=15)
     lblStudTransCred.grid(row=7, column=2, padx=(10,5), pady=10, sticky="w")
     #entry field for student transfer credits
     txtStudTransCred = tk.Entry(add_student_window, width=20)
     txtStudTransCred.grid(row=7, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for student earned Credits
-    lblStudEarnedCred = tk.Label(add_student_window, text="Earned Credits:", height=1, width=15)
+    lblStudEarnedCred = tk.Label(add_student_window, text="*Earned Credits:", height=1, width=15)
     lblStudEarnedCred.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
     #entry field for student transfer credits
     txtStudEarnedCred = tk.Entry(add_student_window, width=20)
     txtStudEarnedCred.grid(row=3, column=5, padx=(5,10), pady=10, sticky="w")
 
     #label for student Total Credits
-    lblStudTotalCred = tk.Label(add_student_window, text="Total Credits:", height=1, width=15)
+    lblStudTotalCred = tk.Label(add_student_window, text="*Total Credits:", height=1, width=15)
     lblStudTotalCred.grid(row=4, column=4, padx=(10,5), pady=10, sticky="w")
     #entry field for student total credits
     txtStudTotalCred = tk.Entry(add_student_window, width=20)
     txtStudTotalCred.grid(row=4, column=5, padx=(5,10), pady=10, sticky="w")
 
     #label for below 30 lr credits indicator
-    lblStudBelow30LrCred = tk.Label(add_student_window, text="Below 30 LR Credits?:", height=1, width=15)
+    lblStudBelow30LrCred = tk.Label(add_student_window, text="*Below 30 LR Credits?:", height=1, width=15)
     lblStudBelow30LrCred.grid(row=5, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for below 30 indicator selection
     txtStudBelow30LrCred = tk.StringVar()
@@ -706,7 +706,7 @@ def open_add_student(root):
     belowcred_dropdown.grid(row=5, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for below 3.0 GPA indicator
-    lblStudBel3GPA = tk.Label(add_student_window, text="Below 3.0 GPA?:", height=1, width=15)
+    lblStudBel3GPA = tk.Label(add_student_window, text="*Below 3.0 GPA?:", height=1, width=15)
     lblStudBel3GPA.grid(row=6, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for below 3.0 GPA indicator selection
     txtStudBel3GPA = tk.StringVar()
@@ -716,7 +716,7 @@ def open_add_student(root):
     belowgpa_dropdown.grid(row=6, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for student invite status
-    lblStudInvStatus = tk.Label(add_student_window, text="Invite Status:", height=1, width=15)
+    lblStudInvStatus = tk.Label(add_student_window, text="*Invite Status:", height=1, width=15)
     lblStudInvStatus.grid(row=7, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for invite status selection
     txtStudInvStatus = tk.StringVar()
@@ -895,13 +895,13 @@ def update_listbox(listbox, table):
     listbox.delete(0, tk.END)
     #sets columns if table is member
     if table == "Member":
-        columns = ("MEM_ID", "STUD_ID", "MEM_DOB", "MEM_ENTRY_YR", "MEM_STATUS", "MEM_POS", "MEM_PST_POS", "MEM_PHO_NO", 
-                   "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
+        columns = ("Member ID", "Student ID", "Birthdate", "Entry Year", "Member Status", "Position", "Past Positions", "Phone Number", 
+                   "Abroad Status", "Commute Status", "Meeting Missed Count", "Meeting Missed Desc.", "Preferred Name")
     #sets columns if table is student
     elif table == "Student":
-        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", 
-                   "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", 
-                   "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
+        columns = ("Student ID", "First Name", "Last Name", "Middle Name", "Email Address", "Class Level", 
+                   "Curriculum", "Degree", "Cumulative GPA", "Transfer Credits", "Earned Credits", 
+                   "Total Credits", "Below 30 LR Credits", "Below 3.0 GPA", "Invite Status")
     #else do nothing
     else:
         return
