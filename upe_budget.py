@@ -41,7 +41,7 @@ def fetch_budget_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     #grabs all columns from tables
-    cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_MEMO FROM budget")
+    cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_MEMO, BDGET_TRNS_AM FROM budget")
     #grabs the related rows from columns and returns it
     rows = cursor.fetchall()
     return rows
@@ -57,7 +57,7 @@ entry_widget = None
 #function to handle double-click on a treeview table cells
 def on_double_click(event):
     global entry_widget
-
+    
     if entry_widget:
         entry_widget.destroy()
 
@@ -69,10 +69,11 @@ def on_double_click(event):
     column_id = tree.identify_column(event.x)  
     column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
     column_name = [column_index]
+    messagebox.showinfo("FLAG", column_name)
 
     #prevent editing the primary key columns
-    if column_name in ["BDGET_TRNS_NO"]:
-        messagebox.show("FLAG", "Cannot edit primary key column")
+    if column_name == [0]:
+        messagebox.showinfo("FLAG", "Cannot edit primary key column")
         return  
     
     #get cells current value
@@ -190,6 +191,20 @@ def update_database(table, column_name, new_value, primary_key_value):
     cursor.execute(query, (new_value, primary_key_value))
     
     conn.commit()
+
+def add_transactionDB(date, type, amount, memo):
+    #connects to db
+    conn = sqlite3.connect("UPEApp.db")
+    cursor = conn.cursor()
+
+    #sends sql query to db to update table with new info
+    query = "INSERT INTO budget (BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_TRNS_AM, BDGET_MEMO) VALUES (?, ?, ?, ?)"
+    cursor.execute(query, (date, type, amount, memo))
+    
+    conn.commit()
+
+    messagebox.showinfo("Success", "Transaction added successfully")
+    
 
 '''
 ---------------------------------
@@ -417,7 +432,7 @@ def submit_transaction(txtMemo, txtAmount, transaction_type, lblSelectedDate):
         messagebox.showerror("Error", "Please select a transaction type")
         return
     
-    #make sure txtamount is not blank and is a number
+    #make sure txtamount is not blank
     if len(txtAmount.get("0.0", "end-1c")) == 0:
         messagebox.showerror("Error", "Please enter a transaction amount")
         return
@@ -437,3 +452,10 @@ def submit_transaction(txtMemo, txtAmount, transaction_type, lblSelectedDate):
     if len(txtMemo.get("0.0", "end-1c")) > 100 or len(txtMemo.get("0.0", "end-1c")) == 0:
         messagebox.showerror("Error", "Memo is empty or exceeds 100 characters")
         return
+
+    #if type is withdrawal, make the amount negative
+    if transaction_type.get() == "Withdrawal":
+        fltAmount = float(txtAmount.get("0.0", "end-1c"))
+        fltAmount = -fltAmount
+    
+    add_transactionDB(lblSelectedDate, transaction_type.get(), fltAmount, txtMemo.get("0.0", "end-1c"))
