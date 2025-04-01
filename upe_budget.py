@@ -322,19 +322,19 @@ def open_add_transaction(budget_home_window, root):
     lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     lblHeader.pack(pady=20)
 
-    lblDate = tk.Label(budget_add_transaction, text="Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblDate = tk.Label(budget_add_transaction, text="* Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblDate.pack(pady=5)
     lblDate.place(relx=0.1, rely=0.2)
 
-    lblType = tk.Label(budget_add_transaction, text="Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblType = tk.Label(budget_add_transaction, text="* Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblType.pack(pady=5)
     lblType.place(relx=0.45, rely=0.2)
 
-    lblAmount = tk.Label(budget_add_transaction, text="Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
+    lblAmount = tk.Label(budget_add_transaction, text="* Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
     lblAmount.pack(pady=5)
     lblAmount.place(relx=0.7, rely=0.2)
 
-    lblMemo = tk.Label(budget_add_transaction, text="Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblMemo = tk.Label(budget_add_transaction, text="* Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblMemo.pack(pady=5)
     lblMemo.place(relx=0.45, rely=0.4)
 
@@ -373,6 +373,7 @@ def open_add_transaction(budget_home_window, root):
 
     btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
     btnSubmit.place(relx=0.8, rely=0.95, anchor="sw")
+    btnSubmit.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
 
 
 '''
@@ -380,6 +381,10 @@ def open_add_transaction(budget_home_window, root):
 EDIT TRANSACTION WINDOW FUNCTIONS
 -------------------------------
 '''
+
+# DATA VALIDATION FOR EDITING
+
+
 #edit transaction window
 def edit_transaction(budget_home_window, root):
     #creates edit budget window, sets title
