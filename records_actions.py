@@ -5,6 +5,8 @@ from tkinter import ttk
 from tkinter import messagebox
 from ttkthemes import ThemedTk
 from utils import center_window
+from tkinter import Canvas
+from PIL import Image, ImageTk
 import datetime
 import calendar
 import re
@@ -81,29 +83,42 @@ def open_records_act(homepage_window, root):
     records_act_window.title("Select Records Action")
     center_window(records_act_window, 950,700)
 
+    #sets background to maroon color
+    records_act_window.configure(background="#52101a")
+
     #Top title of records
-    label = tk.Label(records_act_window, text="Records", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(records_act_window, text="Records", bg="black", fg="white", font=("Helvetica", 45, "bold"), bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=50)
 
     #button to move to view records window
-    btn_view_records_window = ttk.Button(records_act_window, text="View Records", command=lambda: open_view_records(root))
-    btn_view_records_window.pack(pady=10) 
+    btn_view_records_window = tk.Button(records_act_window, text="View Records", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 20, "bold"),width=15, height=2, padx=1, pady=1, command=lambda: open_view_records(root))
+    btn_view_records_window.pack(pady=15)
+    #creates the hover over effect, turning the button grey when the mouse is over it, and back to black else
+    btn_view_records_window.bind("<Enter>", lambda event : btn_view_records_window.config(bg="grey"))
+    btn_view_records_window.bind("<Leave>", lambda event : btn_view_records_window.config(bg="black")) 
 
     #button to move to add members windows
-    btn_add_members_window = ttk.Button(records_act_window, text="Add Member", command=lambda: open_search_student(root))
-    btn_add_members_window.pack(pady=10)  
+    btn_add_members_window = tk.Button(records_act_window, text="Add Member", bg="black", fg="white", highlightbackground="gray", font=("Franklin Gothic URW", 20, "bold"),width=15, height=2, padx=1, pady=1, command=lambda: open_search_student(root))
+    btn_add_members_window.pack(pady=15)
+    #creates the hover over effect, turning the button grey when the mouse is over it, and back to black else
+    btn_add_members_window.bind("<Enter>", lambda event : btn_add_members_window.config(bg="grey"))
+    btn_add_members_window.bind("<Leave>", lambda event : btn_add_members_window.config(bg="black"))  
 
     #button to move to add students window
-    btn_add_student_window = ttk.Button(records_act_window, text="Add Student", command=lambda: open_add_student(root))
-    btn_add_student_window.pack(pady=10) 
-
+    btn_add_student_window = tk.Button(records_act_window, text="Add Student", bg="black", fg="white", highlightbackground="gray", font=("Franklin Gothic URW", 20, "bold"),width=15, height=2, padx=1, pady=1, command=lambda: open_add_student(root))
+    btn_add_student_window.pack(pady=15)
+    #creates the hover over effect, turning the button grey when the mouse is over it, and back to black else
+    btn_add_student_window.bind("<Enter>", lambda event : btn_add_student_window.config(bg="grey"))
+    btn_add_student_window.bind("<Leave>", lambda event : btn_add_student_window.config(bg="black")) 
 
     #button to return to homepage
-    btn_rtn_homepage_window = ttk.Button(records_act_window, text="Back to Homepage", command=lambda: [close_db_connection(), records_act_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window = tk.Button(records_act_window, text="Back to Homepage", bg="black", fg="white", width=17, height=3, highlightbackground="gray", font=("Franklin Gothic URW", 10, "bold"), command=lambda: [close_db_connection(), records_act_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")  # Top-Left
+    #creates the hover over effect, turning the button grey when the mouse is over it, and back to black else
+    btn_rtn_homepage_window.bind("<Enter>", lambda event : btn_rtn_homepage_window.config(bg="grey"))
+    btn_rtn_homepage_window.bind("<Leave>", lambda event : btn_rtn_homepage_window.config(bg="black")) 
 
-
-
+    
 
 
 
@@ -252,6 +267,7 @@ def open_search_student(root):
     search_window = tk.Toplevel(root)
     center_window(search_window, 600, 400)
     search_window.title("Search Students")
+    search_window.configure(background="#52101a")
 
     #header for top of page
     label = tk.Label(search_window, text="Find Student", font=("Helvetica", 20, "bold"),bd=2, relief="solid", padx=10)
@@ -294,6 +310,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     add_member_window = tk.Toplevel(root)
     center_window(add_member_window, 950,700)
     add_member_window.title("Add Members")
+
     
     #top header
     label = tk.Label(add_member_window, text="Add Members", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
@@ -586,6 +603,7 @@ def open_add_student(root):
     add_student_window = tk.Toplevel(root)
     center_window(add_student_window, 950,700)
     add_student_window.title("Add Student")
+    
     
     #top window header
     label = tk.Label(add_student_window, text="Add Student", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
@@ -930,6 +948,7 @@ def open_view_records(root):
     view_records_window = tk.Toplevel(root)
     center_window(view_records_window, 1500, 650)
     view_records_window.title("View Records")
+    view_records_window.configure(background="#52101a")
 
     #top label for window
     label = tk.Label(view_records_window, text="View Records", font=("Helvetica", 20, "bold"))
