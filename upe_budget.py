@@ -7,9 +7,8 @@ from tkcalendar import Calendar
 from tkinter import *
 import tkinter.messagebox as messagebox
 from datetime import datetime
+from PIL import Image, ImageTk
 
-
-#CAN NOT COLUMN NUMBER PROPERLY TO CREATE A WORKING EDITOR FUNCTION
 
 '''
 ----------------------------------------
@@ -224,18 +223,38 @@ def open_upe_budget(homepage_window, root):
     #creates header
     label = tk.Label(upe_budget_window, text="Budget Home", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=50)
+    label.configure(bg="#52101a", fg="white")
+
+    #Make the background color red
+    upe_budget_window.configure(bg="#52101a")
 
     #back to homepage button
     btn_rtn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [close_db_connection(), upe_budget_window.destroy(), homepage_window.deiconify()])
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")
 
-    #View history button
-    btn_view_history = ttk.Button(upe_budget_window, text="View History", command=lambda: [upe_budget_window.withdraw(), open_budget_history(upe_budget_window, root)])
-    btn_view_history.place(relx=0.5, rely=0.4, anchor="center")
 
+    #EXAMPLE BUTTONS
+    #View history button
+
+    #Load image for history button
+    img_path = "image/History_ButtonF.png"  # Relative path to the image
+    imgHistory = Image.open(img_path).resize((200, 125))  # Resize as needed
+    imgHistory = ImageTk.PhotoImage(imgHistory)
+    root.imgHistory = imgHistory
+
+    #view history button
+    btn_view_history = tk.Button(upe_budget_window, image=root.imgHistory, borderwidth=0, highlightthickness=0, command=lambda: [upe_budget_window.withdraw(), open_budget_history(upe_budget_window, root)])
+    btn_view_history.place(relx=0.3, rely=0.7, anchor="center")
+
+    #Load image for add transaction button
+    imgPathAdd = "image/btnAddTrans.png"  # Relative path to the image
+    imgAddT = Image.open(imgPathAdd).resize((200, 125))
+    imgAddT = ImageTk.PhotoImage(imgAddT)
+    root.imgAddT = imgAddT
+    
     #Add transaction buton
-    btn_transaction = ttk.Button(upe_budget_window, text="Add Transaction", command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
-    btn_transaction.place(relx=0.5, rely=0.5, anchor="center")
+    btn_transaction = tk.Button(upe_budget_window,image=root.imgAddT, borderwidth=0, highlightthickness=0, command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
+    btn_transaction.place(relx=0.7, rely=0.7, anchor="center")
 
 '''
 --------------------------------
