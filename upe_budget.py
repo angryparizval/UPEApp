@@ -229,32 +229,69 @@ def open_upe_budget(homepage_window, root):
     upe_budget_window.configure(bg="#52101a")
 
     #back to homepage button
-    btn_rtn_homepage_window = ttk.Button(upe_budget_window, text="Back to Homepage", command=lambda: [close_db_connection(), upe_budget_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window = tk.Button(upe_budget_window, text="Back", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"),width=7, height=1, padx=1, pady=1, command=lambda: [close_db_connection(), upe_budget_window.destroy(), homepage_window.deiconify()])
+    btn_rtn_homepage_window.pack(pady=15)
     btn_rtn_homepage_window.place(relx=0.05, rely=0.05, anchor="nw")
+    #create highlight on hover
+    btn_rtn_homepage_window.bind("<Enter>", lambda event : btn_rtn_homepage_window.config(bg="grey"))
+    btn_rtn_homepage_window.bind("<Leave>", lambda event : btn_rtn_homepage_window.config(bg="black")) 
 
 
-    #EXAMPLE BUTTONS
     #View history button
+    btn_view_history = tk.Button(upe_budget_window, text="View Full History", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 20, "bold"),width=15, height=2, padx=1, pady=1, command=lambda: [upe_budget_window.withdraw(), open_budget_history(upe_budget_window, root)])
+    btn_view_history.pack(pady=15)
+    btn_view_history.place(relx=0.285, rely=0.82, anchor="center")
+    #change color on hover
+    btn_view_history.bind("<Enter>", lambda event : btn_view_history.config(bg="grey"))
+    btn_view_history.bind("<Leave>", lambda event : btn_view_history.config(bg="black")) 
 
-    #Load image for history button
-    img_path = "image/History_ButtonF.png"  # Relative path to the image
-    imgHistory = Image.open(img_path).resize((200, 125))  # Resize as needed
-    imgHistory = ImageTk.PhotoImage(imgHistory)
-    root.imgHistory = imgHistory
+    #add transaction button
+    btn_transaction = tk.Button(upe_budget_window, text="Add Transaction", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 20, "bold"),width=15, height=2, padx=1, pady=1, command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
+    btn_transaction.pack(pady=15)
+    btn_transaction.place(relx=0.715, rely=0.82, anchor="center")
+    #change color on hover
+    btn_transaction.bind("<Enter>", lambda event : btn_transaction.config(bg="grey"))
+    btn_transaction.bind("<Leave>", lambda event : btn_transaction.config(bg="black")) 
 
-    #view history button
-    btn_view_history = tk.Button(upe_budget_window, image=root.imgHistory, borderwidth=0, highlightthickness=0, command=lambda: [upe_budget_window.withdraw(), open_budget_history(upe_budget_window, root)])
-    btn_view_history.place(relx=0.3, rely=0.7, anchor="center")
+    #add treeview with data from database
+    #Table Frame
+    frame = tk.Frame(upe_budget_window)
+    frame.pack(padx=10, pady=10, fill=tk.BOTH,)
+    frame.configure(width=625, height=300)
+    frame.place(relx=0.5, rely=0.475, anchor="center")
+    frame.configure(bg="white")
 
-    #Load image for add transaction button
-    imgPathAdd = "image/btnAddTrans.png"  # Relative path to the image
-    imgAddT = Image.open(imgPathAdd).resize((200, 125))
-    imgAddT = ImageTk.PhotoImage(imgAddT)
-    root.imgAddT = imgAddT
-    
-    #Add transaction buton
-    btn_transaction = tk.Button(upe_budget_window,image=root.imgAddT, borderwidth=0, highlightthickness=0, command=lambda: [upe_budget_window.withdraw(), open_add_transaction(upe_budget_window, root)])
-    btn_transaction.place(relx=0.7, rely=0.7, anchor="center")
+    #Define table columns
+    columns = ("Transaction No", "Date", "Type", "Memo", "Amount")
+
+    #Create Treeview widget
+    tree = ttk.Treeview(frame, columns=columns, show="headings")
+
+    # Define column properties
+    tree.column("Transaction No", width=120, anchor="center")
+    tree.column("Date", width=100, anchor="center")
+    tree.column("Type", width=150, anchor="center")
+    tree.column("Memo", width=200, anchor="center")
+    tree.column("Amount", width=100, anchor="w")
+
+    # Define column headers
+    for col in columns:
+        tree.heading(col, text=col)
+
+    #Insert data into table
+    budget_data = fetch_budget_data()
+    for row in budget_data:
+        tree.insert("", tk.END, values=row)
+
+    #Add scrollbar
+    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+
+    #Pack widgets
+    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+
 
 '''
 --------------------------------
@@ -274,11 +311,18 @@ def open_budget_history(budget_home_window, root):
 
     #creates header
     label = tk.Label(upe_budget_history, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
-    label.pack(pady=20)
+    label.pack(pady=50)
+    label.configure(bg="#52101a", fg="white")
+    #Make the background color red
+    upe_budget_history.configure(bg="#52101a")
 
-    #Back to Budget Home button
-    btn_rtn_budget_home = ttk.Button(upe_budget_history, text="Back to Budget",command=lambda: [upe_budget_history.destroy(), budget_home_window.deiconify()])
-    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
+    #back to homepage button
+    btn_rtn_budget_home = tk.Button(upe_budget_history, text="Back", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"),width=7, height=1, padx=1, pady=1, command=lambda: [close_db_connection(), upe_budget_history.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home.pack(pady=15)
+    btn_rtn_budget_home.place(relx=0.05, rely=0.05, anchor="nw")
+    #create highlight on hover
+    btn_rtn_budget_home.bind("<Enter>", lambda event : btn_rtn_budget_home.config(bg="grey"))
+    btn_rtn_budget_home.bind("<Leave>", lambda event : btn_rtn_budget_home.config(bg="black")) 
 
     #Table Frame
     frame = tk.Frame(upe_budget_history)
@@ -326,7 +370,9 @@ ADD TRANSACTION WINDOW FUNCTIONS
 def open_add_transaction(budget_home_window, root):
 
     #Do not allow tabs in memo field
-    #Enter key should submit the transaction
+    #Enter key should submit the transaction AND clear the txtAmount field
+    
+
 
     #call in global variables
     global date_label
@@ -337,62 +383,72 @@ def open_add_transaction(budget_home_window, root):
     budget_add_transaction.title("Add Transaction")
     center_window(budget_add_transaction, 800, 630)
 
+
     #creates labels; Header and textbox labels
     lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     lblHeader.pack(pady=20)
 
     lblDate = tk.Label(budget_add_transaction, text="* Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblDate.pack(pady=5)
-    lblDate.place(relx=0.1, rely=0.2)
+    lblDate.place(relx=0.1, rely=0.22)
 
     lblType = tk.Label(budget_add_transaction, text="* Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblType.pack(pady=5)
-    lblType.place(relx=0.45, rely=0.2)
+    lblType.place(relx=0.45, rely=0.22)
 
     lblAmount = tk.Label(budget_add_transaction, text="* Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
     lblAmount.pack(pady=5)
-    lblAmount.place(relx=0.7, rely=0.2)
+    lblAmount.place(relx=0.7, rely=0.22)
 
     lblMemo = tk.Label(budget_add_transaction, text="* Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
     lblMemo.pack(pady=5)
-    lblMemo.place(relx=0.45, rely=0.4)
+    lblMemo.place(relx=0.45, rely=0.42)
 
     #Radio Buttons for type
     transaction_type = tk.StringVar(value="")
     rdWithdrawal = ttk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="Withdrawal")
-    rdWithdrawal.place(relx=0.45, rely=0.25)
+    rdWithdrawal.place(relx=0.45, rely=0.27)
     rdDeposit = ttk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="Deposit")
-    rdDeposit.place(relx=0.45, rely=0.3)
+    rdDeposit.place(relx=0.45, rely=0.32)
 
     #Text boxes for amount and memo
     txtAmount = tk.Text(budget_add_transaction, height=1, width=15)
-    txtAmount.place(relx=0.7, rely=0.25)
+    txtAmount.place(relx=0.7, rely=0.27)
+    #when in txtamount, enter key submits the transaction
+    txtAmount.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+   
+
     txtMemo = tk.Text(budget_add_transaction, height=5, width=30)
-    txtMemo.place(relx=0.45, rely=0.45)
+    txtMemo.place(relx=0.45, rely=0.47)
 
     #Back to Budget Home button and submit button
     btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
-    btn_rtn_budget_home.place(relx=0.02, rely=0.05, anchor="nw")
+    btn_rtn_budget_home.place(relx=0.02, rely=0.07, anchor="nw")
 
     # Create the calendar and get current date
     current_date = datetime.today().strftime('%m/%d/%Y')
     cal = Calendar(budget_add_transaction, selectmode="day", year=datetime.today().year, month=datetime.today().month, day=datetime.today().day)
     cal.pack(pady=20)
-    cal.place(relx=0.05, rely=0.25)
+    cal.place(relx=0.05, rely=0.27)
 
     lblSelectedDate = tk.Label(budget_add_transaction, text="No Date Selected", font=("Arial", 12, "bold"))
     lblSelectedDate.pack(pady=10)
-    lblSelectedDate.place(relx=0.075, rely=0.55)
+    lblSelectedDate.place(relx=0.075, rely=0.57)
 
     # Button to select the date
     select_button = ttk.Button(budget_add_transaction, text="Update Date", command= lambda: [get_selected_date(cal, lblSelectedDate)])
     select_button.pack(pady=10)
-    select_button.place(relx=0.125, rely=0.6)
+    select_button.place(relx=0.125, rely=0.62)
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
     btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
     btnSubmit.place(relx=0.8, rely=0.95, anchor="sw")
     btnSubmit.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+
+    #bind enter key to submit transaction
+    budget_add_transaction.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+
+    
 
 
 '''
@@ -481,5 +537,7 @@ def submit_transaction(txtMemo, txtAmount, transaction_type, lblSelectedDate):
     if transaction_type.get() == "Withdrawal":
         fltAmount = float(txtAmount.get("0.0", "end-1c"))
         fltAmount = -fltAmount
-    
+    else:
+        fltAmount = float(txtAmount.get("0.0", "end-1c"))
+
     add_transactionDB(lblSelectedDate, transaction_type.get(), fltAmount, txtMemo.get("0.0", "end-1c"))
