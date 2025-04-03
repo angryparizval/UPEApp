@@ -30,11 +30,12 @@ def open_upe_information(homepage_window, root):
     # Create the UPE Information window
     upe_information_window = tk.Toplevel(root)
     upe_information_window.title("UPE Information")
-    center_window(upe_information_window, 970, 730)
+    center_window(upe_information_window, 1200, 750)
+    upe_information_window.configure(background="#52101a")
 
     # Load the image and keep a reference to it
     upe_information_window.image_ref = PhotoImage(file="Image/UPE-banner.png")
-    resized_image = upe_information_window.image_ref.subsample(2, 2)
+    resized_image = upe_information_window.image_ref.subsample(3, 3)
 
     # Create a label with the resized image
     image_label = tk.Label(upe_information_window, image=resized_image)
@@ -42,7 +43,7 @@ def open_upe_information(homepage_window, root):
     image_label.pack()
 
     # Header label
-    label = tk.Label(upe_information_window, text="UPE Information", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(upe_information_window, text="UPE Information", font=("Helvetica", 40, "bold"), bg="white", fg="Black", bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=10)
 
     # Main frame to organize content (Grid Layout)
