@@ -87,7 +87,7 @@ def open_records_act(homepage_window, root):
     records_act_window.configure(background="#52101a")
 
     #Top title of records
-    label = tk.Label(records_act_window, text="Records", bg="black", fg="white", font=("Helvetica", 45, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(records_act_window, text="Records", font=("Helvetica", 40, "bold"), bg="white", fg="black",bd=2, relief="solid", padx=10)
     label.pack(pady=50)
 
     #button to move to view records window
@@ -286,12 +286,17 @@ def open_search_student(root):
     student_listbox.pack(pady=5)
 
     #select button that moves to next page with selected student info
-    select_button = ttk.Button(search_window, text="Select", command= lambda: [select_student(root)] )
+    select_button = tk.Button(search_window, text="Select",  bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"), command= lambda: [select_student(root)] )
     select_button.pack()
+    #creates the hover over effect, turning the button grey when the mouse is over it, and back to black else
+    select_button.bind("<Enter>", lambda event : select_button.config(bg="grey"))
+    select_button.bind("<Leave>", lambda event : select_button.config(bg="black")) 
     
     #button to return to records screen
-    btn_rtn_recordsact_window = ttk.Button(search_window, text="Back", command=lambda: [search_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window = tk.Button(search_window, text="Back",  bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"), command=lambda: [search_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
+    btn_rtn_recordsact_window.bind("<Enter>", lambda event : btn_rtn_recordsact_window.config(bg="grey"))
+    btn_rtn_recordsact_window.bind("<Leave>", lambda event : btn_rtn_recordsact_window.config(bg="black"))
     
 
 #function to op window where user will input info to add member
