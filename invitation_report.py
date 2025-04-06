@@ -25,15 +25,13 @@ def search_students(event):
     listbox.delete(0, tk.END)
     student_dict.clear()
     
-    # Connect to the database and search for students
     if query:
         conn = sqlite3.connect("UPEAPP.db")
         cursor = conn.cursor()
-        cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?", 
-                       (f"%{query}%", f"%{query}%"))
+        cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE (STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?)AND STUD_ID NOT IN (SELECT STUD_ID FROM Member)", (f"%{query}%", f"%{query}%"))
         results = cursor.fetchall()
         conn.close()
-
+        
         # Display search results in the listbox
         for index, student in enumerate(results):
             full_name = f"{student[0]} {student[1]}"
