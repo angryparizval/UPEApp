@@ -593,6 +593,9 @@ def send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtSt
                     (txtStudID.get(), txtStudFstNm.get(), txtStudMinit.get(), txtStudLstNm.get(), txtStudEmail.get(), txtStudClassLvl.get(), txtStudCurr.get(), txtStudDegree.get(), txtStudCumGPA.get(),txtStudTransCred.get(), txtStudEarnedCred.get(), txtStudTotalCred.get(), txtStudBelow30LrCred.get(), txtStudBel3GPA.get(), invStatus))
 
     conn.commit()
+    messagebox.showinfo("Success!","Success!")
+    add_student_window.destroy()
+    records_act_window.deiconify()
 
 #function to open add student window
 def open_add_student(root):
@@ -973,11 +976,11 @@ def open_view_records(root):
     filter_entry.bind("<KeyRelease>", lambda event: update_treeview(tree, table.get(), [], filter_col.get()))
 
     #listbox for column selection to apply filter
-    listbox_frame = tk.Frame(view_records_window)
+    listbox_frame = tk.Frame(view_records_window, bg="#52101a")
     listbox_frame.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.Y)
 
     #label for hide columns
-    listbox_label = tk.Label(listbox_frame, text="Hide Columns:")
+    listbox_label = tk.Label(listbox_frame, text="Hide Columns:", bg="#52101a", fg="white", font=("Helvetica", 12, "bold"))
     listbox_label.pack()
 
     #creates listbox

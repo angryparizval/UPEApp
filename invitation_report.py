@@ -205,10 +205,11 @@ def open_invitation_report_window(homepage_window, root):
     invitation_report_window = tk.Toplevel(root)
     invitation_report_window.title("Invitation Reporting")
     center_window(invitation_report_window, 800, 670)
+    invitation_report_window.configure(background="#52101a")
 
     # Header label
     tk.Label(invitation_report_window, text="Invitation Report", font=("Helvetica", 30, "bold")).pack(pady=10)
-    tk.Label(invitation_report_window, text="Search Student:",font=("Helvetica", 18)).pack(pady=5)
+    tk.Label(invitation_report_window, text="Search Student:",font=("Helvetica", 18), bg="#52101a", fg="white").pack(pady=5)
 
     #Entry for searching students
     search_var = tk.StringVar()
@@ -244,16 +245,16 @@ def open_invitation_report_window(homepage_window, root):
 
     # Button to open the calendar
     ttk.Button(invitation_report_window, text="Select Reply by Date", command=open_calendar).pack(pady=10)
-    date_label = tk.Label(invitation_report_window, text="No Date Selected", font=("Helvetica", 18, "bold"))
+    date_label = tk.Label(invitation_report_window, text="No Date Selected", font=("Helvetica", 18, "bold"), bg="#52101a", fg="white")
     date_label.pack(pady=10)
 
     # Entry for form link
-    tk.Label(invitation_report_window, text="Enter Form Link:",font=("Helvetica", 15)).pack()
+    tk.Label(invitation_report_window, text="Enter Form Link:",font=("Helvetica", 15), bg="#52101a", fg="white").pack()
     link_entry = ttk.Entry(invitation_report_window, width=50)
     link_entry.pack(pady=5)
 
     # Create a frame to hold the buttons
-    button_frame = tk.Frame(invitation_report_window)
+    button_frame = tk.Frame(invitation_report_window, bg="#52101a")
     button_frame.pack(pady=20)
 
     # Button to generate PDF report

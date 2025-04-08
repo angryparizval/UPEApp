@@ -43,7 +43,7 @@ def open_upe_information(homepage_window, root):
     image_label.pack()
 
     # Header label
-    label = tk.Label(upe_information_window, text="UPE Information", font=("Helvetica", 40, "bold"), bg="white", fg="Black", bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(upe_information_window, text="UPE Information",  font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=10)
 
     # Main frame to organize content (Grid Layout)
