@@ -262,7 +262,7 @@ def open_upe_budget(homepage_window, root):
     frame.configure(bg="white")
 
     #Define table columns
-    columns = ("Transaction No", "Date", "Type", "Memo", "Amount")
+    columns = ("Transaction No", "Date", "Type", "Memo", "Amount", "Running Total")
 
     #Create Treeview widget
     tree = ttk.Treeview(frame, columns=columns, show="headings")
@@ -272,7 +272,8 @@ def open_upe_budget(homepage_window, root):
     tree.column("Date", width=100, anchor="center")
     tree.column("Type", width=150, anchor="center")
     tree.column("Memo", width=200, anchor="center")
-    tree.column("Amount", width=100, anchor="w")
+    tree.column("Amount", width=100, anchor="center")
+    tree.column("Running Total", width=100, anchor="w")
 
     # Define column headers
     for col in columns:
@@ -329,7 +330,7 @@ def open_budget_history(budget_home_window, root):
     frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
     #Define table columns
-    columns = ("Transaction No", "Date", "Type", "Memo", "Amount")
+    columns = ("Transaction No", "Date", "Type", "Memo", "Amount", "Running Total")
 
     #Create Treeview widget
     tree = ttk.Treeview(frame, columns=columns, show="headings")
@@ -339,7 +340,8 @@ def open_budget_history(budget_home_window, root):
     tree.column("Date", width=100, anchor="center")
     tree.column("Type", width=150, anchor="center")
     tree.column("Memo", width=200, anchor="center")
-    tree.column("Amount", width=100, anchor="w")
+    tree.column("Amount", width=100, anchor="center")
+    tree.column("Running Total", width=100, anchor="w")
 
     # Define column headers
     for col in columns:
@@ -369,10 +371,8 @@ ADD TRANSACTION WINDOW FUNCTIONS
 #function to open edit budget window
 def open_add_transaction(budget_home_window, root):
 
-    #Do not allow tabs in memo field
-    #Enter key should submit the transaction AND clear the txtAmount field
-    
-
+    #BRING IN RUNNING TOTAL
+    #RADIO BUTTON RUNNING TOTAL
 
     #call in global variables
     global date_label
@@ -383,47 +383,60 @@ def open_add_transaction(budget_home_window, root):
     budget_add_transaction.title("Add Transaction")
     center_window(budget_add_transaction, 800, 630)
 
-
     #creates labels; Header and textbox labels
     lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     lblHeader.pack(pady=20)
 
-    lblDate = tk.Label(budget_add_transaction, text="* Transaction Date", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblHeader.configure(bg="#52101a", fg="white")
+
+    #Make the background color red
+    budget_add_transaction.configure(bg="#52101a")
+
+    lblDate = tk.Label(budget_add_transaction, text="* Transaction Date", font=("Helvetica", 12, "bold"), bd=2, padx=5, pady=5)
     lblDate.pack(pady=5)
     lblDate.place(relx=0.1, rely=0.22)
+    lblDate.configure(bg="#52101a", fg="white")
 
-    lblType = tk.Label(budget_add_transaction, text="* Type", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblType = tk.Label(budget_add_transaction, text="* Type", font=("Helvetica", 12, "bold"), bd=2, padx=5, pady=5)
     lblType.pack(pady=5)
     lblType.place(relx=0.45, rely=0.22)
+    lblType.configure(bg="#52101a", fg="white")
 
-    lblAmount = tk.Label(budget_add_transaction, text="* Amount", font=("Helvetica", 12), bd=2,  padx=5, pady=5)
+    lblAmount = tk.Label(budget_add_transaction, text="* Amount", font=("Helvetica", 12, "bold"), bd=2,  padx=5, pady=5)
     lblAmount.pack(pady=5)
     lblAmount.place(relx=0.7, rely=0.22)
+    lblAmount.configure(bg="#52101a", fg="white")
 
-    lblMemo = tk.Label(budget_add_transaction, text="* Memo", font=("Helvetica", 12), bd=2, padx=5, pady=5)
+    lblMemo = tk.Label(budget_add_transaction, text="* Memo", font=("Helvetica", 12, "bold"), bd=2, padx=5, pady=5)
     lblMemo.pack(pady=5)
     lblMemo.place(relx=0.45, rely=0.42)
+    lblMemo.configure(bg="#52101a", fg="white")
+    
 
     #Radio Buttons for type
     transaction_type = tk.StringVar(value="")
-    rdWithdrawal = ttk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="Withdrawal")
+    rdWithdrawal = tk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="Withdrawal", disabledforeground="white", background="#52101a", activebackground="#52101a", activeforeground="white", foreground="white", selectcolor="#52101a", indicatoron=True)
     rdWithdrawal.place(relx=0.45, rely=0.27)
-    rdDeposit = ttk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="Deposit")
+    rdDeposit = tk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="Deposit", disabledforeground="white", background="#52101a", activebackground="#52101a", activeforeground="white", foreground="white", selectcolor="#52101a", indicatoron=True)
     rdDeposit.place(relx=0.45, rely=0.32)
 
     #Text boxes for amount and memo
     txtAmount = tk.Text(budget_add_transaction, height=1, width=15)
     txtAmount.place(relx=0.7, rely=0.27)
+
     #when in txtamount, enter key submits the transaction
-    txtAmount.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+    txtAmount.bind("<Return>", "break")
+    txtAmount.bind("<Tab>", "break")
    
 
     txtMemo = tk.Text(budget_add_transaction, height=5, width=30)
     txtMemo.place(relx=0.45, rely=0.47)
 
     #Back to Budget Home button and submit button
-    btn_rtn_budget_home = ttk.Button(budget_add_transaction, text="Back to Budget",command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
+    btn_rtn_budget_home = tk.Button(budget_add_transaction, text="Back", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"), width=8, command=lambda: [budget_add_transaction.destroy(), budget_home_window.deiconify()])
     btn_rtn_budget_home.place(relx=0.02, rely=0.07, anchor="nw")
+    btn_rtn_budget_home.bind("<Enter>", lambda event : btn_rtn_budget_home.config(bg="grey"))
+    btn_rtn_budget_home.bind("<Leave>", lambda event : btn_rtn_budget_home.config(bg="black")) 
 
     # Create the calendar and get current date
     current_date = datetime.today().strftime('%m/%d/%Y')
@@ -433,17 +446,22 @@ def open_add_transaction(budget_home_window, root):
 
     lblSelectedDate = tk.Label(budget_add_transaction, text="No Date Selected", font=("Arial", 12, "bold"))
     lblSelectedDate.pack(pady=10)
-    lblSelectedDate.place(relx=0.075, rely=0.57)
+    lblSelectedDate.place(relx=0.087, rely=0.57)
+    lblSelectedDate.configure(bg="#52101a", fg="white")
 
     # Button to select the date
-    select_button = ttk.Button(budget_add_transaction, text="Update Date", command= lambda: [get_selected_date(cal, lblSelectedDate)])
+    select_button = tk.Button(budget_add_transaction, text="Update Date", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), width=12, command= lambda: [get_selected_date(cal, lblSelectedDate)])
     select_button.pack(pady=10)
-    select_button.place(relx=0.125, rely=0.62)
+    select_button.place(relx=0.115, rely=0.62)
+    select_button.bind("<Enter>", lambda event : select_button.config(bg="grey"))
+    select_button.bind("<Leave>", lambda event : select_button.config(bg="black")) 
     lblSelectedDate.config(text=f"Selected Date: {selected_date_str}")
 
-    btnSubmit = ttk.Button(budget_add_transaction, text="Submit",command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+    btnSubmit = tk.Button(budget_add_transaction, bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 15, "bold"), text="Submit", width=8,command=lambda: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
     btnSubmit.place(relx=0.8, rely=0.95, anchor="sw")
     btnSubmit.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
+    btnSubmit.bind("<Enter>", lambda event : btnSubmit.config(bg="grey"))
+    btnSubmit.bind("<Leave>", lambda event : btnSubmit.config(bg="black")) 
 
     #bind enter key to submit transaction
     budget_add_transaction.bind("<Return>", lambda event: submit_transaction(txtMemo, txtAmount, transaction_type, selected_date_str))
