@@ -4,11 +4,14 @@ import os
 import subprocess
 import sys
 from utils import center_window
-from tkinter import PhotoImage
+from PIL import Image, ImageTk
+
+
+banner_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-banner.png')
 
 # Function to open files
 def open_file(filename):
-    #exception handling for opening files
+    # Exception handling for opening files
     try:
         # Windows
         if sys.platform.startswith("win"):
@@ -19,7 +22,7 @@ def open_file(filename):
         # Linux
         else:
             subprocess.run(["xdg-open", filename])  
-    #exception handling for unknown OS
+    # Exception handling for unknown OS
     except Exception as e:
         print(f"Error opening file: {e}")
 
@@ -33,13 +36,18 @@ def open_upe_information(homepage_window, root):
     center_window(upe_information_window, 1200, 750)
     upe_information_window.configure(background="#52101a")
 
-    # Load the image and keep a reference to it
-    upe_information_window.image_ref = PhotoImage(file="Image/UPE-banner.png")
-    resized_image = upe_information_window.image_ref.subsample(3, 3)
+    # Load the image using Pillow
+    upe_information_window.image_ref = Image.open(banner_image_path)
+
+    # Resize the image (scale it down to 1/3 of the original size)
+    resized_image = upe_information_window.image_ref.resize((upe_information_window.image_ref.width // 3, upe_information_window.image_ref.height // 3))
+
+    # Convert the resized image to a Tkinter-compatible format
+    tk_image = ImageTk.PhotoImage(resized_image)
 
     # Create a label with the resized image
-    image_label = tk.Label(upe_information_window, image=resized_image)
-    image_label.image = resized_image
+    image_label = tk.Label(upe_information_window, image=tk_image)
+    image_label.image = tk_image  # Keep a reference to the image
     image_label.pack()
 
     # Header label
@@ -113,6 +121,6 @@ def open_upe_information(homepage_window, root):
 
     # Buttons in the right frame
     ttk.Button(right_frame, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()]).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_bylaws.pdf"))).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "LRU_Constitution.pdf"))).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(os.getcwd(), "PDF", "UPE_Infographic_2022.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "LRU_bylaws.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "LRU_Constitution.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "UPE_Infographic_2022.pdf"))).pack(pady=5, fill="x")

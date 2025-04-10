@@ -8,6 +8,7 @@ from tkinter import *
 import tkinter.messagebox as messagebox
 from datetime import datetime
 from PIL import Image, ImageTk
+import os,sys
 
 
 '''
@@ -23,8 +24,9 @@ selected_date_str = "No Date"
 def get_db_connection():
     #returns gloval database connection
     global conn
+    db_path = os.path.join(sys._MEIPASS, 'UPEApp.db')
     if conn is None:
-        conn = sqlite3.connect("UPEAPP.db")
+        conn = sqlite3.connect("UPEApp.db")
     return conn
 
 def close_db_connection():
