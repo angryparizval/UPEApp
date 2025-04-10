@@ -40,7 +40,7 @@ def fetch_budget_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     #grabs all columns from tables
-    cursor.execute("SELECT BDGET_TRNS_NO, BDGET_TRNS_DT, BDGET_TRNS_TYP, BDGET_MEMO, BDGET_TRNS_AM FROM budget")
+    cursor.execute("SELECT * FROM BudgetRunningTotal")
     #grabs the related rows from columns and returns it
     rows = cursor.fetchall()
     return rows
@@ -100,7 +100,7 @@ def save_edit(selected_item, column_index):
     global entry_widget
 
     #CREATE VARIABLE THAT GRABS ALL COLUMNS
-    columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+    columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM", "Running_Total")
 
     new_value = entry_widget.get()
     column_name = columns[column_index]  # Get column name
@@ -129,7 +129,7 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
 
     #fetch data from the selected table
     if table == "Budget":
-        columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+        columns = ("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM", "Running_Total")
         data = fetch_member_data()
         return  
     
@@ -171,7 +171,7 @@ def fetch_member_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     #grabs all columns
-    cursor.execute("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM")
+    cursor.execute("BDGET_TRNS_NO", "BDGET_TRNS_DT", "BDGET_TRNS_TYP", "BDGET_MEMO", "BDGET_TRNS_AM", "Running_Total")
     #grabs all rows from related columns and returns it
     rows = cursor.fetchall()
     return rows
@@ -273,7 +273,7 @@ def open_upe_budget(homepage_window, root):
     tree.column("Type", width=150, anchor="center")
     tree.column("Memo", width=200, anchor="center")
     tree.column("Amount", width=100, anchor="center")
-    tree.column("Running Total", width=100, anchor="w")
+    tree.column("Running Total", width=100, anchor="center")
 
     # Define column headers
     for col in columns:
@@ -308,7 +308,7 @@ def open_budget_history(budget_home_window, root):
     #creates history page, sets title and centers it
     upe_budget_history = tk.Toplevel(root)
     upe_budget_history.title("Budget History")
-    center_window(upe_budget_history, 800, 630)
+    center_window(upe_budget_history, 850, 630)
 
     #creates header
     label = tk.Label(upe_budget_history, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
@@ -341,7 +341,7 @@ def open_budget_history(budget_home_window, root):
     tree.column("Type", width=150, anchor="center")
     tree.column("Memo", width=200, anchor="center")
     tree.column("Amount", width=100, anchor="center")
-    tree.column("Running Total", width=100, anchor="w")
+    tree.column("Running Total", width=100, anchor="center")
 
     # Define column headers
     for col in columns:
@@ -381,7 +381,7 @@ def open_add_transaction(budget_home_window, root):
     #creates edit budget window, sets title and centers it
     budget_add_transaction = tk.Toplevel(root)
     budget_add_transaction.title("Add Transaction")
-    center_window(budget_add_transaction, 800, 630)
+    center_window(budget_add_transaction, 850, 630)
 
     #creates labels; Header and textbox labels
     lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
