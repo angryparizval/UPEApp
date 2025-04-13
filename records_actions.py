@@ -10,8 +10,7 @@ from PIL import Image, ImageTk
 import datetime
 import calendar
 import re
-import os
-import sys
+from utils import resource_path
 
 '''
 ======================
@@ -27,9 +26,9 @@ selected_date_str = ""
 def get_db_connection():
     #returns gloval database connection
     global conn
-    db_path = os.path.join(sys._MEIPASS, 'UPEApp.db')
+    db_path = resource_path('UPEApp.db')
     if conn is None:
-        conn = sqlite3.connect("UPEApp.db")
+        conn = sqlite3.connect(db_path)
     return conn
 
 #Function to close connection if open

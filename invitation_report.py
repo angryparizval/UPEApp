@@ -1,4 +1,3 @@
-# invitation_report.py
 import tkinter as tk
 import sqlite3
 import os
@@ -12,12 +11,22 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from tkcalendar import Calendar
 from datetime import datetime
+import sys
 
 
 # Store selected students and search results
 selected_students = []
-#Dictionary to store search results
-student_dict = {}  
+# Dictionary to store search results
+student_dict = {}
+
+# Function to get the correct path to the database (works both in development and packaged form)
+def get_db_path():
+    if getattr(sys, 'frozen', False):
+        # If running as a bundled executable, use the path relative to the executable
+        return os.path.join(sys._MEIPASS, "UPEApp.db")
+    else:
+        # If running from source, use the local path
+        return "UPEApp.db"
 
 # Function to search students
 def search_students(event):
@@ -26,7 +35,8 @@ def search_students(event):
     student_dict.clear()
     
     if query:
-        conn = sqlite3.connect("UPEAPP.db")
+        db_path = get_db_path()  # Get the correct DB path
+        conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE (STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?)AND STUD_ID NOT IN (SELECT STUD_ID FROM Member)", (f"%{query}%", f"%{query}%"))
         results = cursor.fetchall()
@@ -70,7 +80,7 @@ def open_calendar():
     global calendar_window, cal
     calendar_window = tk.Toplevel()
     calendar_window.title("Select a Date")
-    center_window(calendar_window, 300, 250)
+    center_window(calendar_window, 300, 320)
 
     # Create the calendar and get current date
     current_date = datetime.today().strftime('%m/%d/%Y')
@@ -78,7 +88,7 @@ def open_calendar():
     cal.pack(pady=20)
 
     # Button to select the date
-    select_button = ttk.Button(calendar_window, text="Select Date", command=get_selected_date)
+    select_button = ttk.Button(calendar_window, text="Select Date", command= lambda: [get_selected_date, calendar_window.destroy()])
     select_button.pack(pady=10)
 
 # Function to generate the PDF report
@@ -105,7 +115,7 @@ def generate_pdf_report():
         # Split the student name into first and last name
         first_name, last_name = student.split(" ", 1)
         # Define the PDF file path
-        pdf_filename = os.path.join("InvitationOutput",first_name + '-' + last_name + "-Invitation_report.pdf")
+        pdf_filename = os.path.join("InvitationOutput", first_name + '-' + last_name + "-Invitation_report.pdf")
         # Create the PDF document
         doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
         document = []

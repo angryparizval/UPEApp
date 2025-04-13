@@ -5,9 +5,10 @@ import subprocess
 import sys
 from utils import center_window
 from PIL import Image, ImageTk
+from utils import resource_path
 
 
-banner_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-banner.png')
+banner_image_path = resource_path('Image/UPE-banner.png')
 
 # Function to open files
 def open_file(filename):
@@ -121,6 +122,6 @@ def open_upe_information(homepage_window, root):
 
     # Buttons in the right frame
     ttk.Button(right_frame, text="Back to Homepage", command=lambda: [upe_information_window.destroy(), homepage_window.deiconify()]).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "LRU_bylaws.pdf"))).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "LRU_Constitution.pdf"))).pack(pady=5, fill="x")
-    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(os.path.join(sys._MEIPASS, "PDF", "UPE_Infographic_2022.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU bylaws PDF", command=lambda: open_file(resource_path("PDF/LRU_bylaws.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open LRU Constitution PDF", command=lambda: open_file(resource_path("PDF/LRU_Constitution.pdf"))).pack(pady=5, fill="x")
+    ttk.Button(right_frame, text="Open UPE Infographic PDF", command=lambda: open_file(resource_path("PDF/UPE_Infographic_2022.pdf"))).pack(pady=5, fill="x")

@@ -9,18 +9,15 @@ from upe_budget import open_upe_budget
 from invitation_report import open_invitation_report_window
 from records_actions import open_records_act
 from upe_information import open_upe_information
-
-import sys
-
+from utils import resource_path
 
 
-# Now build the path to the images
-background_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-background.png')
-opening_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-opening.png')
-banner_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-banner.png')
-logo_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-logo.png')
-shortbanner_image_path = os.path.join(sys._MEIPASS, 'Image', 'UPE-shortbanner.jpg')
-
+#build the path to the images
+background_image_path = resource_path('Image/UPE-background.png')
+opening_image_path = resource_path('Image/UPE-opening.png')
+banner_image_path = resource_path('Image/UPE-banner.png')
+logo_image_path = resource_path('Image/UPE-logo.png')
+shortbanner_image_path = resource_path('Image/UPE-shortbanner.jpg')
 
 
 # Function to handle login and check if the credentials are correct
@@ -33,7 +30,7 @@ def login():
         messagebox.showinfo("Login Successful", "Welcome to the Application!")
         open_homepage()
     else:
-        open_homepage()
+        messagebox.showinfo("Login Failed!", "Username or Password was incorrect! Please try again!")
 
 # Function to open the homepage
 def open_homepage():
