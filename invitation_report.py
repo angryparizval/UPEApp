@@ -12,6 +12,8 @@ from reportlab.lib.units import inch
 from tkcalendar import Calendar
 from datetime import datetime
 import sys
+from utils import resource_path
+icon_path = resource_path("Image/icon.ico") 
 
 
 # Store selected students and search results
@@ -79,6 +81,7 @@ def get_selected_date():
 def open_calendar():
     global calendar_window, cal
     calendar_window = tk.Toplevel()
+    calendar_window.iconbitmap(icon_path)
     calendar_window.title("Select a Date")
     center_window(calendar_window, 300, 320)
 
@@ -213,6 +216,7 @@ def open_invitation_report_window(homepage_window, root):
     homepage_window.withdraw()
     global invitation_report_window, search_var, listbox, selected_students_listbox, date_label, link_entry, selected_date_str
     invitation_report_window = tk.Toplevel(root)
+    invitation_report_window.iconbitmap(icon_path)
     invitation_report_window.title("Invitation Reporting")
     center_window(invitation_report_window, 800, 670)
     invitation_report_window.configure(background="#52101a")

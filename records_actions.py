@@ -21,6 +21,7 @@ GENERAL USE FUNCTIONS
 #global variables
 conn = None
 selected_date_str = ""
+icon_path = resource_path("Image/icon.ico") 
 
 #Function to get connection to db
 def get_db_connection():
@@ -82,6 +83,7 @@ def open_records_act(homepage_window, root):
     
     global records_act_window
     records_act_window = tk.Toplevel(root)
+    records_act_window.iconbitmap(icon_path)
     records_act_window.title("Select Records Action")
     center_window(records_act_window, 950,700)
 
@@ -267,6 +269,7 @@ def open_search_student(root):
     
     #creates window, centers it and gives it a title
     search_window = tk.Toplevel(root)
+    search_window.iconbitmap(icon_path)
     center_window(search_window, 600, 400)
     search_window.title("Search Students")
     search_window.configure(background="#52101a")
@@ -315,6 +318,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
 
     #sets window to root,centers it and sets window title
     add_member_window = tk.Toplevel(root)
+    add_member_window.iconbitmap(icon_path)
     center_window(add_member_window, 950,700)
     add_member_window.title("Add Members")
 
@@ -611,6 +615,7 @@ def open_add_student(root):
     
     #sets window to root,centers it and sets window title
     add_student_window = tk.Toplevel(root)
+    add_student_window.iconbitmap(icon_path)
     center_window(add_student_window, 950,700)
     add_student_window.title("Add Student")
     
@@ -780,6 +785,39 @@ def open_add_student(root):
 VIEW RECORDS WINDOW FUNCTIONS
 ==============================
 '''
+member_column_map = {
+    "Member ID": "MEM_ID",
+    "Student ID": "STUD_ID",
+    "Birthdate": "MEM_DOB",
+    "Entry Year": "MEM_ENTRY_YR",
+    "Member Status": "MEM_STATUS",
+    "Position": "MEM_POS",
+    "Past Positions": "MEM_PST_POS",
+    "Phone Number": "MEM_PHO_NO",
+    "Abroad Status": "MEM_ABROAD_ST",
+    "Commute Status": "MEM_COMMUTE_ST",
+    "Meeting Missed Count": "MEM_MEETING_MISD",
+    "Meeting Missed Desc.": "MEM_MEETING_MISD_DESC",
+    "Preferred Name": "MEM_PREFR_NAME"
+}
+
+student_column_map = {
+    "Student ID": "STUD_ID",
+    "First Name": "STUD_FST_NM",
+    "Last Name": "STUD_LST_NM",
+    "Middle Name": "STUD_MID_NM",
+    "Email Address": "STUD_EMAIL_ADD",
+    "Class Level": "STUD_CLASS_LVL",
+    "Curriculum": "STUD_CURRICULUM",
+    "Degree": "STUD_DEG",
+    "Cumulative GPA": "STUD_CUM_GPA",
+    "Transfer Credits": "STUD_TRANS_CRED",
+    "Earned Credits": "STUD_EARNED_CRED",
+    "Total Credits": "STUD_TOTcs_CRED",
+    "Below 30 LR Credits": "STUD_BEL_30_LR_CRED_IN",
+    "Below 3.0 GPA": "STUD_BEL_3_GPA_IN",
+    "Invite Status": "STUD_INV_STATUS"
+}
 
 entry_widget = None
 
@@ -893,7 +931,12 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
                    "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
         data = fetch_student_data()
     else:
-        return  
+        return 
+
+    if table == "Member":
+        column_map = member_column_map
+    else:
+        column_map = student_column_map 
 
     #apply filter if user wants
     if filter_col:
@@ -905,7 +948,9 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
     #update Treeview columns
     tree["columns"] = visible_columns
     for col in visible_columns:
-        tree.heading(col, text=f"{col} {'▲'}", command=lambda _col=col: treeview_sort_column(tree, _col, False))
+        display_name = [k for k, v in column_map.items() if v == col]
+        display_name = display_name[0] if display_name else col
+        tree.heading(col, text=f"{display_name} ▲", command=lambda _col=col: treeview_sort_column(tree, _col, False))
         tree.column(col, anchor="center", width=120)
 
     #insert filtered data
@@ -915,7 +960,15 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
 
 #middleman function to handle column selection and update Treeview
 def update_selected_columns(event, tree, table, listbox, filter_col):
-    selected_columns = [listbox.get(i) for i in listbox.curselection()]
+    display_columns = [listbox.get(i) for i in listbox.curselection()]
+
+    if table.get() == "Member":
+        selected_columns = [member_column_map[col] for col in display_columns]
+    elif table.get() == "Student":
+        selected_columns = [student_column_map[col] for col in display_columns]
+    else:
+        selected_columns = []
+
     update_treeview(tree, table.get(), selected_columns, filter_col.get())
 
 #function to update listbox based on table selection
@@ -956,6 +1009,7 @@ def open_view_records(root):
 
     #sets records window as root
     view_records_window = tk.Toplevel(root)
+    view_records_window.iconbitmap(icon_path)
     center_window(view_records_window, 1500, 650)
     view_records_window.title("View Records")
     view_records_window.configure(background="#52101a")

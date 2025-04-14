@@ -7,7 +7,7 @@ from utils import center_window
 from PIL import Image, ImageTk
 from utils import resource_path
 
-
+icon_path = resource_path("Image/icon.ico")
 banner_image_path = resource_path('Image/UPE-banner.png')
 
 # Function to open files
@@ -33,6 +33,7 @@ def open_upe_information(homepage_window, root):
     
     # Create the UPE Information window
     upe_information_window = tk.Toplevel(root)
+    upe_information_window.iconbitmap(icon_path)
     upe_information_window.title("UPE Information")
     center_window(upe_information_window, 1200, 750)
     upe_information_window.configure(background="#52101a")

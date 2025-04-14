@@ -9,6 +9,7 @@ import tkinter.messagebox as messagebox
 from datetime import datetime
 from PIL import Image, ImageTk
 from utils import resource_path
+icon_path = resource_path("Image/icon.ico") 
 
 '''
 ----------------------------------------
@@ -70,7 +71,7 @@ def on_double_click(event):
     column_id = tree.identify_column(event.x)  
     column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
     column_name = [column_index]
-    messagebox.showinfo("FLAG", column_name)
+    
 
     #prevent editing the primary key columns
     if column_name == [0]:
@@ -219,6 +220,7 @@ def open_upe_budget(homepage_window, root):
 
     #creates window, sets title and centers it
     upe_budget_window = tk.Toplevel(root)
+    upe_budget_window.iconbitmap(icon_path)
     upe_budget_window.title("View Budget")
     center_window(upe_budget_window, 800, 630)
 
@@ -309,6 +311,7 @@ def open_budget_history(budget_home_window, root):
 
     #creates history page, sets title and centers it
     upe_budget_history = tk.Toplevel(root)
+    upe_budget_history.iconbitmap(icon_path)
     upe_budget_history.title("Budget History")
     center_window(upe_budget_history, 850, 630)
 
@@ -382,6 +385,7 @@ def open_add_transaction(budget_home_window, root):
 
     #creates edit budget window, sets title and centers it
     budget_add_transaction = tk.Toplevel(root)
+    budget_add_transaction.iconbitmap(icon_path)
     budget_add_transaction.title("Add Transaction")
     center_window(budget_add_transaction, 850, 630)
 
@@ -484,6 +488,7 @@ EDIT TRANSACTION WINDOW FUNCTIONS
 def edit_transaction(budget_home_window, root):
     #creates edit budget window, sets title
     budget_edit_transaction = tk.Toplevel(root)
+    budget_edit_transaction.iconbitmap(icon_path)
     budget_edit_transaction.title("Edit Transaction")
     center_window(budget_edit_transaction, 800, 630)
 

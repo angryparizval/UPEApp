@@ -18,6 +18,7 @@ opening_image_path = resource_path('Image/UPE-opening.png')
 banner_image_path = resource_path('Image/UPE-banner.png')
 logo_image_path = resource_path('Image/UPE-logo.png')
 shortbanner_image_path = resource_path('Image/UPE-shortbanner.jpg')
+icon_path = resource_path("Image/icon.ico") 
 
 
 # Function to handle login and check if the credentials are correct
@@ -43,6 +44,7 @@ def open_homepage():
     # Create the homepage window
     homepage_window = tk.Toplevel(root)
     homepage_window.title("Homepage")
+    homepage_window.iconbitmap(icon_path)
     center_window(homepage_window, 950, 700)
 
     # Load the image using PIL
@@ -84,6 +86,7 @@ def open_login_window():
 
     # Create the login window
     login_window = tk.Toplevel(root)
+    login_window.iconbitmap(icon_path)
     login_window.title("Login")
     center_window(login_window, 800, 630)
 
@@ -100,12 +103,12 @@ def open_login_window():
     image_label.pack()
 
     # Add username and password fields
-    label_username = tk.Label(login_window, text="Username:")
+    label_username = tk.Label(login_window, text="Username:", font=("Helvetica", 12))
     label_username.pack(pady=5)
     entry_username = ttk.Entry(login_window)
     entry_username.pack(pady=5)
 
-    label_password = tk.Label(login_window, text="Password:")
+    label_password = tk.Label(login_window, text="Password:", font=("Helvetica", 12))
     label_password.pack(pady=5)
     entry_password = ttk.Entry(login_window, show="*")
     entry_password.pack(pady=5)
@@ -116,6 +119,10 @@ def open_login_window():
 
 # Main application root window
 root = ThemedTk()
+
+ 
+root.iconbitmap(icon_path)
+
 style = ttk.Style()
 style.configure('TButton', font=('Helvetica', 15), foreground='black')
 style.map('TButton', background=[('active', 'black'), ('pressed', 'red')], foreground=[('active', 'red'), ('pressed', 'green')])
@@ -125,6 +132,7 @@ root.withdraw()
 
 # Create the startup screen window
 startup_window = tk.Toplevel(root)
+startup_window.iconbitmap(icon_path)
 startup_window.title("Welcome to UPE")
 center_window(startup_window, 480, 480)
 
