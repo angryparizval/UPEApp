@@ -225,9 +225,9 @@ def open_upe_budget(homepage_window, root):
     center_window(upe_budget_window, 800, 630)
 
     #creates header
-    label = tk.Label(upe_budget_window, text="Budget Home", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(upe_budget_window, text="Budget Home", bg="white", fg="black", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=50)
-    label.configure(bg="#52101a", fg="white")
+    
 
     #Make the background color red
     upe_budget_window.configure(bg="#52101a")
@@ -316,9 +316,8 @@ def open_budget_history(budget_home_window, root):
     center_window(upe_budget_history, 850, 630)
 
     #creates header
-    label = tk.Label(upe_budget_history, text="Budget History", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(upe_budget_history, text="Budget History", bg="white", fg="black",font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     label.pack(pady=50)
-    label.configure(bg="#52101a", fg="white")
     #Make the background color red
     upe_budget_history.configure(bg="#52101a")
 
@@ -390,10 +389,8 @@ def open_add_transaction(budget_home_window, root):
     center_window(budget_add_transaction, 850, 630)
 
     #creates labels; Header and textbox labels
-    lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
+    lblHeader = tk.Label(budget_add_transaction, text="Add Transaction", bg="white", fg="black", font=("Helvetica", 40, "bold"), bd=2, relief="solid", padx=10, pady=5)
     lblHeader.pack(pady=20)
-
-    lblHeader.configure(bg="#52101a", fg="white")
 
     #Make the background color red
     budget_add_transaction.configure(bg="#52101a")

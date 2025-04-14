@@ -91,7 +91,7 @@ def open_calendar():
     cal.pack(pady=20)
 
     # Button to select the date
-    select_button = ttk.Button(calendar_window, text="Select Date", command= lambda: [get_selected_date (), calendar_window.destroy()])
+    select_button = tk.Button(calendar_window, text="Select Date", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command= lambda: [get_selected_date (), calendar_window.destroy()])
     select_button.pack(pady=10)
 
 # Function to generate the PDF report
@@ -234,7 +234,7 @@ def open_invitation_report_window(homepage_window, root):
     student_entry.bind("<KeyRelease>", search_students)
 
     # Frame to hold both listboxes and buttons
-    listbox_frame = tk.Frame(invitation_report_window)
+    listbox_frame = tk.Frame(invitation_report_window, bg="#52101a")
     listbox_frame.pack(pady=10)
 
     # Listbox for search results
@@ -246,11 +246,11 @@ def open_invitation_report_window(homepage_window, root):
     selected_students_listbox.grid(row=0, column=1, padx=10, pady=(0, 5))
 
     # Button to select a student (centered under the first listbox)
-    select_button = ttk.Button(listbox_frame, text="Select Student", command=select_student)
+    select_button = tk.Button(listbox_frame, text="Select Student", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=select_student)
     select_button.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
     # Button to remove a student (centered under the second listbox)
-    remove_button = ttk.Button(listbox_frame, text="Remove Selected", command=remove_selected_student)
+    remove_button = tk.Button(listbox_frame, text="Remove Selected", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=remove_selected_student)
     remove_button.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
     # Ensure buttons stretch to match listbox width
@@ -258,7 +258,7 @@ def open_invitation_report_window(homepage_window, root):
     listbox_frame.columnconfigure(1, weight=1)
 
     # Button to open the calendar
-    ttk.Button(invitation_report_window, text="Select Reply by Date", command=open_calendar).pack(pady=10)
+    tk.Button(invitation_report_window, text="Select Reply by Date", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=open_calendar).pack(pady=10)
     date_label = tk.Label(invitation_report_window, text="No Date Selected", font=("Helvetica", 18, "bold"), bg="#52101a", fg="white")
     date_label.pack(pady=10)
 
@@ -272,9 +272,9 @@ def open_invitation_report_window(homepage_window, root):
     button_frame.pack(pady=20)
 
     # Button to generate PDF report
-    ttk.Button(button_frame, text="Generate .pdf Report", command=generate_pdf_report).pack(side=tk.LEFT, padx=10)
+    tk.Button(button_frame, text="Generate .pdf Report", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=generate_pdf_report).pack(side=tk.LEFT, padx=10)
 
     # Button to generate TXT report
-    ttk.Button(button_frame, text="Generate a .txt Report", command=generate_txt_report).pack(side=tk.RIGHT, padx=10)
+    tk.Button(button_frame, text="Generate a .txt Report", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=generate_txt_report).pack(side=tk.RIGHT, padx=10)
 
-    ttk.Button(invitation_report_window, text="Back to Homepage", command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()]).place(relx=0.02, rely=0.05)
+    tk.Button(invitation_report_window, text="Back to Homepage", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()]).place(relx=0.02, rely=0.05)

@@ -321,47 +321,49 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     add_member_window.iconbitmap(icon_path)
     center_window(add_member_window, 950,700)
     add_member_window.title("Add Members")
+    add_member_window.configure(bg="#52101a")
+
 
     
     #top header
-    label = tk.Label(add_member_window, text="Add Members", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(add_member_window, text="Add Members", bg="white", fg="black", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
     label.place(relx = .30, rely = .05, anchor="nw")
 
     #label for student id
-    lblStudId = tk.Label(add_member_window, text="Student ID:", height=1, width=15)
+    lblStudId = tk.Label(add_member_window, text="Student ID:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudId.grid(row=1, column=0, pady=10, padx=(10, 5), sticky = "w")
     #student id textbox that is prefilled using search student returned stud_id
-    txtMemStudID = tk.Entry(add_member_window, width=20)
+    txtMemStudID = tk.Entry(add_member_window, width=20, disabledbackground="gray",disabledforeground="black")
     txtMemStudID.grid(row=1, column=1, padx=(5, 10), pady=10, sticky="w")
     #inserts id into box
     txtMemStudID.insert(0, student_id)
     #makes it readonly so stud_id is not messed with by user
-    txtMemStudID.config(state="readonly")  
+    txtMemStudID.config(state="disabled")
 
     #label for student first name
-    lblMemFName = tk.Label(add_member_window, text="First Name:", height=1, width=15)
+    lblMemFName = tk.Label(add_member_window, text="First Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemFName.grid(row=1, column=2, pady=10, padx=(10, 5), sticky = "w")
     #member first name entry field
-    txtMemFName = tk.Entry(add_member_window, width=20)
+    txtMemFName = tk.Entry(add_member_window, width=20, disabledbackground="gray",disabledforeground="black")
     txtMemFName.grid(row=1, column=3, padx=(5, 10), pady=10, sticky="w")
     #inserts first name into box
     txtMemFName.insert(0, student_first)
     #makes box readonly so first name is not messed with by user
-    txtMemFName.config(state="readonly")
+    txtMemFName.config(state="disabled")
 
     #label for student last name
-    lblMemLName = tk.Label(add_member_window, text="Last Name:", height=1, width=15 )
+    lblMemLName = tk.Label(add_member_window, text="Last Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemLName.grid(row=1, column = 4, pady=10, padx=(10, 5), sticky = "w")
     #member last name entry field
-    txtMemLName = tk.Entry(add_member_window, width=20)
+    txtMemLName = tk.Entry(add_member_window, width=20, disabledbackground="gray",disabledforeground="black")
     txtMemLName.grid(row=1, column=5, padx=(5, 10), pady=10, sticky="w")
     #inserts last name into box
     txtMemLName.insert(0, student_last)
     #makes box readonly so first name is not messed with by user
-    txtMemLName.config(state="readonly")
+    txtMemLName.config(state="disabled")
 
     #label for member dob
-    lblMemDob = tk.Label(add_member_window, text="*Birthdate:", height=1, width=15)
+    lblMemDob = tk.Label(add_member_window, text="*Birthdate:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemDob.grid(row=2, column=0, padx=(10,5), pady=10, sticky="w")
     #function for date entry that formats it with YYYY/MM/DD and auto moves cursor
     def on_dob_entry_change(*args):
@@ -396,7 +398,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     txtMemDOB.grid(row=2, column=1, padx=(5, 10), pady=10, sticky="w")
 
     #label for member entry year
-    lblMemEntryYr = tk.Label(add_member_window, text="*Entry Year:", height=1, width=15)
+    lblMemEntryYr = tk.Label(add_member_window, text="*Entry Year:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemEntryYr.grid(row=2, column=2, padx=(10,5), pady=10, sticky="w")
     #member entry year entry field
     txtMemEntryYr = tk.StringVar()
@@ -407,7 +409,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     entryYr_dropdown.grid(row=2, column=3, padx=(5, 10), pady=10, sticky="w")
     
     #label for member status
-    lblMemStatus = tk.Label(add_member_window, text="*Member Status:", height=1, width=15)
+    lblMemStatus = tk.Label(add_member_window, text="*Member Status:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemStatus.grid(row=2, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for status selection
     txtMemStatus = tk.StringVar()
@@ -417,7 +419,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     status_dropdown.grid(row=2, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for member position
-    lblMemPos = tk.Label(add_member_window, text="*Position:", height=1, width=15)
+    lblMemPos = tk.Label(add_member_window, text="*Position:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemPos.grid(row=3, column=0, padx=(10, 5), pady=10, sticky="w")
     #creates dropdown for position selection
     txtMemPos = tk.StringVar()
@@ -427,7 +429,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     pos_dropdown.grid(row=3, column=1, padx=(5, 10), pady=10, sticky="w")
 
     #label for member phone number
-    lblMemPhoNo = tk.Label(add_member_window, text="Phone Number:", height=1, width=15)
+    lblMemPhoNo = tk.Label(add_member_window, text="Phone Number:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemPhoNo.grid(row=3, column=2, padx=(10,5), pady=10, sticky="w")
     #function for date entry that formats it with YYYY/MM/DD and auto moves cursor
     def on_phoNo_entry_change(*args):
@@ -462,7 +464,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     txtMemPhoNo.grid(row=3, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for member abroad status
-    lblMemAbrStatus = tk.Label(add_member_window, text="*Abroad Status:", height=1, width=15)
+    lblMemAbrStatus = tk.Label(add_member_window, text="*Abroad Status:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemAbrStatus.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for abroad status selection
     txtMemAbrStatus = tk.StringVar()
@@ -472,7 +474,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     abrStatus_dropdown.grid(row=3, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for member commuter status
-    lblMemComStatus = tk.Label(add_member_window, text="*Commute Status:", height=1, width=15)
+    lblMemComStatus = tk.Label(add_member_window, text="*Commute Status:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemComStatus.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for commuter status selection
     txtMemComStatus = tk.StringVar()
@@ -482,7 +484,7 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     comStatus_dropdown.grid(row=4, column=1, padx=(5, 10), pady=10, sticky="w")
 
     #label for member prefer name
-    lblMemPreferNm = tk.Label(add_member_window, text="Preferred Name:", height=1, width=15)
+    lblMemPreferNm = tk.Label(add_member_window, text="Preferred Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblMemPreferNm.grid(row=4, column=2, padx=(10,5), pady=10, sticky="w")
     #entry box for member phone number
     txtMemPreferNm = tk.Entry(add_member_window, width=20)
@@ -495,11 +497,11 @@ def open_add_member(root, student_id, student_first, student_last, conn):
         add_member_window.rowconfigure(i, weight=1)
 
     #button to submit all data
-    btn_submit_member = ttk.Button(add_member_window, text="Submit", command=lambda: [send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm, conn)])
+    btn_submit_member = tk.Button(add_member_window, text="Submit", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 14, "bold"), command=lambda: [send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemPos, phoNo_var, txtMemAbrStatus, txtMemComStatus, txtMemPreferNm, conn)])
     btn_submit_member.place(relx=0.88, rely=0.92, anchor="se")
 
     #button to return to records screen
-    btn_rtn_recordsact_window = ttk.Button(add_member_window, text="Back", command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window = tk.Button(add_member_window, text="Back to Records Actions", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=lambda: [add_member_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
 
@@ -618,10 +620,11 @@ def open_add_student(root):
     add_student_window.iconbitmap(icon_path)
     center_window(add_student_window, 950,700)
     add_student_window.title("Add Student")
+    add_student_window.configure(bg="#52101a")
     
     
     #top window header
-    label = tk.Label(add_student_window, text="Add Student", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
+    label = tk.Label(add_student_window, text="Add Student", bg="white", fg="black", font=("Helvetica", 40, "bold"),bd=2, relief="solid", padx=10, pady=5)
     label.place(relx = .35, rely = .05, anchor="nw")
 
 
@@ -634,44 +637,44 @@ def open_add_student(root):
     stud_id = cursor.fetchone()[0]
 
     #label for studentid
-    lblStudID = tk.Label(add_student_window, text="Student ID:", height=1, width=15)
+    lblStudID = tk.Label(add_student_window, text="Student ID:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudID.grid(row=3, column=0, padx=(10,5), pady=10, sticky="w")
     #textbox for studid
-    txtStudID = tk.Entry(add_student_window, width=20)
+    txtStudID = tk.Entry(add_student_window, width=20, disabledbackground="gray",disabledforeground="black")
     txtStudID.grid(row=3, column=1, padx=(5,10), pady=10, sticky="w")
     txtStudID.insert(0, stud_id)
-    txtStudID.config(state="readonly")
+    txtStudID.config(state="disabled")
     
     #label for student first name
-    lblStudFstNm = tk.Label(add_student_window, text="*First Name:", height=1, width=15)
+    lblStudFstNm = tk.Label(add_student_window, text="*First Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudFstNm.grid(row=4, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student first name
     txtStudFstNm = tk.Entry(add_student_window, width=20)
     txtStudFstNm.grid(row=4, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student middle intial
-    lblStudMInit = tk.Label(add_student_window, text="*Middle Name:", height=1, width=15)
+    lblStudMInit = tk.Label(add_student_window, text="*Middle Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudMInit.grid(row=5, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student middle intial
     txtStudMinit = tk.Entry(add_student_window, width=20)
     txtStudMinit.grid(row=5, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student last name
-    lblStudLstNm = tk.Label(add_student_window, text="*Last Name:", height=1, width=15)
+    lblStudLstNm = tk.Label(add_student_window, text="*Last Name:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudLstNm.grid(row=6, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student first name
     txtStudLstNm = tk.Entry(add_student_window, width=20)
     txtStudLstNm.grid(row=6, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student email address
-    lblStudEmail = tk.Label(add_student_window, text="*Email Address:", height=1, width=15)
+    lblStudEmail = tk.Label(add_student_window, text="*Email Address:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudEmail.grid(row=7, column=0, padx=(10,5), pady=10, sticky="w")
     #entry field for student email address
     txtStudEmail = tk.Entry(add_student_window, width=20)
     txtStudEmail.grid(row=7, column=1, padx=(5,10), pady=10, sticky="w")
 
     #label for student class level
-    lblStudClassLvl = tk.Label(add_student_window, text="*Class Level:", height=1, width=15)
+    lblStudClassLvl = tk.Label(add_student_window, text="*Class Level:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudClassLvl.grid(row=3, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for class level selection
     txtStudClassLvl = tk.StringVar()
@@ -681,7 +684,7 @@ def open_add_student(root):
     classLvl_dropdown.grid(row=3, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student curriculum
-    lblStudCurr = tk.Label(add_student_window, text="*Curriculum:", height=1, width=15)
+    lblStudCurr = tk.Label(add_student_window, text="*Curriculum:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudCurr.grid(row=4, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for curriculum selection
     txtStudCurr = tk.StringVar()
@@ -691,7 +694,7 @@ def open_add_student(root):
     curr_dropdown.grid(row=4, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student degree
-    lblStudDegree = tk.Label(add_student_window, text="*Degree:", height=1, width=15)
+    lblStudDegree = tk.Label(add_student_window, text="*Degree:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudDegree.grid(row=5, column=2, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for degree selection
     txtStudDegree = tk.StringVar()
@@ -701,35 +704,35 @@ def open_add_student(root):
     degree_dropdown.grid(row=5, column=3, padx=(5, 10), pady=10, sticky="w")
 
     #label for student cumulative gpa
-    lblStudCumGPA = tk.Label(add_student_window, text="*Cumulative GPA:", height=1, width=15)
+    lblStudCumGPA = tk.Label(add_student_window, text="*Cumulative GPA:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudCumGPA.grid(row=6, column=2, padx=(10,5), pady=10, sticky="w")
     #entry field for student email address
     txtStudCumGPA = tk.Entry(add_student_window, width=20)
     txtStudCumGPA.grid(row=6, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for student Transfer Credits
-    lblStudTransCred = tk.Label(add_student_window, text="*Transfer Credits:", height=1, width=15)
+    lblStudTransCred = tk.Label(add_student_window, text="*Transfer Credits:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudTransCred.grid(row=7, column=2, padx=(10,5), pady=10, sticky="w")
     #entry field for student transfer credits
     txtStudTransCred = tk.Entry(add_student_window, width=20)
     txtStudTransCred.grid(row=7, column=3, padx=(5,10), pady=10, sticky="w")
 
     #label for student earned Credits
-    lblStudEarnedCred = tk.Label(add_student_window, text="*Earned Credits:", height=1, width=15)
+    lblStudEarnedCred = tk.Label(add_student_window, text="*Earned Credits:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudEarnedCred.grid(row=3, column=4, padx=(10,5), pady=10, sticky="w")
     #entry field for student transfer credits
     txtStudEarnedCred = tk.Entry(add_student_window, width=20)
     txtStudEarnedCred.grid(row=3, column=5, padx=(5,10), pady=10, sticky="w")
 
     #label for student Total Credits
-    lblStudTotalCred = tk.Label(add_student_window, text="*Total Credits:", height=1, width=15)
+    lblStudTotalCred = tk.Label(add_student_window, text="*Total Credits:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudTotalCred.grid(row=4, column=4, padx=(10,5), pady=10, sticky="w")
     #entry field for student total credits
     txtStudTotalCred = tk.Entry(add_student_window, width=20)
     txtStudTotalCred.grid(row=4, column=5, padx=(5,10), pady=10, sticky="w")
 
     #label for below 30 lr credits indicator
-    lblStudBelow30LrCred = tk.Label(add_student_window, text="*Below 30 LR Credits?:", height=1, width=15)
+    lblStudBelow30LrCred = tk.Label(add_student_window, text="*<30 LR Credits?:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudBelow30LrCred.grid(row=5, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for below 30 indicator selection
     txtStudBelow30LrCred = tk.StringVar()
@@ -739,7 +742,7 @@ def open_add_student(root):
     belowcred_dropdown.grid(row=5, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for below 3.0 GPA indicator
-    lblStudBel3GPA = tk.Label(add_student_window, text="*Below 3.0 GPA?:", height=1, width=15)
+    lblStudBel3GPA = tk.Label(add_student_window, text="*Below 3.0 GPA?:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudBel3GPA.grid(row=6, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for below 3.0 GPA indicator selection
     txtStudBel3GPA = tk.StringVar()
@@ -749,7 +752,7 @@ def open_add_student(root):
     belowgpa_dropdown.grid(row=6, column=5, padx=(5, 10), pady=10, sticky="w")
 
     #label for student invite status
-    lblStudInvStatus = tk.Label(add_student_window, text="*Invite Status:", height=1, width=15)
+    lblStudInvStatus = tk.Label(add_student_window, text="*Invite Status:", height=1, width=15, bg="#52101a", fg="white", font=("Helvetica", 11, "bold"))
     lblStudInvStatus.grid(row=7, column=4, padx=(10,5), pady=10, sticky="w")
     #creates dropdown for invite status selection
     txtStudInvStatus = tk.StringVar()
@@ -764,11 +767,11 @@ def open_add_student(root):
     for i in range(total_rows):  
         add_student_window.rowconfigure(i, weight=1)
 
-    btn_submit = ttk.Button(add_student_window, text="Submit", command=lambda: [send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr, txtStudDegree, txtStudCumGPA,txtStudTransCred, txtStudEarnedCred, txtStudTotalCred, txtStudBelow30LrCred, txtStudBel3GPA, txtStudInvStatus, conn)])
+    btn_submit = tk.Button(add_student_window, text="Submit", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 14, "bold"), command=lambda: [send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtStudEmail, txtStudClassLvl, txtStudCurr, txtStudDegree, txtStudCumGPA,txtStudTransCred, txtStudEarnedCred, txtStudTotalCred, txtStudBelow30LrCred, txtStudBel3GPA, txtStudInvStatus, conn)])
     btn_submit.place(relx=0.869, rely=0.92, anchor="se")
 
     #button to return back to records actions screen
-    btn_rtn_recordsact_window = ttk.Button(add_student_window, text="Back to Records Actions", command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window = tk.Button(add_student_window, text="Back to Records Actions", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 14, "bold"), command=lambda: [add_student_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
 
 
