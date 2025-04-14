@@ -91,7 +91,7 @@ def open_calendar():
     cal.pack(pady=20)
 
     # Button to select the date
-    select_button = ttk.Button(calendar_window, text="Select Date", command= lambda: [get_selected_date, calendar_window.destroy()])
+    select_button = ttk.Button(calendar_window, text="Select Date", command= lambda: [get_selected_date (), calendar_window.destroy()])
     select_button.pack(pady=10)
 
 # Function to generate the PDF report
