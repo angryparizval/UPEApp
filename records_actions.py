@@ -403,7 +403,8 @@ def open_add_member(root, student_id, student_first, student_last, conn):
     #member entry year entry field
     txtMemEntryYr = tk.StringVar()
     #creates a dropdown with year options from 1900-current year
-    entryYr_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemEntryYr, values=list(range(datetime.datetime.now().year + 1, 1900)), state="readonly", width=20)
+    entryYr_dropdown = ttk.Combobox(add_member_window, textvariable=txtMemEntryYr, values=list(range(datetime.datetime.now().year, 1899, -1)), state="readonly", width=20)
+
     #sets default text to select status
     entryYr_dropdown.set("Select Year")
     entryYr_dropdown.grid(row=2, column=3, padx=(5, 10), pady=10, sticky="w")
