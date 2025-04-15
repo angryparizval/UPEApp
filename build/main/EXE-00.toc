@@ -1,5 +1,5 @@
 ('F:\\Github\\UPEApp\\build\\main\\main.exe',
- False,
+ True,
  False,
  True,
  ['F:\\Github\\UPEApp\\Image\\icon.ico'],
@@ -66,8 +66,8 @@
  [],
  False,
  False,
- 1744664255,
- [('runw.exe',
-   'F:\\Github\\UPEApp\\myenv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',
+ 1744747555,
+ [('run.exe',
+   'F:\\Github\\UPEApp\\myenv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')],
  'F:\\python\\python311.dll')

@@ -7,6 +7,7 @@ from tkcalendar import Calendar
 from tkinter import *
 import tkinter.messagebox as messagebox
 from datetime import datetime
+import os, sys
 from PIL import Image, ImageTk
 from utils import resource_path
 icon_path = resource_path("Image/icon.ico") 
@@ -21,11 +22,22 @@ conn = None
 selected_date_str = "No Date"
 
 
+
+#function to get project root
+def get_project_root():
+    #when running from pyinstaller .exe 
+    if getattr(sys, 'frozen', False):
+        #go up from dist/main to project root
+        return os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
+    #when running from development source
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
+
 #Function to get connection to db
 def get_db_connection():
     #returns gloval database connection
     global conn
-    db_path = resource_path('UPEApp.db')
+    db_path = os.path.join(get_project_root(), "UPEApp.db")
     if conn is None:
         conn = sqlite3.connect(db_path)
     return conn
@@ -67,15 +79,20 @@ def on_double_click(event):
     selected_items = tree.selection()
     if not selected_items:
         return 
+    
     selected_item = tree.selection()[0]  
     column_id = tree.identify_column(event.x)  
     column_index = int(column_id[1:]) - 1  #convert from '#1' to index 0
-    column_name = [column_index]
     
+    # Columns you don't want to allow editing
+    uneditable_columns = ["Transaction No", "Running Total"]
 
-    #prevent editing the primary key columns
-    if column_name == [0]:
-        messagebox.showinfo("FLAG", "Cannot edit primary key column")
+    # Get actual column name from the treeview
+    columns = tree["columns"]
+    column_name = columns[column_index]
+
+    if column_name in uneditable_columns:
+        messagebox.showinfo("Error", f"Cannot edit '{column_name}' column")
         return  
     
     #get cells current value
@@ -182,7 +199,7 @@ def fetch_member_data():
 #function to update SQLite database after cell is edited
 def update_database(table, column_name, new_value, primary_key_value):
     #connects to db
-    conn = sqlite3.connect("UPEApp.db")  
+    conn = get_db_connection() 
     cursor = conn.cursor()
 
     #define primary key column per table
@@ -196,7 +213,7 @@ def update_database(table, column_name, new_value, primary_key_value):
 
 def add_transactionDB(date, type, amount, memo):
     #connects to db
-    conn = sqlite3.connect("UPEApp.db")
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     #sends sql query to db to update table with new info
@@ -206,6 +223,8 @@ def add_transactionDB(date, type, amount, memo):
     conn.commit()
 
     messagebox.showinfo("Success", "Transaction added successfully")
+    
+    
     
 
 '''
@@ -219,6 +238,7 @@ def open_upe_budget(homepage_window, root):
     homepage_window.withdraw()
 
     #creates window, sets title and centers it
+    global upe_budget_window
     upe_budget_window = tk.Toplevel(root)
     upe_budget_window.iconbitmap(icon_path)
     upe_budget_window.title("View Budget")
@@ -260,8 +280,7 @@ def open_upe_budget(homepage_window, root):
     #add treeview with data from database
     #Table Frame
     frame = tk.Frame(upe_budget_window)
-    frame.pack(padx=10, pady=10, fill=tk.BOTH,)
-    frame.configure(width=625, height=300)
+    
     frame.place(relx=0.5, rely=0.475, anchor="center")
     frame.configure(bg="white")
 
@@ -286,11 +305,21 @@ def open_upe_budget(homepage_window, root):
     #Insert data into table
     budget_data = fetch_budget_data()
     for row in budget_data:
+        row = list(row)
+        #format Amount and Running Total as currency
+        try:
+            row[4] = f"${float(row[4]):,.2f}"  #amount column
+            row[5] = f"${float(row[5]):,.2f}"  #running Total column
+        except (ValueError, IndexError):
+            #in case there's bad/missing data
+            pass
+
         tree.insert("", tk.END, values=row)
 
     #Add scrollbar
     scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
+    
 
     #Pack widgets
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -354,6 +383,15 @@ def open_budget_history(budget_home_window, root):
     #Insert data into table
     budget_data = fetch_budget_data()
     for row in budget_data:
+        row = list(row)
+        #format Amount and Running Total as currency
+        try:
+            row[4] = f"${float(row[4]):,.2f}"  #amount column
+            row[5] = f"${float(row[5]):,.2f}"  #running Total column
+        except (ValueError, IndexError):
+            #in case there's bad/missing data
+            pass
+
         tree.insert("", tk.END, values=row)
 
     #Add scrollbar
@@ -381,6 +419,7 @@ def open_add_transaction(budget_home_window, root):
     #call in global variables
     global date_label
     global selected_date_str
+    global budget_add_transaction
 
     #creates edit budget window, sets title and centers it
     budget_add_transaction = tk.Toplevel(root)
@@ -417,7 +456,7 @@ def open_add_transaction(budget_home_window, root):
     
 
     #Radio Buttons for type
-    transaction_type = tk.StringVar(value="")
+    transaction_type = tk.StringVar(value="Withdrawal")
     rdWithdrawal = tk.Radiobutton(budget_add_transaction, text="Withdrawal", variable=transaction_type, value="Withdrawal", disabledforeground="white", background="#52101a", activebackground="#52101a", activeforeground="white", foreground="white", selectcolor="#52101a", indicatoron=True)
     rdWithdrawal.place(relx=0.45, rely=0.27)
     rdDeposit = tk.Radiobutton(budget_add_transaction, text="Deposit", variable=transaction_type, value="Deposit", disabledforeground="white", background="#52101a", activebackground="#52101a", activeforeground="white", foreground="white", selectcolor="#52101a", indicatoron=True)

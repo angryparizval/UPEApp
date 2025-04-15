@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 import datetime
 import calendar
 import re
+import sys
+import os
 from utils import resource_path
 
 '''
@@ -23,11 +25,21 @@ conn = None
 selected_date_str = ""
 icon_path = resource_path("Image/icon.ico") 
 
+#function to get project root
+def get_project_root():
+    #when running from pyinstaller .exe 
+    if getattr(sys, 'frozen', False):
+        #go up from dist/main to project root
+        return os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
+    #when running from development source
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
+
 #Function to get connection to db
 def get_db_connection():
     #returns gloval database connection
     global conn
-    db_path = resource_path('UPEApp.db')
+    db_path = os.path.join(get_project_root(), "UPEApp.db")
     if conn is None:
         conn = sqlite3.connect(db_path)
     return conn
@@ -56,7 +68,7 @@ def fetch_student_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     #grabs all columns
-    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS FROM Student")
+    cursor.execute("SELECT STUD_ID, STUD_FST_NM, STUD_MID_NM, STUD_LST_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS FROM Student")
     rows = cursor.fetchall()
     return rows
 
@@ -208,7 +220,8 @@ def send_member_data(txtMemStudID, dob_var, txtMemEntryYr, txtMemStatus, txtMemP
     
     #sends message to let user know if everything worked correctly
     messagebox.showinfo("Success","Member Succesfully Added")
-    records_act_window.deiconify
+    add_member_window.destroy()
+    records_act_window.deiconify()
 
 #function to get the selected date
 def get_selected_date(cal, lblSelectedDate):
@@ -597,7 +610,7 @@ def send_student_data(txtStudID, txtStudFstNm, txtStudMinit, txtStudLstNm, txtSt
         return
     
     cursor.execute("""
-                    INSERT INTO Student (STUD_ID, STUD_FST_NM, STUD_LST_NM, STUD_MID_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS )
+                    INSERT INTO Student (STUD_ID, STUD_FST_NM, STUD_MID_NM, STUD_LST_NM, STUD_EMAIL_ADD, STUD_CLASS_LVL, STUD_CURRICULUM, STUD_DEG, STUD_CUM_GPA, STUD_TRANS_CRED, STUD_EARNED_CRED, STUD_TOT_CRED, STUD_BEL_30_LR_CRED_IN, STUD_BEL_3_GPA_IN, STUD_INV_STATUS )
                     Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (txtStudID.get(), txtStudFstNm.get(), txtStudMinit.get(), txtStudLstNm.get(), txtStudEmail.get(), txtStudClassLvl.get(), txtStudCurr.get(), txtStudDegree.get(), txtStudCumGPA.get(),txtStudTransCred.get(), txtStudEarnedCred.get(), txtStudTotalCred.get(), txtStudBelow30LrCred.get(), txtStudBel3GPA.get(), invStatus))
 
@@ -808,8 +821,8 @@ member_column_map = {
 student_column_map = {
     "Student ID": "STUD_ID",
     "First Name": "STUD_FST_NM",
-    "Last Name": "STUD_LST_NM",
     "Middle Name": "STUD_MID_NM",
+    "Last Name": "STUD_LST_NM",
     "Email Address": "STUD_EMAIL_ADD",
     "Class Level": "STUD_CLASS_LVL",
     "Curriculum": "STUD_CURRICULUM",
@@ -843,7 +856,7 @@ def treeview_sort_column(treeview, col, reverse):
 #function to update SQLite database after cell is edited
 def update_database(table, column_name, new_value, primary_key_value):
     #connects to db
-    conn = sqlite3.connect("UPEApp.db")  
+    conn = get_db_connection() 
     cursor = conn.cursor()
 
     #define primary key column per table
@@ -930,7 +943,7 @@ def update_treeview(tree, table, selected_columns, filter_col=None):
                    "MEM_ABROAD_ST", "MEM_COMMUTE_ST", "MEM_MEETING_MISD", "MEM_MEETING_MISD_DESC", "MEM_PREFR_NAME")
         data = fetch_member_data()
     elif table == "Student":
-        columns = ("STUD_ID", "STUD_FST_NM", "STUD_LST_NM", "STUD_MID_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", 
+        columns = ("STUD_ID", "STUD_FST_NM", "STUD_MID_NM", "STUD_LST_NM", "STUD_EMAIL_ADD", "STUD_CLASS_LVL", 
                    "STUD_CURRICULUM", "STUD_DEG", "STUD_CUM_GPA", "STUD_TRANS_CRED", "STUD_EARNED_CRED", 
                    "STUD_TOTcs_CRED", "STUD_BEL_30_LR_CRED_IN", "STUD_BEL_3_GPA_IN", "STUD_INV_STATUS")
         data = fetch_student_data()
@@ -984,7 +997,7 @@ def update_listbox(listbox, table):
                    "Abroad Status", "Commute Status", "Meeting Missed Count", "Meeting Missed Desc.", "Preferred Name")
     #sets columns if table is student
     elif table == "Student":
-        columns = ("Student ID", "First Name", "Last Name", "Middle Name", "Email Address", "Class Level", 
+        columns = ("Student ID", "First Name",  "Middle Name","Last Name", "Email Address", "Class Level", 
                    "Curriculum", "Degree", "Cumulative GPA", "Transfer Credits", "Earned Credits", 
                    "Total Credits", "Below 30 LR Credits", "Below 3.0 GPA", "Invite Status")
     #else do nothing

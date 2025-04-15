@@ -13,22 +13,57 @@ from tkcalendar import Calendar
 from datetime import datetime
 import sys
 from utils import resource_path
-icon_path = resource_path("Image/icon.ico") 
+icon_path = resource_path("Image/icon.ico")
+image_path = resource_path("Image/UPE-shortbanner.jpg") 
 
+#global variables
+conn = None
 
 # Store selected students and search results
 selected_students = []
 # Dictionary to store search results
 student_dict = {}
 
-# Function to get the correct path to the database (works both in development and packaged form)
-def get_db_path():
+#function to get project root
+def get_project_root():
+    #when running from pyinstaller .exe 
     if getattr(sys, 'frozen', False):
-        # If running as a bundled executable, use the path relative to the executable
-        return os.path.join(sys._MEIPASS, "UPEApp.db")
+        #go up from dist/main to project root
+        return os.path.abspath(os.path.join(os.path.dirname(sys.executable), '..', '..'))
+    #when running from development source
     else:
-        # If running from source, use the local path
-        return "UPEApp.db"
+        return os.path.dirname(os.path.abspath(__file__))
+
+#Function to get connection to db
+def get_db_path():
+    #returns gloval database connection
+    global conn
+    db_path = os.path.join(get_project_root(), "UPEApp.db")
+    if conn is None:
+        conn = sqlite3.connect(db_path)
+    return conn
+
+#Function to close connection if open
+def close_db_connection():
+    global conn
+    if conn:
+        conn.close()
+        conn = None
+
+def student_auto_pop():
+    listbox.delete(0, tk.END)
+    student_dict.clear()
+    conn = get_db_path()
+    cursor = conn.cursor()
+    cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE STUD_ID NOT IN (SELECT STUD_ID FROM Member)")
+    results = cursor.fetchall()
+    
+    # Display search results in the listbox
+    for index, student in enumerate(results):
+        full_name = f"{student[0]} {student[1]}"
+        # Store student tuple 
+        student_dict[index] = student  
+        listbox.insert(tk.END, full_name)
 
 # Function to search students
 def search_students(event):
@@ -37,12 +72,12 @@ def search_students(event):
     student_dict.clear()
     
     if query:
-        db_path = get_db_path()  # Get the correct DB path
-        conn = sqlite3.connect(db_path)
+          # Get the correct DB path
+        conn = get_db_path()
         cursor = conn.cursor()
         cursor.execute("SELECT STUD_FST_NM, STUD_LST_NM FROM Student WHERE (STUD_FST_NM LIKE ? OR STUD_LST_NM LIKE ?)AND STUD_ID NOT IN (SELECT STUD_ID FROM Member)", (f"%{query}%", f"%{query}%"))
         results = cursor.fetchall()
-        conn.close()
+        
         
         # Display search results in the listbox
         for index, student in enumerate(results):
@@ -50,6 +85,8 @@ def search_students(event):
             # Store student tuple 
             student_dict[index] = student  
             listbox.insert(tk.END, full_name)
+    else:
+        student_auto_pop()
 
 # Function to select a student
 def select_student():
@@ -110,20 +147,22 @@ def generate_pdf_report():
         messagebox.showerror("Missing Information", "Please enter the form link.")
         return
 
-    # Ensure the output directory exists
-    os.makedirs("InvitationOutput", exist_ok=True)
+    #using main.py as an anchor point to find root resource path for the project folder and then appending invitation ouput
+    base_dir = os.path.dirname(resource_path("main.py"))
+    output_dir = os.path.join(get_project_root(), "InvitationOutput")
+    os.makedirs(output_dir, exist_ok=True)
 
     # Loop through selected students
     for student in selected_students:
         # Split the student name into first and last name
         first_name, last_name = student.split(" ", 1)
         # Define the PDF file path
-        pdf_filename = os.path.join("InvitationOutput", first_name + '-' + last_name + "-Invitation_report.pdf")
+        pdf_filename = os.path.join(output_dir, f"{first_name}-{last_name}-Invitation_report.pdf")
         # Create the PDF document
         doc = SimpleDocTemplate(pdf_filename, pagesize=letter, rightMargin=12, leftMargin=12, topMargin=12, bottomMargin=6)
         document = []
         # Add the UPE banner image
-        image_path = os.path.join("Image", "UPE-shortbanner.jpg")
+        
         # Check if the image file exists
         if os.path.exists(image_path):
             document.append(Image(image_path, width=6.1 * inch, height=2.0 * inch, hAlign=TA_CENTER))
@@ -172,8 +211,9 @@ def generate_txt_report():
         messagebox.showerror("Missing Information", "Please enter the form link.")
         return
 
-    # Ensure the output directory exists
-    output_dir = "InvitationOutput"
+    #using main.py as an anchor point to find root resource path for the project folder and then appending invitation ouput
+    base_dir = os.path.dirname(resource_path("main.py"))
+    output_dir = os.path.join(get_project_root(), "InvitationOutput")
     os.makedirs(output_dir, exist_ok=True)
 
     # Loop through selected students
@@ -181,6 +221,7 @@ def generate_txt_report():
         first_name, last_name = student.split(" ", 1)
         # Define the TXT file path
         txt_filename = os.path.join(output_dir, f"{first_name}-{last_name}-Invitation_report.txt")
+
 
         # Create the content
         content = f"""To: {first_name}
@@ -277,4 +318,6 @@ def open_invitation_report_window(homepage_window, root):
     # Button to generate TXT report
     tk.Button(button_frame, text="Generate a .txt Report", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=generate_txt_report).pack(side=tk.RIGHT, padx=10)
 
-    tk.Button(invitation_report_window, text="Back to Homepage", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=lambda: [invitation_report_window.destroy(), homepage_window.deiconify()]).place(relx=0.02, rely=0.05)
+    tk.Button(invitation_report_window, text="Back to Homepage", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 12, "bold"), command=lambda: [close_db_connection(),invitation_report_window.destroy(), homepage_window.deiconify()]).place(relx=0.02, rely=0.05)
+
+    student_auto_pop()

@@ -117,6 +117,9 @@ def open_login_window():
     btn_login = ttk.Button(login_window, text="Login", command=login)
     btn_login.pack(pady=20)
 
+    
+    login_window.bind("<Return>", lambda event: login())
+
 # Main application root window
 root = ThemedTk()
 
