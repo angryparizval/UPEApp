@@ -1061,21 +1061,30 @@ def open_view_records(root):
     listbox.pack()
 
     #button to apply filtered columns selected by user
-    btn_update_columns = ttk.Button(listbox_frame, text="Apply Filter", command=lambda: update_selected_columns(None, tree, table, listbox, filter_col))
+    btn_update_columns = tk.Button(listbox_frame, text="Apply Filter",bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 14, "bold"), command=lambda: update_selected_columns(None, tree, table, listbox, filter_col))
     btn_update_columns.pack(pady=5)
 
     #creates treeview in frame form
-    tree_frame = tk.Frame(view_records_window)
+    tree_frame = tk.Frame(view_records_window, bg="#52101a")
     tree_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-    tree = ttk.Treeview(tree_frame, show="headings")
-    tree.pack(fill=tk.BOTH, expand=True)
 
-    #Add scrollbar
-    scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=tree.yview)
+    # Create a frame just for the Treeview + Scrollbar side by side
+    tree_scroll_container = tk.Frame(tree_frame)
+    tree_scroll_container.pack(fill=tk.BOTH, expand=True)
+
+    # Treeview
+    tree = ttk.Treeview(tree_scroll_container, show="headings")
+    tree.grid(row=0, column=0, sticky="nsew")
+
+    # Scrollbar
+    scrollbar = ttk.Scrollbar(tree_scroll_container, orient=tk.VERTICAL, command=tree.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
     tree.configure(yscroll=scrollbar.set)
 
-    #Pack widgets
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    # Make the Treeview expand with container
+    tree_scroll_container.grid_rowconfigure(0, weight=1)
+    tree_scroll_container.grid_columnconfigure(0, weight=1)
+
 
     #bind double-click event for editing cells
     tree.bind("<Double-1>", on_double_click)
@@ -1084,5 +1093,5 @@ def open_view_records(root):
     table_dropdown.bind("<<ComboboxSelected>>", lambda event: switch_table(event, tree, table, listbox, filter_col))
 
     #button to return to records screen
-    btn_rtn_recordsact_window = ttk.Button(view_records_window, text="Back to Records Actions", command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
+    btn_rtn_recordsact_window = tk.Button(view_records_window, text="Back to Records Actions", bg="black", fg="white", highlightcolor="gray", font=("Franklin Gothic URW", 14, "bold"), command=lambda: [view_records_window.destroy(), records_act_window.deiconify()])
     btn_rtn_recordsact_window.place(relx=0.02, rely=0.05, anchor="nw")
