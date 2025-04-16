@@ -1,5 +1,5 @@
 # Quickstart Guide
-*Full user manual attached here -> [UPE User Manual.docx](https://github.com/user-attachments/files/19783821/UPE.User.Manual.docx)*
+*Full user manual attached here -> [UPE User Manual.docx](https://github.com/user-attachments/files/19783821/UPE.User.Manual.docx)*  
 *All data in database is test data and was done through SQLLite (Not hosted)*
 
 ## How to start
@@ -30,7 +30,7 @@
 
 ### Add Transaction
 #### Window to add a transaction to the database. Add a data, type, memo and amount and then hit submit
-![image](https://github.com/user-attachments/assets/2b3b102c-6795-47aa-9caf-bfd141283818)
+![image](https://github.com/user-attachments/assets/6b8bf885-a454-41c0-9ca4-d706d1de82b4)
 
 
 
@@ -38,7 +38,7 @@
 ## Records Actions
 ### Records Actions Homepage
 #### Window that appears if "Records Actions" was selected on the Main Homepage. Here there are three options, view records, add member or add student
-![image](https://github.com/user-attachments/assets/1cef8917-022c-4d89-848f-5b897a2ad25e)
+![image](https://github.com/user-attachments/assets/8395ca85-cf9c-4422-89ed-d6f7495af3ca)
 
 ### View Records
 #### Window to view all Student/Member records. Which is selected is based on the dropdown menu at the top. All columns can be filtered out/back in using the column select on the left along with the "Apply Filter" button. Each cell is invidually editable and upon hitting enter will save to the database.
