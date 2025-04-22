@@ -1,5 +1,5 @@
 # Quickstart Guide
-*Full user manual attached here -> [UPE User Manual.docx]([UPE User Manual.docx](https://github.com/user-attachments/files/19850620/UPE.User.Manual.docx))*  
+*Full user manual attached here -> ([UPE User Manual.docx](https://github.com/user-attachments/files/19850620/UPE.User.Manual.docx))*  
 *All data in database is test data and was done through SQLLite (Not hosted)*
 
 ## How to start
