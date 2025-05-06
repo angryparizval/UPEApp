@@ -172,9 +172,9 @@ def generate_pdf_report():
         # Add the content to the PDF
         document.append(Spacer(1, 20))
         styles = getSampleStyleSheet()
-        document.append(Paragraph('To: '+ first_name, styles['Normal']))
+        document.append(Paragraph('To: '+ first_name + ' ' + last_name, styles['Normal']))
         document.append(Spacer(1, 20))
-        document.append(Paragraph('Dear ' + first_name + ' ' + last_name + ',', styles['Normal']))
+        document.append(Paragraph('Dear ' + first_name + ',', styles['Normal']))
         document.append(Spacer(1, 20))
         document.append(Paragraph('Congratulations! We are pleased to inform you that you have been selected for membership in the LRU Chapter of Upsilon Pi Epsilon, the International Honor Society for Computing and Information disciplines. As an undergraduate student in the computing and information disciplines at Lenoir-Rhyne University, your selection has been based upon your outstanding achievement and high scholarship rating.', styles['Normal']))
         document.append(Spacer(1, 20))
